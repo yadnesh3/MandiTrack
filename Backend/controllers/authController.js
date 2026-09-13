@@ -64,12 +64,12 @@ const loginUser = async (req, res) => {
       });
     }
 
-    const isPasswordCorrect = await bcrypt.compare(
+    const passwordMatch = await bcrypt.compare(
       password,
       user.password
     );
 
-    if (!isPasswordCorrect) {
+    if (!passwordMatch) {
       return res.status(401).json({
         message: "Invalid mobile or password",
       });
