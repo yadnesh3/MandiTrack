@@ -42,6 +42,34 @@ const call = async (path, { method = "GET", token, body } = {}) => {
   return { status: res.status, data };
 };
 
+/**
+ * Deletes the account straight out of MongoDB, then replays its still-valid
+ * token. Verifying the signature alone would let this through, so this is the
+ * check that proves `protect` reloads the user.
+ *
+ * Skipped when MONGO_URI is not set, since it needs database access.
+ */
+const checkDeletedUserToken = async (token, mobile) => {
+  if (!process.env.MONGO_URI) {
+    console.log("  SKIP  deleted-user token rejected (set MONGO_URI to run)");
+    return;
+  }
+
+  const mongoose = require("mongoose");
+  const User = require("../models/User");
+
+  await mongoose.connect(process.env.MONGO_URI);
+  const stillWorks = await call("/lots/my-lots", { token });
+  check("token works while the account exists", stillWorks.status === 200, `status ${stillWorks.status}`);
+
+  await User.deleteOne({ mobile });
+
+  const afterDelete = await call("/lots/my-lots", { token });
+  check("deleted user's token rejected", afterDelete.status === 401, `status ${afterDelete.status}`);
+
+  await mongoose.disconnect();
+};
+
 const run = async () => {
   const stamp = Date.now();
   const farmer = { name: "E2E Farmer", mobile: `9${stamp.toString().slice(-9)}`, password: "farmer-pass-1", role: "farmer" };
@@ -139,6 +167,38 @@ const run = async () => {
 
   const gonePending = await call("/lots/pending", { token: officerToken });
   check("sold lot left the pending queue", !gonePending.data?.lots?.some((l) => l._id === lotId), "still pending");
+
+  // ---- 8. Auth hardening ----------------------------------------------
+  console.log("\n8. Auth hardening");
+
+  const me = await call("/auth/me", { token: farmerToken });
+  check("/auth/me returns the current user", me.status === 200 && me.data?.user?.mobile === farmer.mobile, `status ${me.status}`);
+  check("/auth/me never leaks the password hash", me.data?.user?.password === undefined, "password present");
+  check("login response never leaks the password hash", farmerLogin.data?.user?.password === undefined, "password present");
+
+  const meNoToken = await call("/auth/me");
+  check("/auth/me rejects a missing token", meNoToken.status === 401, `status ${meNoToken.status}`);
+
+  const meBadToken = await call("/auth/me", { token: "not.a.real.token" });
+  check("/auth/me rejects a malformed token", meBadToken.status === 401, `status ${meBadToken.status}`);
+
+  const shortMobile = await call("/auth/register", { method: "POST", body: { ...farmer, mobile: "12345" } });
+  check("short mobile rejected", shortMobile.status === 400, `status ${shortMobile.status}`);
+
+  const badPrefixMobile = await call("/auth/register", { method: "POST", body: { ...farmer, mobile: "1234567890" } });
+  check("mobile not starting 6-9 rejected", badPrefixMobile.status === 400, `status ${badPrefixMobile.status}`);
+
+  const weakPassword = await call("/auth/register", { method: "POST", body: { ...farmer, mobile: `7${stamp.toString().slice(-9)}`, password: "123" } });
+  check("weak password rejected", weakPassword.status === 400, `status ${weakPassword.status}`);
+
+  const shortName = await call("/auth/register", { method: "POST", body: { ...farmer, mobile: `7${stamp.toString().slice(-9)}`, name: "A" } });
+  check("one-character name rejected", shortName.status === 400, `status ${shortName.status}`);
+
+  const selfAdmin = await call("/auth/register", { method: "POST", body: { ...farmer, mobile: `7${stamp.toString().slice(-9)}`, role: "admin" } });
+  check("admin self-registration blocked", selfAdmin.status === 403, `status ${selfAdmin.status}`);
+
+  // A token for an account that has since been deleted must stop working.
+  await checkDeletedUserToken(farmerToken, farmer.mobile);
 
   // ---- Summary ---------------------------------------------------------
   console.log(`\n${"-".repeat(48)}`);
