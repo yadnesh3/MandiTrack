@@ -3,7 +3,11 @@ import Navbar from "./components/Navbar";
 import AuthModal from "./components/AuthModal";
 import FarmerDashboard from "./components/FarmerDashboard";
 import OfficerDashboard from "./components/OfficerDashboard";
+import AdminDashboard from "./components/AdminDashboard";
+import VoiceHelpModal from "./components/VoiceHelpModal";
+import LandingPage from "./pages/LandingPage";
 import { useLang } from "./context/LanguageContext";
+import { Volume2 } from "lucide-react";
 
 function App() {
   const { t } = useLang();
@@ -11,13 +15,13 @@ function App() {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(null);
 
-  // App opens directly on the Landing Page
-  const [view, setView] = useState("landing"); // "landing" | "login" | "register"
-
   // Auth modal state
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [authMode, setAuthMode] = useState("login");
   const [authDefaultRole, setAuthDefaultRole] = useState("farmer");
+
+  // Voice help modal state
+  const [isVoiceHelpOpen, setIsVoiceHelpOpen] = useState(false);
 
   // Load stored auth on mount
   useEffect(() => {
@@ -51,128 +55,51 @@ function App() {
     localStorage.removeItem("manditrack_user");
     setUser(null);
     setToken(null);
-    setView("landing");
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col font-sans antialiased text-slate-900">
+    <div className="min-h-screen bg-slate-50 flex flex-col font-sans antialiased text-slate-900 selection:bg-amber-200 selection:text-slate-900">
       {/* Navigation Bar */}
       <Navbar
         user={user}
-        onOpenAuth={(mode) => handleOpenAuth(mode, "farmer")}
+        onOpenAuth={(mode, role) => handleOpenAuth(mode, role || "farmer")}
+        onOpenVoiceHelp={() => setIsVoiceHelpOpen(true)}
         onLogout={handleLogout}
       />
 
       {/* Main Content View */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-8">
+      <main className="flex-1 w-full">
         {!user ? (
-          /* Landing Hero view for logged-out users (Direct Landing Page) */
-          <div className="py-8 md:py-16 flex flex-col md:flex-row items-center justify-between gap-12 animate-fadeIn">
-            <div className="max-w-xl space-y-6">
-              <span className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-green-100 text-green-800 text-xs font-bold uppercase tracking-wider border border-green-200">
-                {t("heroBadge")}
-              </span>
-
-              <h1 className="text-4xl sm:text-5xl font-extrabold text-slate-900 leading-tight">
-                {t("heroHeadlineLead")}{" "}
-                <span className="text-green-700 underline decoration-green-300 decoration-wavy">
-                  {t("heroHeadlineAccent")}
-                </span>
-                {t("heroHeadlineTrail") && ` ${t("heroHeadlineTrail")}`}
-              </h1>
-
-              <p className="text-lg text-slate-600 leading-relaxed">
-                {t("heroDescription")}
-              </p>
-
-              <div className="pt-2 flex flex-wrap gap-4">
-                <button
-                  onClick={() => handleOpenAuth("login", "farmer")}
-                  className="px-6 py-3.5 bg-green-700 hover:bg-green-800 text-white font-bold rounded-xl shadow-md hover:shadow-lg transition-all flex items-center gap-2 active:scale-95 text-sm"
-                >
-                  👨‍🌾 {t("farmerLoginBtn")}
-                </button>
-
-                <button
-                  onClick={() => handleOpenAuth("register", "farmer")}
-                  className="px-6 py-3.5 bg-white border-2 border-green-700 text-green-800 hover:bg-green-50 font-bold rounded-xl shadow-xs transition-all flex items-center gap-2 active:scale-95 text-sm"
-                >
-                  📝 {t("farmerRegisterBtn")}
-                </button>
-
-                <button
-                  onClick={() => handleOpenAuth("login", "officer")}
-                  className="px-6 py-3.5 bg-blue-700 hover:bg-blue-800 text-white font-bold rounded-xl shadow-md hover:shadow-lg transition-all flex items-center gap-2 active:scale-95 text-sm"
-                >
-                  🏛️ {t("officerLoginBtn")}
-                </button>
-              </div>
-
-              <div className="pt-6 border-t border-slate-200 grid grid-cols-3 gap-4 text-center">
-                <div>
-                  <div className="text-2xl font-bold text-green-800">100%</div>
-                  <div className="text-xs text-slate-500 font-medium">{t("statTransparent")}</div>
-                </div>
-                <div>
-                  <div className="text-2xl font-bold text-green-800">JWT</div>
-                  <div className="text-xs text-slate-500 font-medium">{t("statSecureAuth")}</div>
-                </div>
-                <div>
-                  <div className="text-2xl font-bold text-green-800">{t("statLiveValue")}</div>
-                  <div className="text-xs text-slate-500 font-medium">{t("statStatusTracking")}</div>
-                </div>
-              </div>
-            </div>
-
-            {/* Visual Preview Card */}
-            <div className="w-full max-w-md bg-white p-6 rounded-3xl shadow-lg border border-slate-100 space-y-4 hover:shadow-xl transition-shadow">
-              <div className="flex items-center justify-between pb-3 border-b">
-                <div className="font-semibold text-slate-800 text-sm">
-                  {t("previewLotLabel")} #1042
-                </div>
-                <span className="px-2.5 py-1 bg-yellow-100 text-yellow-800 rounded-full text-xs font-bold border border-yellow-200">
-                  {t("pendingReview")}
-                </span>
-              </div>
-              <div className="grid grid-cols-2 gap-3 text-sm">
-                <div>
-                  <span className="text-slate-500 text-xs block">{t("cropName")}</span>
-                  <span className="font-medium text-slate-800">Wheat (गहू)</span>
-                </div>
-                <div>
-                  <span className="text-slate-500 text-xs block">{t("quantity")}</span>
-                  <span className="font-medium text-slate-800">{t("previewQuantity")}</span>
-                </div>
-                <div>
-                  <span className="text-slate-500 text-xs block">{t("mandi")}</span>
-                  <span className="font-medium text-slate-800">Pune APMC</span>
-                </div>
-                <div>
-                  <span className="text-slate-500 text-xs block">{t("expectedPrice")}</span>
-                  <span className="font-medium text-slate-800">{t("previewPrice")}</span>
-                </div>
-              </div>
-              <div className="pt-2 text-xs text-center text-slate-400 border-t">
-                {t("previewFooter")}
-              </div>
-            </div>
-          </div>
-        ) : user.role === "farmer" ? (
-          /* Render Farmer Dashboard for Logged-In Farmers */
-          <FarmerDashboard user={user} />
+          /* Rich Landing Page for non-logged-in visitors */
+          <LandingPage
+            onNavigateToLogin={(role = "farmer") => handleOpenAuth("login", role)}
+            onNavigateToRegister={(role = "farmer") => handleOpenAuth("register", role)}
+          />
         ) : (
-          /* Render Officer Dashboard for Logged-In Officers */
-          <OfficerDashboard user={user} />
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+            {user.role === "farmer" ? (
+              /* Farmer Dashboard */
+              <FarmerDashboard user={user} />
+            ) : user.role === "admin" ? (
+              /* Dedicated Admin Dashboard (Do NOT send admin to OfficerDashboard) */
+              <AdminDashboard user={user} />
+            ) : (
+              /* Officer Dashboard (Strict location restricted) */
+              <OfficerDashboard user={user} />
+            )}
+          </div>
         )}
       </main>
 
-      {/* Footer */}
-      <footer className="bg-white border-t py-5 text-center text-xs text-slate-500">
-        <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
-          <div>{t("footerBrand")}</div>
-          <div>{t("footerCredit")}</div>
-        </div>
-      </footer>
+      {/* Floating Voice Help Button for quick farmer access */}
+      <button
+        onClick={() => setIsVoiceHelpOpen(true)}
+        title="Open Voice Assistance (आवाज मदत)"
+        className="fixed bottom-6 right-6 z-40 px-4 py-3 bg-[#0E2A3F] hover:bg-[#163c5a] text-white rounded-full shadow-2xl border-2 border-amber-400 flex items-center gap-2 text-xs font-bold transition active:scale-95 group"
+      >
+        <Volume2 size={18} className="text-amber-400 group-hover:scale-110 transition-transform" />
+        <span className="hidden sm:inline">Voice Help (मदत)</span>
+      </button>
 
       {/* Auth Modal */}
       <AuthModal
@@ -181,6 +108,12 @@ function App() {
         initialMode={authMode}
         defaultRole={authDefaultRole}
         onLoginSuccess={handleLoginSuccess}
+      />
+
+      {/* Voice Help Modal */}
+      <VoiceHelpModal
+        isOpen={isVoiceHelpOpen}
+        onClose={() => setIsVoiceHelpOpen(false)}
       />
     </div>
   );

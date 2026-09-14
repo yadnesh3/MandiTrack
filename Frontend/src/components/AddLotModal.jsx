@@ -22,10 +22,10 @@ const MANDI_OPTIONS = [
   "Pune APMC (पुणे मंडी)",
   "Nashik APMC (नाशिक मंडी)",
   "Nagpur APMC (नागपूर मंडी)",
-  "Amravati APMC (अमरावती मंडी)",
-  "Solapur APMC (सोलापूर मंडी)",
-  "Kolhapur APMC (कोल्हापूर मंडी)",
   "Mumbai Vashi APMC (वाशी मंडी)",
+  "Kalyan APMC (कल्याण मंडी)",
+  "Bhiwandi APMC (भिवंडी मंडी)",
+  "Ulhasnagar APMC (उल्हासनगर मंडी)",
   "Latur APMC (लातूर मंडी)",
 ];
 

@@ -18,10 +18,10 @@ const MANDI_OPTIONS = [
   "Pune",
   "Nashik",
   "Nagpur",
-  "Solapur",
-  "Amravati",
-  "Kolhapur",
   "Mumbai Vashi",
+  "Kalyan",
+  "Bhiwandi",
+  "Ulhasnagar",
   "Latur",
   "Akola",
 ];

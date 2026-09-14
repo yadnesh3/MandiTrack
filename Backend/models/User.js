@@ -29,6 +29,12 @@ const userSchema = new mongoose.Schema(
       enum: ["farmer", "officer", "admin"],
       default: "farmer",
     },
+
+    mandi: {
+      type: String,
+      trim: true,
+      default: "",
+    },
   },
   {
     timestamps: true,

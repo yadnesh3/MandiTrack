@@ -2,10 +2,20 @@ import React, { useState, useEffect } from "react";
 import { loginApi, registerApi } from "../services/api";
 import { useLang } from "../context/LanguageContext";
 
-// Kept in step with the server-side rules in Backend/controllers/authController.js
-// so the user gets the message before a round trip, not after.
 const MOBILE_PATTERN = /^[6-9]\d{9}$/;
 const MIN_PASSWORD_LENGTH = 6;
+
+const MANDI_OPTIONS = [
+  "Pune APMC",
+  "Navi Mumbai APMC",
+  "Thane APMC",
+  "Kalyan APMC",
+  "Bhiwandi APMC",
+  "Ulhasnagar APMC",
+  "Nashik APMC",
+  "Nagpur APMC",
+  "Latur APMC",
+];
 
 function AuthModal({ isOpen, onClose, initialMode = "login", defaultRole = "farmer", onLoginSuccess }) {
   const { t } = useLang();
@@ -17,6 +27,7 @@ function AuthModal({ isOpen, onClose, initialMode = "login", defaultRole = "farm
   const [name, setName] = useState("");
   const [mobile, setMobile] = useState("");
   const [password, setPassword] = useState("");
+  const [mandi, setMandi] = useState("Pune APMC");
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -56,6 +67,11 @@ function AuthModal({ isOpen, onClose, initialMode = "login", defaultRole = "farm
         setError(t("passwordTooShort"));
         return;
       }
+
+      if (role === "officer" && !mandi) {
+        setError("Please select your assigned APMC Mandi location.");
+        return;
+      }
     }
 
     setLoading(true);
@@ -74,6 +90,7 @@ function AuthModal({ isOpen, onClose, initialMode = "login", defaultRole = "farm
           mobile: mobile.trim(),
           password,
           role,
+          mandi: mandi ? mandi.trim() : "",
         });
 
         setSuccessMsg(t("registrationSuccess"));
@@ -106,42 +123,46 @@ function AuthModal({ isOpen, onClose, initialMode = "login", defaultRole = "farm
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden border border-gray-100 animate-fadeIn">
-
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-xs animate-fadeIn">
+      <div className="bg-[#FBF8EF] rounded-3xl shadow-2xl w-full max-w-md overflow-hidden border-2 border-[#D9A227]/30">
         {/* Header Tabs */}
-        <div className="flex border-b">
+        <div className="flex border-b border-[#E3DCC8] bg-white">
           <button
             onClick={() => { setMode("login"); setError(""); }}
-            className={`flex-1 py-3 text-center font-medium text-sm transition-colors ${
+            className={`flex-1 py-3.5 text-center font-bold text-xs transition-colors ${
               mode === "login"
-                ? "border-b-2 border-green-700 text-green-700 font-semibold bg-gray-50"
-                : "text-gray-500 hover:text-gray-700"
+                ? "border-b-2 border-emerald-700 text-emerald-900 bg-emerald-50/40"
+                : "text-slate-500 hover:text-slate-700"
             }`}
           >
             {t("loginBtn")}
           </button>
           <button
             onClick={() => { setMode("register"); setError(""); }}
-            className={`flex-1 py-3 text-center font-medium text-sm transition-colors ${
+            className={`flex-1 py-3.5 text-center font-bold text-xs transition-colors ${
               mode === "register"
-                ? "border-b-2 border-green-700 text-green-700 font-semibold bg-gray-50"
-                : "text-gray-500 hover:text-gray-700"
+                ? "border-b-2 border-emerald-700 text-emerald-900 bg-emerald-50/40"
+                : "text-slate-500 hover:text-slate-700"
             }`}
           >
             {t("registerBtn")}
           </button>
         </div>
 
-        <div className="p-6">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-xl font-bold text-gray-900">
-              {mode === "login" ? t("welcomeBack") : t("createAccount")}
-            </h2>
+        <div className="p-6 sm:p-8">
+          <div className="flex justify-between items-center mb-5">
+            <div>
+              <h2 className="text-xl font-black text-slate-900">
+                {mode === "login" ? t("welcomeBack") : t("createAccount")}
+              </h2>
+              <p className="text-xs text-slate-500 mt-0.5">
+                {mode === "login" ? "Enter your mobile & password" : "Join digital APMC operations"}
+              </p>
+            </div>
             <button
               onClick={onClose}
               aria-label={t("close")}
-              className="text-gray-400 hover:text-gray-600 text-xl font-bold px-2"
+              className="text-slate-400 hover:text-slate-600 text-2xl font-bold px-2"
             >
               &times;
             </button>
@@ -149,45 +170,47 @@ function AuthModal({ isOpen, onClose, initialMode = "login", defaultRole = "farm
 
           {/* Role selector */}
           <div className="mb-5">
-            <label className="block text-xs font-semibold uppercase text-gray-500 mb-2">
+            <label className="block text-xs font-bold uppercase text-slate-500 mb-2 tracking-wider">
               {t("selectRole")}
             </label>
             <div className="grid grid-cols-2 gap-3">
               <button
                 type="button"
                 onClick={() => setRole("farmer")}
-                className={`py-2 px-3 rounded-lg border text-sm font-medium transition-all ${
+                className={`py-2.5 px-3 rounded-2xl border text-xs font-bold transition-all flex items-center justify-center gap-2 ${
                   role === "farmer"
-                    ? "border-green-700 bg-green-50 text-green-800 ring-2 ring-green-700/20"
-                    : "border-gray-200 text-gray-600 hover:bg-gray-50"
+                    ? "border-emerald-700 bg-emerald-50 text-emerald-900 shadow-xs ring-2 ring-emerald-700/20"
+                    : "border-slate-200 text-slate-600 bg-white hover:bg-slate-50"
                 }`}
               >
-                {t("farmerOption")}
+                <span>👨‍🌾</span>
+                <span>{t("farmerOption")}</span>
               </button>
               <button
                 type="button"
                 onClick={() => setRole("officer")}
-                className={`py-2 px-3 rounded-lg border text-sm font-medium transition-all ${
+                className={`py-2.5 px-3 rounded-2xl border text-xs font-bold transition-all flex items-center justify-center gap-2 ${
                   role === "officer"
-                    ? "border-blue-700 bg-blue-50 text-blue-800 ring-2 ring-blue-700/20"
-                    : "border-gray-200 text-gray-600 hover:bg-gray-50"
+                    ? "border-blue-700 bg-blue-50 text-blue-900 shadow-xs ring-2 ring-blue-700/20"
+                    : "border-slate-200 text-slate-600 bg-white hover:bg-slate-50"
                 }`}
               >
-                {t("officerOption")}
+                <span>🏛️</span>
+                <span>{t("officerOption")}</span>
               </button>
             </div>
           </div>
 
           {/* Alert messages */}
           {error && (
-            <div role="alert" className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg">
-              {error}
+            <div role="alert" className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 text-xs font-semibold rounded-2xl">
+              ⚠️ {error}
             </div>
           )}
 
           {successMsg && (
-            <div role="status" className="mb-4 p-3 bg-green-50 border border-green-200 text-green-700 text-sm rounded-lg">
-              {successMsg}
+            <div role="status" className="mb-4 p-3 bg-green-50 border border-green-200 text-green-700 text-xs font-semibold rounded-2xl">
+              ✅ {successMsg}
             </div>
           )}
 
@@ -195,7 +218,7 @@ function AuthModal({ isOpen, onClose, initialMode = "login", defaultRole = "farm
           <form onSubmit={handleSubmit} className="space-y-4">
             {mode === "register" && (
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-xs font-bold uppercase text-slate-600 mb-1">
                   {t("fullName")}
                 </label>
                 <input
@@ -204,13 +227,13 @@ function AuthModal({ isOpen, onClose, initialMode = "login", defaultRole = "farm
                   placeholder={t("nameExample")}
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full px-3.5 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-600 focus:border-green-600 outline-none text-sm"
+                  className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-600 focus:border-emerald-600 outline-none text-xs text-slate-900"
                 />
               </div>
             )}
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-xs font-bold uppercase text-slate-600 mb-1">
                 {t("mobileNumber")}
               </label>
               <input
@@ -221,12 +244,12 @@ function AuthModal({ isOpen, onClose, initialMode = "login", defaultRole = "farm
                 placeholder={t("mobileHint")}
                 value={mobile}
                 onChange={(e) => setMobile(e.target.value.replace(/\D/g, ""))}
-                className="w-full px-3.5 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-600 focus:border-green-600 outline-none text-sm"
+                className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-600 focus:border-emerald-600 outline-none text-xs text-slate-900 font-medium"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-xs font-bold uppercase text-slate-600 mb-1">
                 {t("password")}
               </label>
               <input
@@ -235,19 +258,43 @@ function AuthModal({ isOpen, onClose, initialMode = "login", defaultRole = "farm
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-3.5 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-600 focus:border-green-600 outline-none text-sm"
+                className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-600 focus:border-emerald-600 outline-none text-xs text-slate-900"
               />
               {mode === "register" && (
-                <p className="mt-1 text-xs text-gray-500">{t("passwordHint")}</p>
+                <p className="mt-1 text-[11px] text-slate-400">{t("passwordHint")}</p>
               )}
             </div>
+
+            {mode === "register" && (
+              <div>
+                <label className="block text-xs font-bold uppercase text-slate-600 mb-1">
+                  {role === "officer" ? "Assigned APMC Mandi (Mandatory)" : "Preferred APMC Mandi"}
+                </label>
+                <select
+                  value={mandi}
+                  onChange={(e) => setMandi(e.target.value)}
+                  className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-600 focus:border-emerald-600 outline-none text-xs font-bold text-slate-800"
+                >
+                  {MANDI_OPTIONS.map((m) => (
+                    <option key={m} value={m}>
+                      {m}
+                    </option>
+                  ))}
+                </select>
+                {role === "officer" && (
+                  <p className="mt-1 text-[10px] text-amber-700 font-semibold">
+                    🔒 Location security: Officers only process lots from this mandi.
+                  </p>
+                )}
+              </div>
+            )}
 
             <button
               type="submit"
               disabled={loading}
-              className={`w-full py-2.5 rounded-lg text-white font-medium shadow-xs transition-colors mt-2 disabled:opacity-60 disabled:cursor-not-allowed ${
+              className={`w-full py-3 rounded-xl text-white font-bold text-xs shadow-md transition active:scale-95 mt-2 disabled:opacity-60 disabled:cursor-not-allowed ${
                 role === "farmer"
-                  ? "bg-green-700 hover:bg-green-800"
+                  ? "bg-emerald-700 hover:bg-emerald-800"
                   : "bg-blue-700 hover:bg-blue-800"
               }`}
             >
@@ -255,7 +302,6 @@ function AuthModal({ isOpen, onClose, initialMode = "login", defaultRole = "farm
             </button>
           </form>
         </div>
-
       </div>
     </div>
   );

@@ -46,6 +46,12 @@ export const loginApi = (credentials) => {
   });
 };
 
+export const getMeApi = () => {
+  return request("/auth/me", {
+    method: "GET",
+  });
+};
+
 // Farmer Lot APIs
 export const createLotApi = (lotData) => {
   return request("/lots/create", {
@@ -56,6 +62,12 @@ export const createLotApi = (lotData) => {
 
 export const getMyLotsApi = () => {
   return request("/lots/my-lots", {
+    method: "GET",
+  });
+};
+
+export const getLotByIdApi = (lotId) => {
+  return request(`/lots/${lotId}`, {
     method: "GET",
   });
 };
@@ -80,9 +92,23 @@ export const updateLotStatusApi = (lotId, status) => {
   });
 };
 
+export const advanceCheckpointApi = (lotId, checkpointData) => {
+  return request(`/lots/${lotId}/checkpoint`, {
+    method: "PUT",
+    body: JSON.stringify(checkpointData),
+  });
+};
+
 // Mandi Price API
 export const getMandiPricesApi = () => {
   return request("/mandi-prices", {
+    method: "GET",
+  });
+};
+
+// Admin Overview API
+export const getAdminOverviewApi = () => {
+  return request("/admin/overview", {
     method: "GET",
   });
 };

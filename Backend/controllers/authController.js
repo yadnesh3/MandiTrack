@@ -20,6 +20,7 @@ const publicUser = (user) => ({
   name: user.name,
   mobile: user.mobile,
   role: user.role,
+  mandi: user.mandi || "",
 });
 
 /** Returns an error string, or null when the input is usable. */
@@ -49,7 +50,7 @@ const validateCredentials = ({ name, mobile, password }) => {
 
 const registerUser = async (req, res) => {
   try {
-    const { name, mobile, password, role } = req.body;
+    const { name, mobile, password, role, mandi } = req.body;
 
     if (!name || !mobile || !password) {
       return res.status(400).json({
@@ -87,6 +88,7 @@ const registerUser = async (req, res) => {
       mobile: cleanMobile,
       password: hashedPassword,
       role: requestedRole,
+      mandi: typeof mandi === "string" ? mandi.trim() : "",
     });
 
     res.status(201).json({
@@ -163,6 +165,7 @@ const getMe = async (req, res) => {
       name: req.user.name,
       mobile: req.user.mobile,
       role: req.user.role,
+      mandi: req.user.mandi || "",
     },
   });
 };
