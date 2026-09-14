@@ -3,7 +3,8 @@ const https = require("https");
 // Controller to fetch live/open market prices from Agmarknet (data.gov.in)
 const getMandiPrices = async (req, res) => {
   try {
-    const apiKey = process.env.DATA_GOV_API_KEY || "579b464db66ec23bdd000001cdd3946368fd46334d9659e7b87f3bc5";
+    const apiKey = process.env.DATA_GOV_API_KEY;
+    if (!apiKey) return res.status(503).json({ success: false, message: "Market price data is currently unavailable." });
     const resourceId = "9ef0be3a-08d4-458b-a3a3-a7787b2e4509";
     const apiUrl = `https://api.data.gov.in/resource/${resourceId}?api-key=${apiKey}&format=json&limit=60`;
 

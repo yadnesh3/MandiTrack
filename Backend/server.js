@@ -21,10 +21,12 @@ connectDB();
 const authRoutes = require("./Routes/authRoutes");
 const lotRoutes = require("./Routes/lotRoutes");
 const mandiPriceRoutes = require("./Routes/mandiPriceRoutes");
+const adminRoutes = require("./Routes/adminRoutes");
 
 app.use("/api/auth", authRoutes);
 app.use("/api/lots", lotRoutes);
 app.use("/api/mandi-prices", mandiPriceRoutes);
+app.use("/api/admin", adminRoutes);
 
 app.get("/", (req, res) => {
   res.send("MandiTrack Backend is running");

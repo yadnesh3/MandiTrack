@@ -16,6 +16,10 @@ const createLot = async (req, res) => {
       });
     }
 
+    if (typeof crop !== "string" || typeof mandi !== "string" || !Number.isFinite(Number(quantity)) || Number(quantity) <= 0 || !Number.isFinite(Number(expectedPrice)) || Number(expectedPrice) < 0) {
+      return res.status(400).json({ message: "Please enter valid produce details." });
+    }
+
     const lot = await Lot.create({
       farmer: req.user.id,
       crop,
@@ -32,7 +36,6 @@ const createLot = async (req, res) => {
   } catch (error) {
     res.status(500).json({
       message: "Failed to create lot",
-      error: error.message,
     });
   }
 };
@@ -51,7 +54,6 @@ const getMyLots = async (req, res) => {
   } catch (error) {
     res.status(500).json({
       message: "Failed to fetch lots",
-      error: error.message,
     });
   }
 };
@@ -70,7 +72,6 @@ const getAllLots = async (req, res) => {
   } catch (error) {
     res.status(500).json({
       message: "Failed to fetch all lots",
-      error: error.message,
     });
   }
 };
@@ -89,7 +90,6 @@ const getPendingLots = async (req, res) => {
   } catch (error) {
     res.status(500).json({
       message: "Failed to fetch pending lots",
-      error: error.message,
     });
   }
 };
@@ -126,7 +126,6 @@ const updateLotStatus = async (req, res) => {
   } catch (error) {
     res.status(500).json({
       message: "Failed to update lot status",
-      error: error.message,
     });
   }
 };

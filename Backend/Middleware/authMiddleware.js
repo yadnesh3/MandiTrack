@@ -34,6 +34,11 @@ const farmerOnly = (req, res, next) => {
   next();
 };
 
+const adminOnly = (req, res, next) => {
+  if (req.user.role !== "admin") return res.status(403).json({ message: "Access denied. Administrators only." });
+  next();
+};
+
 const officerOnly = (req, res, next) => {
   if (req.user.role !== "officer") {
     return res.status(403).json({
@@ -48,4 +53,5 @@ module.exports = {
   protect,
   farmerOnly,
   officerOnly,
+  adminOnly,
 };

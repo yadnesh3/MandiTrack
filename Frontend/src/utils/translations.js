@@ -10,7 +10,7 @@ const translations = {
     about: "About",
     features: "Features",
     contact: "Contact",
-    
+
     // Language Selection Screen
     chooseLanguage: "Choose your language",
     chooseLanguageSub: "Select your preferred language to get started with MandiTrack",
@@ -20,7 +20,7 @@ const translations = {
     marathiDesc: "मराठी भाषेत पुढे जा",
     continueBtn: "Continue",
 
-    // Landing Page (Panel 1)
+    // Landing Page
     heroHeadline: "Track your produce from entry to payment",
     heroSubtext: "A simple and transparent platform for farmers and market officers.",
     farmerLoginBtn: "Farmer Login",
@@ -35,7 +35,7 @@ const translations = {
     farmerRole: "Farmer",
     officerRole: "Officer / Market Officer",
 
-    // Login Page (Panel 2)
+    // Login Page
     loginTitle: "Login to MandiTrack",
     loginSub: "Enter your credentials to continue",
     mobileNumber: "Mobile Number",
@@ -46,7 +46,7 @@ const translations = {
     dontHaveAccount: "Don't have an account?",
     registerHere: "Register here",
 
-    // Registration Page (Panel 3)
+    // Registration Page
     registerTitle: "Create Your Account",
     registerSub: "Join MandiTrack today",
     fullName: "Full Name",
@@ -65,8 +65,48 @@ const translations = {
     // General Actions
     backToHome: "Back to Home",
     changeLang: "Change Language",
+    refresh: "Refresh",
     footerText: "MandiTrack — A step towards a stronger farming community",
     footerRight: "Prototype | Built for a Better Tomorrow",
+
+    // Farmer Dashboard & Lots
+    farmerPortal: "🌾 Farmer Portal",
+    welcomeFarmer: "Welcome",
+    farmerSubtext: "Track your produce and get the best prices at the mandi.",
+    addProduceBtn: "+ Add Produce",
+    myProduceLots: "My Produce Lots",
+    myLotsSubtext: "All produce lots you have submitted to the mandi.",
+    totalSubmitted: "Total Submitted",
+    pendingReview: "Pending Review",
+    approvedLots: "Approved",
+    soldCompleted: "Sold / Completed",
+    rejectedLots: "Rejected",
+    cropName: "Crop",
+    quantity: "Quantity",
+    mandi: "Mandi",
+    expectedPrice: "Expected Price",
+    date: "Date",
+    status: "Status",
+    farmerInfo: "Farmer Info",
+    actions: "Actions",
+    mandiPricesTitle: "Mandi Prices",
+
+    // Officer Dashboard
+    officerPortal: "Officer Portal",
+    officerTitle: "Mandi Officer Dashboard",
+    officerSubtext: "Review and process farmer produce submissions.",
+    allLots: "All Lots",
+    pendingLots: "Pending Lots",
+
+    // Officer Actions
+    approveBtn: "Approve",
+    rejectBtn: "Reject",
+    markSoldBtn: "Mark Sold",
+
+    // Admin
+    adminPortal: "Administration",
+    adminTitle: "System Overview",
+    adminSubtext: "Manage farmers, officers and produce lots.",
   },
 
   mr: {
@@ -88,7 +128,7 @@ const translations = {
     marathiDesc: "मराठी भाषेत पुढे जा",
     continueBtn: "पुढे जा",
 
-    // Landing Page (Panel 1)
+    // Landing Page
     heroHeadline: "तुमचा शेतमाल आवक ते पेमेंटपर्यंत ट्रॅक करा",
     heroSubtext: "शेतकरी आणि बाजार समिती अधिकाऱ्यांसाठी एक सोपे आणि पारदर्शक व्यासपीठ.",
     farmerLoginBtn: "शेतकरी लॉगिन",
@@ -103,7 +143,7 @@ const translations = {
     farmerRole: "शेतकरी",
     officerRole: "अधिकारी / बाजार समिती अधिकारी",
 
-    // Login Page (Panel 2)
+    // Login Page
     loginTitle: "मंडीट्रॅक मध्ये लॉगिन करा",
     loginSub: "पुढे जाण्यासाठी तुमची माहिती प्रविष्ट करा",
     mobileNumber: "मोबाइल नंबर",
@@ -114,7 +154,7 @@ const translations = {
     dontHaveAccount: "खाते नाही का?",
     registerHere: "येथे नोंदणी करा",
 
-    // Registration Page (Panel 3)
+    // Registration Page
     registerTitle: "नवीन खाते तयार करा",
     registerSub: "आजच मंडीट्रॅक सोबत जोडा",
     fullName: "पूर्ण नाव",
@@ -133,8 +173,48 @@ const translations = {
     // General Actions
     backToHome: "मुख्यपृष्ठावर जा",
     changeLang: "भाषा बदला",
+    refresh: "रिफ्रेश करा",
     footerText: "मंडीट्रॅक — सक्षम शेतकरी समुदायाच्या दिशेने एक पाऊल",
     footerRight: "प्रतिकृती | चांगल्या उद्यासाठी निर्मित",
+
+    // Farmer Dashboard & Lots
+    farmerPortal: "🌾 शेतकरी पोर्टल",
+    welcomeFarmer: "नमस्कार",
+    farmerSubtext: "तुमचा शेतमाल ट्रॅक करा आणि मंडीत सर्वोत्तम भाव मिळवा.",
+    addProduceBtn: "+ उत्पादन नोंदवा",
+    myProduceLots: "माझे उत्पादन लॉट",
+    myLotsSubtext: "तुम्ही मंडीत सादर केलेले सर्व उत्पादन लॉट.",
+    totalSubmitted: "एकूण सादर",
+    pendingReview: "समीक्षेसाठी प्रलंबित",
+    approvedLots: "मंजूर",
+    soldCompleted: "विक्री / पूर्ण",
+    rejectedLots: "नामंजूर",
+    cropName: "पीक",
+    quantity: "प्रमाण",
+    mandi: "मंडी",
+    expectedPrice: "अपेक्षित भाव",
+    date: "तारीख",
+    status: "स्थिती",
+    farmerInfo: "शेतकरी माहिती",
+    actions: "कृती",
+    mandiPricesTitle: "मंडी भाव",
+
+    // Officer Dashboard
+    officerPortal: "अधिकारी पोर्टल",
+    officerTitle: "मंडी अधिकारी डॅशबोर्ड",
+    officerSubtext: "शेतकऱ्यांच्या उत्पादन सादरण्यांचे पुनरावलोकन करा आणि प्रक्रिया करा.",
+    allLots: "सर्व लॉट",
+    pendingLots: "प्रलंबित लॉट",
+
+    // Officer Actions
+    approveBtn: "मंजूर करा",
+    rejectBtn: "नाकारा",
+    markSoldBtn: "विक्री झाली",
+
+    // Admin
+    adminPortal: "प्रशासन",
+    adminTitle: "सिस्टम विहंगावलोकन",
+    adminSubtext: "शेतकरी, अधिकारी आणि उत्पादन लॉट व्यवस्थापित करा.",
   },
 };
 

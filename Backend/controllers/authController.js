@@ -12,6 +12,10 @@ const registerUser = async (req, res) => {
       });
     }
 
+    if (typeof name !== "string" || name.trim().length < 2 || !/^\d{10}$/.test(String(mobile)) || String(password).length < 6) {
+      return res.status(400).json({ message: "Enter a valid name, 10-digit mobile number and password of at least 6 characters." });
+    }
+
     const existingUser = await User.findOne({ mobile });
 
     if (existingUser) {
@@ -26,7 +30,8 @@ const registerUser = async (req, res) => {
       name,
       mobile,
       password: hashedPassword,
-      role: role || "farmer",
+      // Admin is never available through public registration.
+      role: role === "officer" ? "officer" : "farmer",
     });
 
     res.status(201).json({
@@ -41,7 +46,6 @@ const registerUser = async (req, res) => {
   } catch (error) {
     res.status(500).json({
       message: "Registration failed",
-      error: error.message,
     });
   }
 };
@@ -99,7 +103,6 @@ const loginUser = async (req, res) => {
   } catch (error) {
     res.status(500).json({
       message: "Login failed",
-      error: error.message,
     });
   }
 };
