@@ -13,11 +13,15 @@ const userSchema = new mongoose.Schema(
       required: true,
       unique: true,
       trim: true,
+      match: [/^[6-9]\d{9}$/, "Enter a valid 10-digit mobile number"],
     },
 
     password: {
       type: String,
       required: true,
+      // Never ship the hash to the client. Login has to ask for it
+      // explicitly with .select("+password").
+      select: false,
     },
 
     role: {

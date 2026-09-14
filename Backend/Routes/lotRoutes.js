@@ -11,7 +11,7 @@ const {
 const {
   protect,
   farmerOnly,
-  officerOnly,
+  officerOrAdmin,
 } = require("../Middleware/authMiddleware");
 
 const router = express.Router();
@@ -20,9 +20,9 @@ const router = express.Router();
 router.post("/create", protect, farmerOnly, createLot);
 router.get("/my-lots", protect, farmerOnly, getMyLots);
 
-// Officer routes
-router.get("/all", protect, officerOnly, getAllLots);
-router.get("/pending", protect, officerOnly, getPendingLots);
-router.patch("/:id/status", protect, officerOnly, updateLotStatus);
+// Review routes — officers do the day-to-day work, admins can step in.
+router.get("/all", protect, officerOrAdmin, getAllLots);
+router.get("/pending", protect, officerOrAdmin, getPendingLots);
+router.patch("/:id/status", protect, officerOrAdmin, updateLotStatus);
 
 module.exports = router;

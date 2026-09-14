@@ -1,10 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { getAllLotsApi, updateLotStatusApi } from "../services/api";
 import MandiPriceInfo from "./MandiPriceInfo";
-import { getTranslation } from "../utils/translations";
+import { useLang } from "../context/LanguageContext";
 
-function OfficerDashboard({ user, lang = "en" }) {
-  const t = (key) => getTranslation(lang, key);
+// The filter value doubles as a lot status, except for "all".
+const FILTER_LABEL_KEYS = {
+  all: "allLots",
+  pending: "pending",
+  approved: "approved",
+  rejected: "rejected",
+};
+
+function OfficerDashboard({ user }) {
+  const { t, tUnit, locale } = useLang();
 
   const [activeTab, setActiveTab] = useState("lots");
   const [lots, setLots] = useState([]);
@@ -21,7 +29,7 @@ function OfficerDashboard({ user, lang = "en" }) {
       const response = await getAllLotsApi();
       setLots(response.lots || []);
     } catch (err) {
-      setError(err.message || "Failed to load officer lots.");
+      setError(err.message || t("officerLoadFailed"));
     } finally {
       setLoading(false);
     }
@@ -38,17 +46,17 @@ function OfficerDashboard({ user, lang = "en" }) {
 
     try {
       await updateLotStatusApi(lotId, newStatus);
-      
+
       setLots((prevLots) =>
         prevLots.map((lot) =>
           lot._id === lotId ? { ...lot, status: newStatus } : lot
         )
       );
 
-      setSuccessMsg(`Lot status updated to "${t(newStatus)}".`);
+      setSuccessMsg(`${t("statusUpdatedTo")} "${t(newStatus)}".`);
       setTimeout(() => setSuccessMsg(""), 3000);
     } catch (err) {
-      setError(err.message || "Failed to update lot status.");
+      setError(err.message || t("statusUpdateFailed"));
     } finally {
       setUpdatingId(null);
     }
@@ -99,6 +107,9 @@ function OfficerDashboard({ user, lang = "en" }) {
   const approvedCount = lots.filter((l) => l.status === "approved").length;
   const rejectedCount = lots.filter((l) => l.status === "rejected").length;
 
+  const formatDate = (value, opts) =>
+    new Date(value).toLocaleDateString(locale, opts);
+
   return (
     <div className="space-y-6 animate-fadeIn">
       {/* Officer Welcome Header */}
@@ -148,7 +159,7 @@ function OfficerDashboard({ user, lang = "en" }) {
       </div>
 
       {activeTab === "prices" ? (
-        <MandiPriceInfo lang={lang} />
+        <MandiPriceInfo />
       ) : (
         <>
           {/* Summary Cards */}
@@ -220,13 +231,13 @@ function OfficerDashboard({ user, lang = "en" }) {
 
           {/* Alert Messages */}
           {successMsg && (
-            <div className="p-3 bg-green-50 border border-green-200 text-green-800 text-sm rounded-xl font-medium animate-fadeIn">
+            <div role="status" className="p-3 bg-green-50 border border-green-200 text-green-800 text-sm rounded-xl font-medium animate-fadeIn">
               ✅ {successMsg}
             </div>
           )}
 
           {error && (
-            <div className="p-3 bg-red-50 border border-red-200 text-red-800 text-sm rounded-xl font-medium animate-fadeIn">
+            <div role="alert" className="p-3 bg-red-50 border border-red-200 text-red-800 text-sm rounded-xl font-medium animate-fadeIn">
               ❌ {error}
             </div>
           )}
@@ -289,17 +300,22 @@ function OfficerDashboard({ user, lang = "en" }) {
             {/* Content Section */}
             {loading ? (
               <div className="p-12 text-center text-gray-500 text-sm">
-                Loading...
+                {t("loading")}
               </div>
             ) : filteredLots.length === 0 ? (
               <div className="p-12 text-center max-w-sm mx-auto space-y-2">
                 <div className="w-12 h-12 bg-gray-100 text-gray-400 rounded-full flex items-center justify-center text-2xl mx-auto">
                   📋
                 </div>
-                <h3 className="font-bold text-gray-800">No lots found</h3>
+                <h3 className="font-bold text-gray-800">
+                  {t("noOfficerLotsTitle")}
+                </h3>
                 <p className="text-xs text-gray-500">
-                  There are currently no lots under the "{filter}" filter.
+                  {t("noOfficerLotsSubtext")}
                 </p>
+                <span className="inline-block px-2.5 py-1 rounded-full bg-gray-100 text-gray-600 text-xs font-semibold">
+                  {t(FILTER_LABEL_KEYS[filter] || "allLots")}
+                </span>
               </div>
             ) : (
               <>
@@ -326,10 +342,10 @@ function OfficerDashboard({ user, lang = "en" }) {
                         >
                           <td className="py-4 px-6">
                             <div className="font-bold text-gray-900">
-                              {lot.farmer?.name || "Unknown Farmer"}
+                              {lot.farmer?.name || t("unknownFarmer")}
                             </div>
                             <div className="text-xs text-gray-500">
-                              📱 {lot.farmer?.mobile || "N/A"}
+                              📱 {lot.farmer?.mobile || t("notAvailable")}
                             </div>
                           </td>
 
@@ -338,7 +354,7 @@ function OfficerDashboard({ user, lang = "en" }) {
                           </td>
 
                           <td className="py-4 px-4 text-gray-700 font-medium">
-                            {lot.quantity} <span className="text-xs text-gray-500">{lot.unit}</span>
+                            {lot.quantity} <span className="text-xs text-gray-500">{tUnit(lot.unit)}</span>
                           </td>
 
                           <td className="py-4 px-4 text-gray-700">
@@ -346,11 +362,11 @@ function OfficerDashboard({ user, lang = "en" }) {
                           </td>
 
                           <td className="py-4 px-4 font-bold text-green-800">
-                            ₹{lot.expectedPrice.toLocaleString()} <span className="text-xs font-normal text-gray-500">/ {lot.unit}</span>
+                            ₹{Number(lot.expectedPrice).toLocaleString(locale)} <span className="text-xs font-normal text-gray-500">/ {tUnit(lot.unit)}</span>
                           </td>
 
                           <td className="py-4 px-4 text-gray-500 text-xs">
-                            {new Date(lot.createdAt).toLocaleDateString("en-IN", {
+                            {formatDate(lot.createdAt, {
                               day: "numeric",
                               month: "short",
                               year: "numeric",
@@ -367,7 +383,7 @@ function OfficerDashboard({ user, lang = "en" }) {
                                 <button
                                   disabled={updatingId === lot._id}
                                   onClick={() => handleStatusUpdate(lot._id, "approved")}
-                                  className="px-3 py-1.5 bg-green-700 hover:bg-green-800 disabled:opacity-50 text-white text-xs font-bold rounded-lg transition-colors shadow-xs active:scale-95"
+                                  className="px-3 py-1.5 bg-green-700 hover:bg-green-800 disabled:opacity-50 disabled:cursor-not-allowed text-white text-xs font-bold rounded-lg transition-colors shadow-xs active:scale-95"
                                 >
                                   {t("approveBtn")}
                                 </button>
@@ -377,7 +393,7 @@ function OfficerDashboard({ user, lang = "en" }) {
                                 <button
                                   disabled={updatingId === lot._id}
                                   onClick={() => handleStatusUpdate(lot._id, "rejected")}
-                                  className="px-3 py-1.5 bg-red-600 hover:bg-red-700 disabled:opacity-50 text-white text-xs font-bold rounded-lg transition-colors shadow-xs active:scale-95"
+                                  className="px-3 py-1.5 bg-red-600 hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed text-white text-xs font-bold rounded-lg transition-colors shadow-xs active:scale-95"
                                 >
                                   {t("rejectBtn")}
                                 </button>
@@ -387,7 +403,7 @@ function OfficerDashboard({ user, lang = "en" }) {
                                 <button
                                   disabled={updatingId === lot._id}
                                   onClick={() => handleStatusUpdate(lot._id, "sold")}
-                                  className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white text-xs font-bold rounded-lg transition-colors shadow-xs active:scale-95"
+                                  className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white text-xs font-bold rounded-lg transition-colors shadow-xs active:scale-95"
                                 >
                                   {t("markSoldBtn")}
                                 </button>
@@ -407,10 +423,10 @@ function OfficerDashboard({ user, lang = "en" }) {
                       <div className="flex items-center justify-between">
                         <div>
                           <div className="font-bold text-gray-900 text-sm">
-                            {lot.farmer?.name || "Unknown Farmer"}
+                            {lot.farmer?.name || t("unknownFarmer")}
                           </div>
                           <div className="text-xs text-gray-500">
-                            📱 {lot.farmer?.mobile || "N/A"}
+                            📱 {lot.farmer?.mobile || t("notAvailable")}
                           </div>
                         </div>
                         {renderStatusBadge(lot.status)}
@@ -423,7 +439,7 @@ function OfficerDashboard({ user, lang = "en" }) {
                         </div>
                         <div>
                           <span className="text-gray-400 block">{t("quantity")}</span>
-                          <span className="font-semibold text-gray-800">{lot.quantity} {lot.unit}</span>
+                          <span className="font-semibold text-gray-800">{lot.quantity} {tUnit(lot.unit)}</span>
                         </div>
                         <div>
                           <span className="text-gray-400 block">{t("mandi")}</span>
@@ -431,7 +447,7 @@ function OfficerDashboard({ user, lang = "en" }) {
                         </div>
                         <div>
                           <span className="text-gray-400 block">{t("expectedPrice")}</span>
-                          <span className="font-bold text-green-800">₹{lot.expectedPrice.toLocaleString()}</span>
+                          <span className="font-bold text-green-800">₹{Number(lot.expectedPrice).toLocaleString(locale)}</span>
                         </div>
                       </div>
 
@@ -440,7 +456,7 @@ function OfficerDashboard({ user, lang = "en" }) {
                           <button
                             disabled={updatingId === lot._id}
                             onClick={() => handleStatusUpdate(lot._id, "approved")}
-                            className="flex-1 py-2 bg-green-700 text-white text-xs font-bold rounded-lg shadow-xs active:scale-95"
+                            className="flex-1 py-2 bg-green-700 disabled:opacity-50 text-white text-xs font-bold rounded-lg shadow-xs active:scale-95"
                           >
                             {t("approveBtn")}
                           </button>
@@ -450,7 +466,7 @@ function OfficerDashboard({ user, lang = "en" }) {
                           <button
                             disabled={updatingId === lot._id}
                             onClick={() => handleStatusUpdate(lot._id, "rejected")}
-                            className="flex-1 py-2 bg-red-600 text-white text-xs font-bold rounded-lg shadow-xs active:scale-95"
+                            className="flex-1 py-2 bg-red-600 disabled:opacity-50 text-white text-xs font-bold rounded-lg shadow-xs active:scale-95"
                           >
                             {t("rejectBtn")}
                           </button>
@@ -460,7 +476,7 @@ function OfficerDashboard({ user, lang = "en" }) {
                           <button
                             disabled={updatingId === lot._id}
                             onClick={() => handleStatusUpdate(lot._id, "sold")}
-                            className="flex-1 py-2 bg-blue-600 text-white text-xs font-bold rounded-lg shadow-xs active:scale-95"
+                            className="flex-1 py-2 bg-blue-600 disabled:opacity-50 text-white text-xs font-bold rounded-lg shadow-xs active:scale-95"
                           >
                             {t("markSoldBtn")}
                           </button>

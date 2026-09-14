@@ -2,10 +2,10 @@ import React, { useState, useEffect } from "react";
 import { getMyLotsApi } from "../services/api";
 import AddLotModal from "./AddLotModal";
 import MandiPriceInfo from "./MandiPriceInfo";
-import { getTranslation } from "../utils/translations";
+import { useLang } from "../context/LanguageContext";
 
-function FarmerDashboard({ user, lang = "en" }) {
-  const t = (key) => getTranslation(lang, key);
+function FarmerDashboard({ user }) {
+  const { t, tUnit, locale } = useLang();
 
   const [activeTab, setActiveTab] = useState("lots"); // "lots" | "prices"
   const [lots, setLots] = useState([]);
@@ -20,7 +20,7 @@ function FarmerDashboard({ user, lang = "en" }) {
       const response = await getMyLotsApi();
       setLots(response.lots || []);
     } catch (err) {
-      setError(err.message || "Failed to load lots.");
+      setError(err.message || t("loadFailed"));
     } finally {
       setLoading(false);
     }
@@ -122,7 +122,7 @@ function FarmerDashboard({ user, lang = "en" }) {
       </div>
 
       {activeTab === "prices" ? (
-        <MandiPriceInfo lang={lang} />
+        <MandiPriceInfo />
       ) : (
         <>
           {/* Summary Stat Cards */}
@@ -182,7 +182,7 @@ function FarmerDashboard({ user, lang = "en" }) {
             {/* Content Section */}
             {loading ? (
               <div className="p-12 text-center text-gray-500 text-sm">
-                Loading...
+                {t("loading")}
               </div>
             ) : error ? (
               <div className="p-8 text-center text-red-600 text-sm bg-red-50">
@@ -193,9 +193,9 @@ function FarmerDashboard({ user, lang = "en" }) {
                 <div className="w-12 h-12 bg-gray-100 text-gray-400 rounded-full flex items-center justify-center text-2xl mx-auto">
                   🌾
                 </div>
-                <h3 className="font-bold text-gray-800">No produce lots found</h3>
+                <h3 className="font-bold text-gray-800">{t("noLotsTitle")}</h3>
                 <p className="text-xs text-gray-500">
-                  Click below to submit your crop!
+                  {t("noLotsSubtext")}
                 </p>
                 <button
                   onClick={() => setIsAddModalOpen(true)}
@@ -229,16 +229,16 @@ function FarmerDashboard({ user, lang = "en" }) {
                             {lot.crop}
                           </td>
                           <td className="py-4 px-4 text-gray-700 font-medium">
-                            {lot.quantity} <span className="text-xs text-gray-500">{lot.unit}</span>
+                            {lot.quantity} <span className="text-xs text-gray-500">{tUnit(lot.unit)}</span>
                           </td>
                           <td className="py-4 px-4 text-gray-700">
                             {lot.mandi}
                           </td>
                           <td className="py-4 px-4 font-bold text-green-800">
-                            ₹{lot.expectedPrice.toLocaleString()} <span className="text-xs font-normal text-gray-500">/ {lot.unit}</span>
+                            ₹{Number(lot.expectedPrice).toLocaleString(locale)} <span className="text-xs font-normal text-gray-500">/ {tUnit(lot.unit)}</span>
                           </td>
                           <td className="py-4 px-4 text-gray-500 text-xs">
-                            {new Date(lot.createdAt).toLocaleDateString("en-IN", {
+                            {new Date(lot.createdAt).toLocaleDateString(locale, {
                               day: "numeric",
                               month: "short",
                               year: "numeric",
@@ -267,7 +267,7 @@ function FarmerDashboard({ user, lang = "en" }) {
                         <div>
                           <span className="text-gray-400 block">{t("quantity")}</span>
                           <span className="font-semibold text-gray-800">
-                            {lot.quantity} {lot.unit}
+                            {lot.quantity} {tUnit(lot.unit)}
                           </span>
                         </div>
                         <div>
@@ -279,13 +279,13 @@ function FarmerDashboard({ user, lang = "en" }) {
                         <div>
                           <span className="text-gray-400 block">{t("expectedPrice")}</span>
                           <span className="font-bold text-green-800">
-                            ₹{lot.expectedPrice.toLocaleString()} / {lot.unit}
+                            ₹{Number(lot.expectedPrice).toLocaleString(locale)} / {tUnit(lot.unit)}
                           </span>
                         </div>
                         <div>
                           <span className="text-gray-400 block">{t("date")}</span>
                           <span>
-                            {new Date(lot.createdAt).toLocaleDateString("en-IN", {
+                            {new Date(lot.createdAt).toLocaleDateString(locale, {
                               day: "numeric",
                               month: "short",
                             })}

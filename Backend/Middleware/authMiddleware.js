@@ -1,6 +1,14 @@
 const jwt = require("jsonwebtoken");
+const User = require("../models/User");
 
-const protect = (req, res, next) => {
+/**
+ * Verifies the bearer token AND confirms the user still exists.
+ *
+ * Verifying the signature alone is not enough: a token issued to an account
+ * that has since been deleted stays valid until it expires, so we reload the
+ * user on every request and hang the live record off req.user.
+ */
+const protect = async (req, res, next) => {
   try {
     const authHeader = req.headers.authorization;
 
@@ -14,7 +22,22 @@ const protect = (req, res, next) => {
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    req.user = decoded;
+    const user = await User.findById(decoded.id);
+
+    if (!user) {
+      return res.status(401).json({
+        message: "Not authorized. This account no longer exists.",
+      });
+    }
+
+    // Trust the database over the token: if an admin changed someone's role,
+    // the old token must not keep the old privileges.
+    req.user = {
+      id: user._id.toString(),
+      name: user.name,
+      mobile: user.mobile,
+      role: user.role,
+    };
 
     next();
   } catch (error) {
@@ -24,34 +47,33 @@ const protect = (req, res, next) => {
   }
 };
 
-const farmerOnly = (req, res, next) => {
-  if (req.user.role !== "farmer") {
-    return res.status(403).json({
-      message: "Access denied. Farmers only.",
-    });
-  }
+/** Builds a middleware that only lets the listed roles through. */
+const allowRoles = (...roles) => {
+  const label = roles.map((r) => `${r}s`).join(" or ");
 
-  next();
+  return (req, res, next) => {
+    if (!roles.includes(req.user.role)) {
+      return res.status(403).json({
+        message: `Access denied. ${label.charAt(0).toUpperCase()}${label.slice(1)} only.`,
+      });
+    }
+
+    next();
+  };
 };
 
-const adminOnly = (req, res, next) => {
-  if (req.user.role !== "admin") return res.status(403).json({ message: "Access denied. Administrators only." });
-  next();
-};
+const farmerOnly = allowRoles("farmer");
+const officerOnly = allowRoles("officer");
+const adminOnly = allowRoles("admin");
 
-const officerOnly = (req, res, next) => {
-  if (req.user.role !== "officer") {
-    return res.status(403).json({
-      message: "Access denied. Officers only.",
-    });
-  }
-
-  next();
-};
+// Officers and admins share the review screens.
+const officerOrAdmin = allowRoles("officer", "admin");
 
 module.exports = {
   protect,
+  allowRoles,
   farmerOnly,
   officerOnly,
   adminOnly,
+  officerOrAdmin,
 };

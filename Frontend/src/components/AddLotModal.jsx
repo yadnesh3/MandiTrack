@@ -1,6 +1,10 @@
 import React, { useState } from "react";
 import { createLotApi } from "../services/api";
+import { useLang } from "../context/LanguageContext";
 
+// These strings are stored on the lot itself, so they stay bilingual rather
+// than switching with the UI language — otherwise the same crop would be
+// recorded under two different names.
 const CROP_OPTIONS = [
   "Wheat (गहू)",
   "Rice (तांदूळ)",
@@ -26,6 +30,8 @@ const MANDI_OPTIONS = [
 ];
 
 function AddLotModal({ isOpen, onClose, onLotCreated }) {
+  const { t, tUnit } = useLang();
+
   const [crop, setCrop] = useState("");
   const [customCrop, setCustomCrop] = useState("");
   const [quantity, setQuantity] = useState("");
@@ -49,17 +55,17 @@ function AddLotModal({ isOpen, onClose, onLotCreated }) {
     const selectedMandi = mandi === "Other" ? customMandi : mandi;
 
     if (!selectedCrop || !quantity || !selectedMandi || expectedPrice === "") {
-      setError("Please fill in all required fields.");
+      setError(t("fillAllFields"));
       return;
     }
 
     if (Number(quantity) <= 0) {
-      setError("Quantity must be greater than 0.");
+      setError(t("quantityPositive"));
       return;
     }
 
     if (Number(expectedPrice) < 0) {
-      setError("Expected price cannot be negative.");
+      setError(t("priceNotNegative"));
       return;
     }
 
@@ -75,7 +81,7 @@ function AddLotModal({ isOpen, onClose, onLotCreated }) {
       };
 
       const response = await createLotApi(payload);
-      setSuccess("Produce lot submitted successfully!");
+      setSuccess(t("lotSubmitted"));
 
       // Reset form
       setCrop("");
@@ -92,7 +98,7 @@ function AddLotModal({ isOpen, onClose, onLotCreated }) {
         setSuccess("");
       }, 1000);
     } catch (err) {
-      setError(err.message || "Failed to submit produce lot.");
+      setError(err.message || t("lotSubmitFailed"));
     } finally {
       setLoading(false);
     }
@@ -100,15 +106,16 @@ function AddLotModal({ isOpen, onClose, onLotCreated }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden border border-gray-100 animate-fadeIn">
+      <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden border border-gray-100 animate-fadeIn max-h-[92vh] overflow-y-auto">
         {/* Header */}
-        <div className="bg-green-700 text-white px-6 py-4 flex items-center justify-between">
+        <div className="bg-green-700 text-white px-6 py-4 flex items-center justify-between sticky top-0">
           <div className="flex items-center gap-2">
             <span className="text-xl">🌾</span>
-            <h2 className="text-lg font-bold">Add Produce / Create Lot</h2>
+            <h2 className="text-lg font-bold">{t("addLotTitle")}</h2>
           </div>
           <button
             onClick={onClose}
+            aria-label={t("close")}
             className="text-white/80 hover:text-white text-2xl font-bold leading-none px-2"
           >
             &times;
@@ -118,13 +125,13 @@ function AddLotModal({ isOpen, onClose, onLotCreated }) {
         {/* Form Body */}
         <div className="p-6">
           {error && (
-            <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg">
+            <div role="alert" className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg">
               {error}
             </div>
           )}
 
           {success && (
-            <div className="mb-4 p-3 bg-green-50 border border-green-200 text-green-700 text-sm rounded-lg">
+            <div role="status" className="mb-4 p-3 bg-green-50 border border-green-200 text-green-700 text-sm rounded-lg">
               {success}
             </div>
           )}
@@ -133,7 +140,7 @@ function AddLotModal({ isOpen, onClose, onLotCreated }) {
             {/* Crop Select */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Crop Name / पीक *
+                {t("cropLabel")} *
               </label>
               <select
                 required
@@ -141,20 +148,20 @@ function AddLotModal({ isOpen, onClose, onLotCreated }) {
                 onChange={(e) => setCrop(e.target.value)}
                 className="w-full px-3.5 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-600 focus:border-green-600 outline-none text-sm bg-white"
               >
-                <option value="">-- Select Crop --</option>
+                <option value="">{t("selectCrop")}</option>
                 {CROP_OPTIONS.map((c) => (
                   <option key={c} value={c}>
                     {c}
                   </option>
                 ))}
-                <option value="Other">Other / इतर (Specify)</option>
+                <option value="Other">{t("otherSpecify")}</option>
               </select>
 
               {crop === "Other" && (
                 <input
                   type="text"
                   required
-                  placeholder="Enter crop name"
+                  placeholder={t("enterCropName")}
                   value={customCrop}
                   onChange={(e) => setCustomCrop(e.target.value)}
                   className="mt-2 w-full px-3.5 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-600 focus:border-green-600 outline-none text-sm"
@@ -166,13 +173,13 @@ function AddLotModal({ isOpen, onClose, onLotCreated }) {
             <div className="grid grid-cols-3 gap-3">
               <div className="col-span-2">
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Quantity / नग किंवा वजन *
+                  {t("quantityLabel")} *
                 </label>
                 <input
                   type="number"
                   min="1"
                   required
-                  placeholder="e.g. 50"
+                  placeholder={t("quantityExample")}
                   value={quantity}
                   onChange={(e) => setQuantity(e.target.value)}
                   className="w-full px-3.5 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-600 focus:border-green-600 outline-none text-sm"
@@ -181,16 +188,16 @@ function AddLotModal({ isOpen, onClose, onLotCreated }) {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Unit / एकक
+                  {t("unitLabel")}
                 </label>
                 <select
                   value={unit}
                   onChange={(e) => setUnit(e.target.value)}
                   className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-600 focus:border-green-600 outline-none text-sm bg-white font-medium text-gray-700"
                 >
-                  <option value="quintal">quintal</option>
-                  <option value="kg">kg</option>
-                  <option value="ton">ton</option>
+                  <option value="quintal">{tUnit("quintal")}</option>
+                  <option value="kg">{tUnit("kg")}</option>
+                  <option value="ton">{tUnit("ton")}</option>
                 </select>
               </div>
             </div>
@@ -198,7 +205,7 @@ function AddLotModal({ isOpen, onClose, onLotCreated }) {
             {/* Mandi Select */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Target Mandi / बाजार समिती *
+                {t("targetMandi")} *
               </label>
               <select
                 required
@@ -206,20 +213,20 @@ function AddLotModal({ isOpen, onClose, onLotCreated }) {
                 onChange={(e) => setMandi(e.target.value)}
                 className="w-full px-3.5 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-600 focus:border-green-600 outline-none text-sm bg-white"
               >
-                <option value="">-- Select Mandi --</option>
+                <option value="">{t("selectMandi")}</option>
                 {MANDI_OPTIONS.map((m) => (
                   <option key={m} value={m}>
                     {m}
                   </option>
                 ))}
-                <option value="Other">Other / इतर (Specify)</option>
+                <option value="Other">{t("otherSpecify")}</option>
               </select>
 
               {mandi === "Other" && (
                 <input
                   type="text"
                   required
-                  placeholder="Enter Mandi name"
+                  placeholder={t("enterMandiName")}
                   value={customMandi}
                   onChange={(e) => setCustomMandi(e.target.value)}
                   className="mt-2 w-full px-3.5 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-600 focus:border-green-600 outline-none text-sm"
@@ -230,7 +237,7 @@ function AddLotModal({ isOpen, onClose, onLotCreated }) {
             {/* Expected Price */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Expected Price (₹ per {unit}) / अपेक्षित भाव *
+                {t("expectedPriceLabel")} (₹ {t("perUnit")} {tUnit(unit)}) *
               </label>
               <div className="relative">
                 <span className="absolute left-3 top-2.5 text-gray-500 font-bold">
@@ -240,7 +247,7 @@ function AddLotModal({ isOpen, onClose, onLotCreated }) {
                   type="number"
                   min="0"
                   required
-                  placeholder="e.g. 2400"
+                  placeholder={t("priceExample")}
                   value={expectedPrice}
                   onChange={(e) => setExpectedPrice(e.target.value)}
                   className="w-full pl-8 pr-3.5 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-600 focus:border-green-600 outline-none text-sm"
@@ -255,14 +262,14 @@ function AddLotModal({ isOpen, onClose, onLotCreated }) {
                 onClick={onClose}
                 className="flex-1 py-2.5 border border-gray-300 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors"
               >
-                Cancel
+                {t("cancel")}
               </button>
               <button
                 type="submit"
                 disabled={loading}
-                className="flex-1 py-2.5 bg-green-700 hover:bg-green-800 text-white rounded-lg text-sm font-medium shadow-xs transition-colors"
+                className="flex-1 py-2.5 bg-green-700 hover:bg-green-800 text-white rounded-lg text-sm font-medium shadow-xs transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
               >
-                {loading ? "Submitting..." : "Submit Produce Lot"}
+                {loading ? t("submitting") : t("submitLot")}
               </button>
             </div>
           </form>
