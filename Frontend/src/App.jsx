@@ -3,8 +3,11 @@ import Navbar from "./components/Navbar";
 import AuthModal from "./components/AuthModal";
 import FarmerDashboard from "./components/FarmerDashboard";
 import OfficerDashboard from "./components/OfficerDashboard";
+import { useLang } from "./context/LanguageContext";
 
 function App() {
+  const { t } = useLang();
+
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(null);
 
@@ -67,18 +70,19 @@ function App() {
           <div className="py-8 md:py-16 flex flex-col md:flex-row items-center justify-between gap-12 animate-fadeIn">
             <div className="max-w-xl space-y-6">
               <span className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-green-100 text-green-800 text-xs font-bold uppercase tracking-wider border border-green-200">
-                🌱 Mandi Process Management Platform
+                {t("heroBadge")}
               </span>
 
               <h1 className="text-4xl sm:text-5xl font-extrabold text-slate-900 leading-tight">
-                Track your produce from{" "}
+                {t("heroHeadlineLead")}{" "}
                 <span className="text-green-700 underline decoration-green-300 decoration-wavy">
-                  entry to payment.
+                  {t("heroHeadlineAccent")}
                 </span>
+                {t("heroHeadlineTrail") && ` ${t("heroHeadlineTrail")}`}
               </h1>
 
               <p className="text-lg text-slate-600 leading-relaxed">
-                MandiTrack provides a simple and transparent platform connecting farmers with market officers for lot submission, approval queue tracking, and live mandi pricing.
+                {t("heroDescription")}
               </p>
 
               <div className="pt-2 flex flex-wrap gap-4">
@@ -86,36 +90,36 @@ function App() {
                   onClick={() => handleOpenAuth("login", "farmer")}
                   className="px-6 py-3.5 bg-green-700 hover:bg-green-800 text-white font-bold rounded-xl shadow-md hover:shadow-lg transition-all flex items-center gap-2 active:scale-95 text-sm"
                 >
-                  👨‍🌾 Farmer Login
+                  👨‍🌾 {t("farmerLoginBtn")}
                 </button>
 
                 <button
                   onClick={() => handleOpenAuth("register", "farmer")}
                   className="px-6 py-3.5 bg-white border-2 border-green-700 text-green-800 hover:bg-green-50 font-bold rounded-xl shadow-xs transition-all flex items-center gap-2 active:scale-95 text-sm"
                 >
-                  📝 Farmer Register
+                  📝 {t("farmerRegisterBtn")}
                 </button>
 
                 <button
                   onClick={() => handleOpenAuth("login", "officer")}
                   className="px-6 py-3.5 bg-blue-700 hover:bg-blue-800 text-white font-bold rounded-xl shadow-md hover:shadow-lg transition-all flex items-center gap-2 active:scale-95 text-sm"
                 >
-                  🏛️ Officer Login
+                  🏛️ {t("officerLoginBtn")}
                 </button>
               </div>
 
               <div className="pt-6 border-t border-slate-200 grid grid-cols-3 gap-4 text-center">
                 <div>
                   <div className="text-2xl font-bold text-green-800">100%</div>
-                  <div className="text-xs text-slate-500 font-medium">Transparent</div>
+                  <div className="text-xs text-slate-500 font-medium">{t("statTransparent")}</div>
                 </div>
                 <div>
                   <div className="text-2xl font-bold text-green-800">JWT</div>
-                  <div className="text-xs text-slate-500 font-medium">Secure Auth</div>
+                  <div className="text-xs text-slate-500 font-medium">{t("statSecureAuth")}</div>
                 </div>
                 <div>
-                  <div className="text-2xl font-bold text-green-800">Live</div>
-                  <div className="text-xs text-slate-500 font-medium">Status Tracking</div>
+                  <div className="text-2xl font-bold text-green-800">{t("statLiveValue")}</div>
+                  <div className="text-xs text-slate-500 font-medium">{t("statStatusTracking")}</div>
                 </div>
               </div>
             </div>
@@ -123,31 +127,33 @@ function App() {
             {/* Visual Preview Card */}
             <div className="w-full max-w-md bg-white p-6 rounded-3xl shadow-lg border border-slate-100 space-y-4 hover:shadow-xl transition-shadow">
               <div className="flex items-center justify-between pb-3 border-b">
-                <div className="font-semibold text-slate-800 text-sm">Produce Lot #1042</div>
+                <div className="font-semibold text-slate-800 text-sm">
+                  {t("previewLotLabel")} #1042
+                </div>
                 <span className="px-2.5 py-1 bg-yellow-100 text-yellow-800 rounded-full text-xs font-bold border border-yellow-200">
-                  Pending Review
+                  {t("pendingReview")}
                 </span>
               </div>
               <div className="grid grid-cols-2 gap-3 text-sm">
                 <div>
-                  <span className="text-slate-500 text-xs block">Crop</span>
+                  <span className="text-slate-500 text-xs block">{t("cropName")}</span>
                   <span className="font-medium text-slate-800">Wheat (गहू)</span>
                 </div>
                 <div>
-                  <span className="text-slate-500 text-xs block">Quantity</span>
-                  <span className="font-medium text-slate-800">50 Quintals</span>
+                  <span className="text-slate-500 text-xs block">{t("quantity")}</span>
+                  <span className="font-medium text-slate-800">{t("previewQuantity")}</span>
                 </div>
                 <div>
-                  <span className="text-slate-500 text-xs block">Mandi</span>
+                  <span className="text-slate-500 text-xs block">{t("mandi")}</span>
                   <span className="font-medium text-slate-800">Pune APMC</span>
                 </div>
                 <div>
-                  <span className="text-slate-500 text-xs block">Expected Price</span>
-                  <span className="font-medium text-slate-800">₹2,400 / Quintal</span>
+                  <span className="text-slate-500 text-xs block">{t("expectedPrice")}</span>
+                  <span className="font-medium text-slate-800">{t("previewPrice")}</span>
                 </div>
               </div>
               <div className="pt-2 text-xs text-center text-slate-400 border-t">
-                Login as Farmer or Officer to view active data
+                {t("previewFooter")}
               </div>
             </div>
           </div>
@@ -163,8 +169,8 @@ function App() {
       {/* Footer */}
       <footer className="bg-white border-t py-5 text-center text-xs text-slate-500">
         <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
-          <div>MandiTrack Prototype</div>
-          <div>Designed & Developed by the MandiTrack Team</div>
+          <div>{t("footerBrand")}</div>
+          <div>{t("footerCredit")}</div>
         </div>
       </footer>
 
