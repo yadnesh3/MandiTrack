@@ -62,7 +62,48 @@ const translations = {
     rejected: "Rejected",
     sold: "Sold",
 
+    // Farmer Dashboard
+    farmerPortal: "🌾 Farmer Portal",
+    welcomeFarmer: "Welcome",
+    farmerSubtext: "Submit your produce and track it through the mandi",
+    addProduceBtn: "+ Add Produce",
+    myProduceLots: "My Produce Lots",
+    myLotsSubtext: "Every lot you have submitted, with its latest status",
+    totalSubmitted: "Total Submitted",
+    pendingReview: "Pending Review",
+    approvedLots: "Approved",
+    soldCompleted: "Sold",
+    noLotsTitle: "No produce lots yet",
+    noLotsSubtext: "Add your first crop to get started",
+
+    // Officer Dashboard
+    officerPortal: "Officer Portal",
+    officerTitle: "Officer Dashboard",
+    officerSubtext: "Review farmer submissions and update lot status",
+    allLots: "All Lots",
+    rejectedLots: "Rejected",
+    farmerInfo: "Farmer",
+    actions: "Actions",
+    approveBtn: "Approve",
+    rejectBtn: "Reject",
+    markSoldBtn: "Mark Sold",
+    noOfficerLotsTitle: "No lots found",
+    statusUpdatedTo: "Lot status updated to",
+
+    // Lot Table Columns
+    cropName: "Crop",
+    quantity: "Quantity",
+    mandi: "Mandi",
+    expectedPrice: "Expected Price",
+    date: "Date",
+    status: "Status",
+
+    // Mandi Prices
+    mandiPricesTitle: "Mandi Prices",
+
     // General Actions
+    refresh: "Refresh",
+    loading: "Loading...",
     backToHome: "Back to Home",
     changeLang: "Change Language",
     footerText: "MandiTrack — A step towards a stronger farming community",
@@ -130,7 +171,48 @@ const translations = {
     rejected: "नामंजूर",
     sold: "विक्री झाली",
 
+    // Farmer Dashboard
+    farmerPortal: "🌾 शेतकरी पोर्टल",
+    welcomeFarmer: "स्वागत आहे",
+    farmerSubtext: "तुमचा शेतमाल नोंदवा आणि मंडईतील प्रगती पाहा",
+    addProduceBtn: "+ शेतमाल नोंदवा",
+    myProduceLots: "माझे शेतमाल लॉट",
+    myLotsSubtext: "तुम्ही नोंदवलेले सर्व लॉट आणि त्यांची सद्यस्थिती",
+    totalSubmitted: "एकूण नोंदवलेले",
+    pendingReview: "तपासणी प्रलंबित",
+    approvedLots: "मंजूर",
+    soldCompleted: "विक्री झाली",
+    noLotsTitle: "अद्याप कोणताही लॉट नाही",
+    noLotsSubtext: "सुरुवात करण्यासाठी तुमचे पहिले पीक नोंदवा",
+
+    // Officer Dashboard
+    officerPortal: "अधिकारी पोर्टल",
+    officerTitle: "अधिकारी डॅशबोर्ड",
+    officerSubtext: "शेतकऱ्यांचे लॉट तपासा आणि स्थिती अद्ययावत करा",
+    allLots: "सर्व लॉट",
+    rejectedLots: "नामंजूर",
+    farmerInfo: "शेतकरी",
+    actions: "कार्यवाही",
+    approveBtn: "मंजूर करा",
+    rejectBtn: "नामंजूर करा",
+    markSoldBtn: "विक्री झाली",
+    noOfficerLotsTitle: "कोणताही लॉट सापडला नाही",
+    statusUpdatedTo: "लॉटची स्थिती बदलली",
+
+    // Lot Table Columns
+    cropName: "पीक",
+    quantity: "प्रमाण",
+    mandi: "बाजार समिती",
+    expectedPrice: "अपेक्षित भाव",
+    date: "दिनांक",
+    status: "स्थिती",
+
+    // Mandi Prices
+    mandiPricesTitle: "बाजारभाव",
+
     // General Actions
+    refresh: "रिफ्रेश",
+    loading: "लोड होत आहे...",
     backToHome: "मुख्यपृष्ठावर जा",
     changeLang: "भाषा बदला",
     footerText: "मंडीट्रॅक — सक्षम शेतकरी समुदायाच्या दिशेने एक पाऊल",
