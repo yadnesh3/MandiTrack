@@ -35,6 +35,14 @@ const userSchema = new mongoose.Schema(
       trim: true,
       default: "",
     },
+
+    officerId: {
+      type: String,
+      trim: true,
+      sparse: true,
+      unique: true,
+      default: undefined,
+    },
   },
   {
     timestamps: true,

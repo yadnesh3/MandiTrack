@@ -112,3 +112,17 @@ export const getAdminOverviewApi = () => {
     method: "GET",
   });
 };
+
+// Admin Officer Management APIs
+export const createOfficerApi = (officerData) => {
+  return request("/admin/officers", {
+    method: "POST",
+    body: JSON.stringify(officerData),
+  });
+};
+
+export const getOfficersApi = () => {
+  return request("/admin/officers", {
+    method: "GET",
+  });
+};

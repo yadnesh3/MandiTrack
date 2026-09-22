@@ -75,22 +75,112 @@ const run = async () => {
     mandi: "Pune",
   };
 
+  // 1. Verify that public self-registration as officer is blocked with 403 (Requirement 16)
+  const blockedOfficerSignup = await call("/auth/register", {
+    method: "POST",
+    body: {
+      name: "Malicious User",
+      mobile: `5${stamp.toString().slice(-9)}`,
+      password: "some-password",
+      role: "officer",
+      mandi: "Pune",
+    },
+  });
+  check(
+    "Public signup as officer is blocked with 403 (Requirement 16)",
+    blockedOfficerSignup.status === 403
+  );
+
+  // Setup Admin user or login
+  const adminMobile = "9876543210";
+  const adminPassword = "a-strong-password";
+  let adminLogin = await call("/auth/login", {
+    method: "POST",
+    body: { mobile: adminMobile, password: adminPassword },
+  });
+
+  let adminToken = adminLogin.data?.token;
+
+  // Provision officers via Admin API (Requirement 16)
+  const naviOfficer = {
+    officerId: `OFF-NAV-${stamp.toString().slice(-4)}`,
+    name: "Navi Mumbai Officer",
+    mobile: `7${stamp.toString().slice(-9)}`,
+    password: "officer-pass-1",
+    mandi: "Navi Mumbai APMC",
+  };
+  const puneOfficer = {
+    officerId: `OFF-PUN-${stamp.toString().slice(-4)}`,
+    name: "Pune Officer",
+    mobile: `6${stamp.toString().slice(-9)}`,
+    password: "officer-pass-2",
+    mandi: "Pune APMC",
+  };
+
+  // If admin doesn't exist, we create via direct User model or seed
+  const mongoose = require("mongoose");
+  require("dotenv").config({ path: require("path").resolve(__dirname, "../.env") });
+  if (!mongoose.connection.readyState && process.env.MONGO_URI) {
+    await mongoose.connect(process.env.MONGO_URI);
+  }
+  const User = require("../models/User");
+  const bcrypt = require("bcryptjs");
+
+  let adminUser = await User.findOne({ mobile: adminMobile });
+  if (!adminUser) {
+    adminUser = await User.create({
+      name: "System Admin",
+      mobile: adminMobile,
+      password: await bcrypt.hash(adminPassword, 10),
+      role: "admin",
+    });
+    adminLogin = await call("/auth/login", {
+      method: "POST",
+      body: { mobile: adminMobile, password: adminPassword },
+    });
+    adminToken = adminLogin.data?.token;
+  }
+
+  // Admin creates officers via POST /admin/officers
+  const createNaviRes = await call("/admin/officers", {
+    method: "POST",
+    token: adminToken,
+    body: naviOfficer,
+  });
+  const createPuneRes = await call("/admin/officers", {
+    method: "POST",
+    token: adminToken,
+    body: puneOfficer,
+  });
+
+  check(
+    "Admin provisions Navi Mumbai Officer with unique Officer ID",
+    createNaviRes.status === 201 && createNaviRes.data?.officer?.officerId === naviOfficer.officerId
+  );
+  check(
+    "Admin provisions Pune Officer with unique Officer ID",
+    createPuneRes.status === 201 && createPuneRes.data?.officer?.officerId === puneOfficer.officerId
+  );
+
+  // Register farmers
   await call("/auth/register", { method: "POST", body: farmer1 });
   await call("/auth/register", { method: "POST", body: farmer2 });
-  await call("/auth/register", { method: "POST", body: naviOfficer });
-  await call("/auth/register", { method: "POST", body: puneOfficer });
 
   const f1Login = await call("/auth/login", { method: "POST", body: { mobile: farmer1.mobile, password: farmer1.password } });
   const f2Login = await call("/auth/login", { method: "POST", body: { mobile: farmer2.mobile, password: farmer2.password } });
-  const naviLogin = await call("/auth/login", { method: "POST", body: { mobile: naviOfficer.mobile, password: naviOfficer.password } });
+  
+  // Officers login using Officer ID OR mobile
+  const naviLogin = await call("/auth/login", { method: "POST", body: { officerId: naviOfficer.officerId, password: naviOfficer.password } });
   const puneLogin = await call("/auth/login", { method: "POST", body: { mobile: puneOfficer.mobile, password: puneOfficer.password } });
 
-  const f1Token = f1Login.data.token;
-  const f2Token = f2Login.data.token;
-  const naviToken = naviLogin.data.token;
-  const puneToken = puneLogin.data.token;
+  const f1Token = f1Login.data?.token;
+  const f2Token = f2Login.data?.token;
+  const naviToken = naviLogin.data?.token;
+  const puneToken = puneLogin.data?.token;
 
-  check("users registered and logged in with assigned mandis", !!(f1Token && f2Token && naviToken && puneToken));
+  check("Officer logs in using Officer ID successfully", !!naviToken);
+  check("Officer logs in using Mobile successfully", !!puneToken);
+  check("All users authenticated with tokens", !!(f1Token && f2Token && naviToken && puneToken));
 
   // 2. Farmer 1 creates a lot at Navi Mumbai
   console.log("\n--- Farmer 1 creates Navi Mumbai Lot ---");

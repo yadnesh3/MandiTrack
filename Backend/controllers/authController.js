@@ -5,10 +5,10 @@ const User = require("../models/User");
 const MOBILE_PATTERN = /^[6-9]\d{9}$/;
 const MIN_PASSWORD_LENGTH = 6;
 
-// Roles a visitor is allowed to pick for themselves. "admin" is deliberately
-// excluded — admins are created by scripts/seedAdmin.js or promoted by
-// another admin, never by filling in the public signup form.
-const SELF_SERVICE_ROLES = ["farmer", "officer"];
+// Roles a visitor is allowed to pick for themselves. "officer" and "admin"
+// are strictly prohibited — officers are created exclusively by administrators,
+// and admins are provisioned by seed scripts or system admin.
+const SELF_SERVICE_ROLES = ["farmer"];
 
 const signToken = (user) =>
   jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, {
@@ -21,6 +21,7 @@ const publicUser = (user) => ({
   mobile: user.mobile,
   role: user.role,
   mandi: user.mandi || "",
+  officerId: user.officerId || "",
 });
 
 /** Returns an error string, or null when the input is usable. */
@@ -68,7 +69,8 @@ const registerUser = async (req, res) => {
 
     if (!SELF_SERVICE_ROLES.includes(requestedRole)) {
       return res.status(403).json({
-        message: "That role cannot be created from the signup form",
+        message:
+          "Officer IDs and accounts must be created directly by the Mandi Administrator. Normal users cannot register as officers.",
       });
     }
 
@@ -114,22 +116,32 @@ const registerUser = async (req, res) => {
 
 const loginUser = async (req, res) => {
   try {
-    const { mobile, password } = req.body;
+    const { mobile, officerId, password } = req.body;
+    const identifier = (mobile || officerId || "").toString().trim();
 
-    if (!mobile || !password) {
+    if (!identifier || !password) {
       return res.status(400).json({
-        message: "Mobile and password are required",
+        message: "Mobile number / Officer ID and password are required",
       });
     }
 
+    // Support logging in with 10-digit mobile number OR unique Officer ID
+    const query = MOBILE_PATTERN.test(identifier)
+      ? { mobile: identifier }
+      : {
+          $or: [
+            { mobile: identifier },
+            { officerId: identifier.toUpperCase() },
+            { officerId: identifier },
+          ],
+        };
+
     // password is select:false on the schema, so ask for it explicitly.
-    const user = await User.findOne({ mobile: String(mobile).trim() }).select(
-      "+password"
-    );
+    const user = await User.findOne(query).select("+password");
 
     if (!user) {
       return res.status(401).json({
-        message: "Invalid mobile or password",
+        message: "Invalid credentials. Please check your mobile/officer ID and password.",
       });
     }
 
@@ -137,7 +149,7 @@ const loginUser = async (req, res) => {
 
     if (!passwordMatch) {
       return res.status(401).json({
-        message: "Invalid mobile or password",
+        message: "Invalid credentials. Please check your mobile/officer ID and password.",
       });
     }
 
@@ -166,6 +178,7 @@ const getMe = async (req, res) => {
       mobile: req.user.mobile,
       role: req.user.role,
       mandi: req.user.mandi || "",
+      officerId: req.user.officerId || "",
     },
   });
 };

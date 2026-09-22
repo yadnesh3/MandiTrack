@@ -1,12 +1,19 @@
 import React, { useState } from "react";
 import { loginApi } from "../services/api";
+import MandiTrackLogo from "../components/MandiTrackLogo";
+import { useLang } from "../context/LanguageContext";
+import { User, Lock, ArrowRight, AlertCircle, ShieldCheck } from "lucide-react";
 
-function LoginPage({ initialRole = "farmer", onLoginSuccess, onNavigateToRegister, onNavigateToHome }) {
+export default function LoginPage({
+  initialRole = "farmer",
+  onLoginSuccess,
+  onNavigateToRegister,
+  onNavigateToHome,
+}) {
+  const { lang, setLang } = useLang();
   const [role, setRole] = useState(initialRole);
-  const [mobile, setMobile] = useState("");
+  const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -14,174 +21,198 @@ function LoginPage({ initialRole = "farmer", onLoginSuccess, onNavigateToRegiste
     e.preventDefault();
     setError("");
 
-    if (!mobile || !password) {
-      setError("Please fill in mobile number and password.");
+    if (!identifier.trim() || !password) {
+      setError("Please fill in your Mobile / Officer ID and password.");
       return;
     }
 
     setLoading(true);
 
     try {
-      const response = await loginApi({ mobile, password });
-      
-      // Save JWT token and user profile
+      const response = await loginApi({
+        mobile: identifier.trim(),
+        officerId: identifier.trim(),
+        password,
+      });
+
       localStorage.setItem("manditrack_token", response.token);
       localStorage.setItem("manditrack_user", JSON.stringify(response.user));
 
-      onLoginSuccess(response.user, response.token);
+      if (onLoginSuccess) {
+        onLoginSuccess(response.user, response.token);
+      }
     } catch (err) {
-      setError(err.message || "Invalid mobile number or password.");
+      setError(
+        err.message || "Invalid credentials. Please verify your details."
+      );
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col font-sans antialiased text-slate-900">
-      {/* Header Matching Panel 2 */}
-      <header className="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-xs">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex items-center justify-between">
-          <div onClick={onNavigateToHome} className="flex items-center gap-2.5 cursor-pointer">
-            <div className="w-9 h-9 bg-green-700 rounded-xl flex items-center justify-center text-white text-lg font-extrabold shadow-xs">
-              🌱
-            </div>
-            <span className="text-2xl font-extrabold text-green-800 tracking-tight">
-              MandiTrack
-            </span>
+    <div className="min-h-screen bg-[#F4F6F8] flex flex-col font-sans antialiased text-slate-900 selection:bg-amber-200">
+      {/* Top Dark Header matching master theme */}
+      <header className="bg-[#0C192C] text-white border-b border-slate-800 sticky top-0 z-30 shadow-md">
+        <div className="max-w-7xl mx-auto px-4 sm:px-8 py-3.5 flex items-center justify-between">
+          <div
+            onClick={onNavigateToHome}
+            className="cursor-pointer"
+          >
+            <MandiTrackLogo variant="light" subtitle="Apala Mandi Saathi" size="sm" />
           </div>
 
-          <div className="bg-slate-100 p-1 rounded-xl flex items-center border border-slate-200 text-xs font-bold">
-            <span className="px-3 py-1 rounded-lg bg-green-700 text-white shadow-xs">EN</span>
-            <span className="px-3 py-1 rounded-lg text-slate-500 cursor-not-allowed">मराठी</span>
+          <div className="flex items-center gap-3">
+            <div className="bg-slate-800 p-0.5 rounded-xl flex items-center border border-slate-700 text-xs font-bold">
+              <button
+                onClick={() => setLang("en")}
+                className={`px-2.5 py-1 rounded-lg ${
+                  lang === "en" ? "bg-[#EA8F0B] text-[#0C192C] font-black" : "text-slate-300"
+                }`}
+              >
+                EN
+              </button>
+              <button
+                onClick={() => setLang("mr")}
+                className={`px-2.5 py-1 rounded-lg ${
+                  lang === "mr" ? "bg-[#EA8F0B] text-[#0C192C] font-black" : "text-slate-300"
+                }`}
+              >
+                मराठी
+              </button>
+            </div>
           </div>
         </div>
       </header>
 
-      {/* Main Login Card Matching Panel 2 */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-8 md:py-12 flex items-center justify-center">
-        <div className="w-full max-w-md bg-white rounded-3xl shadow-xl border border-slate-100 p-6 sm:p-8 space-y-6">
-          
-          {/* Header */}
-          <div className="text-center space-y-1.5">
-            <div className="w-12 h-12 bg-green-100 text-green-800 rounded-2xl flex items-center justify-center text-2xl mx-auto mb-2 font-bold shadow-xs">
-              🔑
-            </div>
-            <h2 className="text-2xl font-bold text-slate-900">
-              Login to MandiTrack
-            </h2>
-            <p className="text-xs text-slate-500">
-              Enter your credentials to continue
+      {/* Main Login Card */}
+      <main className="flex-1 flex items-center justify-center p-4 sm:p-6">
+        <div className="w-full max-w-md bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/90 shadow-xl space-y-6">
+          <div className="text-center space-y-1">
+            <span className="px-3 py-1 rounded-full text-xs font-black bg-amber-50 text-[#EA8F0B] border border-amber-200">
+              MandiTrack Official Portal
+            </span>
+            <h1 className="text-2xl font-black text-[#0C192C] tracking-tight mt-2">
+              Sign In to Your Account
+            </h1>
+            <p className="text-xs text-slate-500 font-medium">
+              Access produce tracking, mandi checkpoints, and live prices.
             </p>
           </div>
 
-          {/* Error Message */}
+          {/* Role selector pill */}
+          <div className="flex p-1 rounded-xl bg-slate-100 text-xs font-bold">
+            <button
+              type="button"
+              onClick={() => setRole("farmer")}
+              className={`flex-1 py-1.5 rounded-lg transition ${
+                role === "farmer"
+                  ? "bg-white text-slate-900 shadow-2xs font-extrabold"
+                  : "text-slate-500 hover:text-slate-900"
+              }`}
+            >
+              🌾 Farmer
+            </button>
+            <button
+              type="button"
+              onClick={() => setRole("officer")}
+              className={`flex-1 py-1.5 rounded-lg transition ${
+                role === "officer"
+                  ? "bg-white text-slate-900 shadow-2xs font-extrabold"
+                  : "text-slate-500 hover:text-slate-900"
+              }`}
+            >
+              👮 Officer
+            </button>
+            <button
+              type="button"
+              onClick={() => setRole("admin")}
+              className={`flex-1 py-1.5 rounded-lg transition ${
+                role === "admin"
+                  ? "bg-white text-slate-900 shadow-2xs font-extrabold"
+                  : "text-slate-500 hover:text-slate-900"
+              }`}
+            >
+              🛡️ Admin
+            </button>
+          </div>
+
           {error && (
-            <div className="p-3 bg-red-50 border border-red-200 text-red-700 text-xs font-medium rounded-xl">
-              ⚠️ {error}
+            <div className="p-3.5 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-xs font-bold flex items-center gap-2">
+              <AlertCircle size={16} className="shrink-0" />
+              <span>{error}</span>
             </div>
           )}
 
-          {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-4">
-            
-            {/* Select Role */}
             <div>
-              <label className="block text-xs font-semibold uppercase text-slate-600 mb-1.5">
-                Select Role
+              <label className="block text-xs font-bold text-slate-700 mb-1">
+                {role === "officer"
+                  ? "Officer ID or Mobile Number *"
+                  : role === "admin"
+                  ? "Admin Mobile Number *"
+                  : "Registered Mobile Number (मोबाईल) *"}
               </label>
               <div className="relative">
-                <select
-                  value={role}
-                  onChange={(e) => setRole(e.target.value)}
-                  className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-green-600 focus:border-green-600 outline-none text-sm bg-white font-medium text-slate-800 appearance-none"
-                >
-                  <option value="farmer">👨‍🌾 Farmer</option>
-                  <option value="officer">🏛️ Officer</option>
-                </select>
-                <div className="absolute right-3.5 top-3.5 pointer-events-none text-slate-400 text-xs">
-                  ▼
-                </div>
-              </div>
-            </div>
-
-            {/* Mobile Number */}
-            <div>
-              <label className="block text-xs font-semibold uppercase text-slate-600 mb-1.5">
-                Mobile Number
-              </label>
-              <div className="relative">
-                <span className="absolute left-3.5 top-3 text-slate-400 text-base">
-                  📱
+                <span className="absolute left-3.5 top-2.5 text-slate-400">
+                  <User size={16} />
                 </span>
                 <input
-                  type="tel"
+                  type="text"
+                  value={identifier}
+                  onChange={(e) => setIdentifier(e.target.value)}
+                  placeholder={
+                    role === "officer"
+                      ? "e.g. OFF-PUN-01 or 9876543210"
+                      : "e.g. 9876543210"
+                  }
+                  className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs font-bold focus:outline-none focus:border-emerald-600 focus:bg-white"
                   required
-                  placeholder="Enter your mobile number"
-                  value={mobile}
-                  onChange={(e) => setMobile(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-green-600 focus:border-green-600 outline-none text-sm text-slate-800 placeholder-slate-400"
                 />
               </div>
             </div>
 
-            {/* Password */}
             <div>
-              <label className="block text-xs font-semibold uppercase text-slate-600 mb-1.5">
-                Password
+              <label className="block text-xs font-bold text-slate-700 mb-1">
+                Password (पासवर्ड) *
               </label>
               <div className="relative">
-                <span className="absolute left-3.5 top-3 text-slate-400 text-base">
-                  🔒
+                <span className="absolute left-3.5 top-2.5 text-slate-400">
+                  <Lock size={16} />
                 </span>
                 <input
-                  type={showPassword ? "text" : "password"}
-                  required
-                  placeholder="Enter your password"
+                  type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full pl-10 pr-10 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-green-600 focus:border-green-600 outline-none text-sm text-slate-800 placeholder-slate-400"
+                  placeholder="Enter your password"
+                  className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs font-bold focus:outline-none focus:border-emerald-600 focus:bg-white"
+                  required
                 />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3.5 top-3 text-slate-400 hover:text-slate-600 text-sm"
-                  title="Show/Hide Password"
-                >
-                  {showPassword ? "👁️" : "🙈"}
-                </button>
               </div>
             </div>
 
-            {/* Submit Button */}
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3.5 bg-green-700 hover:bg-green-800 active:scale-98 text-white font-bold rounded-xl shadow-md transition-all text-sm mt-2 disabled:opacity-50"
+              className="w-full py-3 rounded-xl bg-[#EA8F0B] hover:bg-[#d47f06] text-white font-extrabold text-xs shadow-md transition active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2 mt-2"
             >
-              {loading ? "Logging in..." : "Login"}
+              <span>{loading ? "Authenticating..." : "Sign In to MandiTrack"}</span>
+              <ArrowRight size={14} />
             </button>
-
-            {/* Link to Register */}
-            <div className="pt-2 text-center text-xs text-slate-600">
-              Don't have an account?{" "}
-              <button
-                type="button"
-                onClick={onNavigateToRegister}
-                className="text-green-800 font-bold hover:underline"
-              >
-                Register here
-              </button>
-            </div>
           </form>
+
+          {/* Registration link */}
+          <div className="text-center pt-2 border-t border-slate-100 text-xs text-slate-500 font-medium">
+            New farmer to MandiTrack?{" "}
+            <button
+              onClick={onNavigateToRegister}
+              className="font-bold text-emerald-700 hover:underline"
+            >
+              Register your farm account &rarr;
+            </button>
+          </div>
         </div>
       </main>
-
-      {/* Footer */}
-      <footer className="bg-white border-t py-4 text-center text-xs text-slate-500">
-        MandiTrack Prototype
-      </footer>
     </div>
   );
 }
-
-export default LoginPage;

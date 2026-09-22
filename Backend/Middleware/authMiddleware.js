@@ -38,6 +38,7 @@ const protect = async (req, res, next) => {
       mobile: user.mobile,
       role: user.role,
       mandi: (user.mandi || "").trim(),
+      officerId: (user.officerId || "").trim(),
     };
 
     next();
