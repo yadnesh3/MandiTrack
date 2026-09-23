@@ -1,9 +1,20 @@
 import React, { useState } from "react";
 import { registerApi, loginApi } from "../services/api";
-import MandiTrackLogo from "../components/MandiTrackLogo";
 import { useLang } from "../context/LanguageContext";
 import { MANDI_LIST } from "../components/layout/MasterShell";
-import { User, Lock, Phone, MapPin, ArrowRight, AlertCircle, ShieldCheck } from "lucide-react";
+
+import {
+  User,
+  Lock,
+  Phone,
+  MapPin,
+  ArrowRight,
+  AlertCircle,
+  ShieldCheck,
+  Sprout,
+  Globe2,
+  CheckCircle2,
+} from "lucide-react";
 
 const MOBILE_PATTERN = /^[6-9]\d{9}$/;
 const MIN_PASSWORD_LENGTH = 6;
@@ -14,6 +25,7 @@ export default function RegisterPage({
   onNavigateToHome,
 }) {
   const { lang, setLang } = useLang();
+
   const [name, setName] = useState("");
   const [mobile, setMobile] = useState("");
   const [password, setPassword] = useState("");
@@ -22,29 +34,43 @@ export default function RegisterPage({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  const isMarathi = lang === "mr";
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
 
     if (!name.trim() || !mobile.trim() || !password) {
-      setError("Please fill in your name, mobile number and password.");
+      setError(
+        isMarathi
+          ? "कृपया तुमचे नाव, मोबाईल नंबर आणि पासवर्ड भरा."
+          : "Please fill in your name, mobile number and password."
+      );
       return;
     }
 
     if (!MOBILE_PATTERN.test(mobile.trim())) {
-      setError("Enter a valid 10-digit mobile number starting with 6, 7, 8 or 9.");
+      setError(
+        isMarathi
+          ? "6, 7, 8 किंवा 9 ने सुरू होणारा वैध 10 अंकी मोबाईल नंबर टाका."
+          : "Enter a valid 10-digit mobile number starting with 6, 7, 8 or 9."
+      );
       return;
     }
 
     if (password.length < MIN_PASSWORD_LENGTH) {
-      setError(`Password must be at least ${MIN_PASSWORD_LENGTH} characters long.`);
+      setError(
+        isMarathi
+          ? `पासवर्ड किमान ${MIN_PASSWORD_LENGTH} अक्षरांचा असावा.`
+          : `Password must be at least ${MIN_PASSWORD_LENGTH} characters long.`
+      );
       return;
     }
 
     setLoading(true);
 
     try {
-      // Farmer only registration enforced
+      // Farmer-only registration
       await registerApi({
         name: name.trim(),
         mobile: mobile.trim(),
@@ -53,185 +79,455 @@ export default function RegisterPage({
         mandi,
       });
 
-      // Auto-login
+      // Auto-login after successful registration
       const loginRes = await loginApi({
         mobile: mobile.trim(),
         password,
       });
 
       localStorage.setItem("manditrack_token", loginRes.token);
-      localStorage.setItem("manditrack_user", JSON.stringify(loginRes.user));
+
+      localStorage.setItem(
+        "manditrack_user",
+        JSON.stringify(loginRes.user)
+      );
 
       if (onLoginSuccess) {
         onLoginSuccess(loginRes.user, loginRes.token);
       }
     } catch (err) {
-      setError(err.message || "Registration failed. Please verify your details.");
+      setError(
+        err.message ||
+          (isMarathi
+            ? "नोंदणी अयशस्वी झाली. कृपया तुमची माहिती तपासा."
+            : "Registration failed. Please verify your details.")
+      );
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-[#F4F6F8] flex flex-col font-sans antialiased text-slate-900 selection:bg-amber-200">
-      {/* Top Header */}
-      <header className="bg-[#0C192C] text-white border-b border-slate-800 sticky top-0 z-30 shadow-md">
-        <div className="max-w-7xl mx-auto px-4 sm:px-8 py-3.5 flex items-center justify-between">
-          <div onClick={onNavigateToHome} className="cursor-pointer">
-            <MandiTrackLogo variant="light" subtitle="Apala Mandi Saathi" size="sm" />
-          </div>
+    <div className="min-h-screen bg-[#F8F7F2] text-[#19343A]">
+      {/* =====================================================
+          HEADER
+      ====================================================== */}
 
-          <div className="flex items-center gap-3">
-            <div className="bg-slate-800 p-0.5 rounded-xl flex items-center border border-slate-700 text-xs font-bold">
-              <button
-                onClick={() => setLang("en")}
-                className={`px-2.5 py-1 rounded-lg ${
-                  lang === "en" ? "bg-[#EA8F0B] text-[#0C192C] font-black" : "text-slate-300"
-                }`}
-              >
-                EN
-              </button>
-              <button
-                onClick={() => setLang("mr")}
-                className={`px-2.5 py-1 rounded-lg ${
-                  lang === "mr" ? "bg-[#EA8F0B] text-[#0C192C] font-black" : "text-slate-300"
-                }`}
-              >
-                मराठी
-              </button>
+      <header className="border-b border-[#E1E4DE] bg-[#F8F7F2]">
+        <div className="mx-auto flex h-[76px] max-w-[1280px] items-center justify-between px-5 sm:px-8">
+          {/* Logo */}
+
+          <button
+            type="button"
+            onClick={onNavigateToHome}
+            className="flex items-center gap-2"
+          >
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#285C3A]">
+              <Sprout
+                size={21}
+                strokeWidth={1.8}
+                className="text-white"
+              />
             </div>
-          </div>
+
+            <span className="text-[25px] font-semibold tracking-[-0.7px]">
+              <span className="text-[#285C3A]">Mandi</span>
+              <span className="text-[#B58A35]">Track</span>
+            </span>
+          </button>
+
+          {/* Language */}
+
+          <button
+            type="button"
+            onClick={() => setLang(lang === "en" ? "mr" : "en")}
+            className="flex items-center gap-2 rounded-lg border border-[#D5DAD4] bg-white px-3.5 py-2 text-xs font-semibold text-[#596769] transition hover:border-[#285C3A] hover:text-[#285C3A]"
+          >
+            <Globe2 size={15} />
+
+            {lang === "en" ? "English" : "मराठी"}
+          </button>
         </div>
       </header>
 
-      {/* Main Registration Card */}
-      <main className="flex-1 flex items-center justify-center p-4 sm:p-6">
-        <div className="w-full max-w-md bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/90 shadow-xl space-y-6">
-          <div className="text-center space-y-1">
-            <span className="px-3 py-1 rounded-full text-xs font-black bg-emerald-50 text-emerald-800 border border-emerald-200">
-              Farmer Enrollment
-            </span>
-            <h1 className="text-2xl font-black text-[#0C192C] tracking-tight mt-2">
-              Create Producer Account
-            </h1>
-            <p className="text-xs text-slate-500 font-medium">
-              Join MandiTrack to register crops, receive queue tokens and transparent payments.
-            </p>
+      {/* =====================================================
+          MAIN
+      ====================================================== */}
+
+      <main className="flex min-h-[calc(100vh-76px)] items-center justify-center px-5 py-10 sm:px-8">
+        <div className="grid w-full max-w-[1000px] overflow-hidden rounded-2xl border border-[#DCE3DB] bg-white shadow-[0_12px_40px_rgba(39,72,52,0.08)] lg:grid-cols-[0.85fr_1.15fr]">
+
+          {/* =================================================
+              LEFT INFORMATION PANEL
+          ================================================= */}
+
+          <div className="hidden bg-[#285C3A] p-10 text-white lg:flex lg:flex-col lg:justify-between">
+            <div>
+              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-white/10">
+                <Sprout
+                  size={21}
+                  strokeWidth={1.8}
+                />
+              </div>
+
+              <p className="mt-7 text-xs font-semibold uppercase tracking-[1.8px] text-[#D9E8D9]">
+                MandiTrack
+              </p>
+
+              <h2 className="mt-3 text-3xl font-semibold leading-tight tracking-[-0.8px]">
+                {isMarathi
+                  ? "तुमच्या मंडी प्रवासाची सुरुवात करा."
+                  : "Start your mandi journey."}
+              </h2>
+
+              <p className="mt-5 text-sm leading-7 text-[#D5E3D7]">
+                {isMarathi
+                  ? "तुमचे उत्पादन डिजिटल पद्धतीने जमा करा, लॉटचा मागोवा घ्या आणि मंडीची माहिती एका ठिकाणी मिळवा."
+                  : "Submit your produce digitally, track your lots and access mandi information from one place."}
+              </p>
+            </div>
+
+            <div className="mt-12 space-y-4">
+              <RegisterBenefit
+                text={
+                  isMarathi
+                    ? "सोपे शेतकरी खाते"
+                    : "Simple farmer account"
+                }
+              />
+
+              <RegisterBenefit
+                text={
+                  isMarathi
+                    ? "डिजिटल लॉट ट्रॅकिंग"
+                    : "Digital lot tracking"
+                }
+              />
+
+              <RegisterBenefit
+                text={
+                  isMarathi
+                    ? "मंडी माहिती एका ठिकाणी"
+                    : "Mandi information in one place"
+                }
+              />
+            </div>
           </div>
 
-          {/* Notice: Officer IDs issued by admin */}
-          <div className="p-3 rounded-2xl bg-amber-50/80 border border-amber-200 text-[11px] font-semibold text-amber-900 flex items-center gap-2">
-            <ShieldCheck size={16} className="text-[#EA8F0B] shrink-0" />
-            <span>
-              Officer accounts are issued solely by Mandi Administrators. This portal is for agricultural producers.
-            </span>
-          </div>
+          {/* =================================================
+              REGISTRATION FORM
+          ================================================= */}
 
-          {error && (
-            <div className="p-3.5 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-xs font-bold flex items-center gap-2">
-              <AlertCircle size={16} className="shrink-0" />
-              <span>{error}</span>
-            </div>
-          )}
+          <div className="p-6 sm:p-9 lg:p-10">
 
-          <form onSubmit={handleSubmit} className="space-y-3.5">
+            {/* Heading */}
+
             <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1">
-                Full Name (पूर्ण नाव) *
-              </label>
-              <div className="relative">
-                <span className="absolute left-3.5 top-2.5 text-slate-400">
-                  <User size={16} />
-                </span>
-                <input
-                  type="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder="e.g. Ramesh Patil"
-                  className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs font-bold focus:outline-none focus:border-emerald-600 focus:bg-white"
-                  required
+              <div className="inline-flex items-center gap-2 rounded-full border border-[#D8E1D8] bg-[#EEF3EC] px-3 py-1.5 text-[11px] font-semibold text-[#386044]">
+                <span className="h-1.5 w-1.5 rounded-full bg-[#4C8658]" />
+
+                {isMarathi
+                  ? "शेतकरी नोंदणी"
+                  : "Farmer registration"}
+              </div>
+
+              <h1 className="mt-5 text-3xl font-semibold tracking-[-1px] text-[#19343A]">
+                {isMarathi
+                  ? "तुमचे खाते तयार करा"
+                  : "Create your account"}
+              </h1>
+
+              <p className="mt-2 text-sm leading-6 text-[#687779]">
+                {isMarathi
+                  ? "MandiTrack वापरण्यासाठी तुमची मूलभूत माहिती नोंदवा."
+                  : "Enter your basic details to get started with MandiTrack."}
+              </p>
+            </div>
+
+            {/* =================================================
+                OFFICER NOTICE
+            ================================================= */}
+
+            <div className="mt-6 flex items-start gap-3 rounded-xl border border-[#E4D8B9] bg-[#F8F3E5] p-3.5">
+              <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#B58A35]/10">
+                <ShieldCheck
+                  size={15}
+                  className="text-[#9A742A]"
                 />
               </div>
+
+              <div>
+                <p className="text-xs font-semibold text-[#72571F]">
+                  {isMarathi
+                    ? "अधिकारी नोंदणीबद्दल सूचना"
+                    : "Officer registration notice"}
+                </p>
+
+                <p className="mt-1 text-[11px] leading-5 text-[#806A3B]">
+                  {isMarathi
+                    ? "अधिकारी खाती फक्त MandiTrack प्रशासकांकडून दिली जातात. हे पोर्टल शेतकरी नोंदणीसाठी आहे."
+                    : "Officer accounts are issued only by MandiTrack administrators. This portal is for farmer registration."}
+                </p>
+              </div>
             </div>
 
-            <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1">
-                10-Digit Mobile Number (मोबाईल) *
-              </label>
-              <div className="relative">
-                <span className="absolute left-3.5 top-2.5 text-slate-400">
-                  <Phone size={16} />
-                </span>
-                <input
-                  type="tel"
-                  value={mobile}
-                  onChange={(e) => setMobile(e.target.value)}
-                  placeholder="e.g. 9876543210"
-                  className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs font-bold focus:outline-none focus:border-emerald-600 focus:bg-white"
-                  required
+            {/* =================================================
+                ERROR
+            ================================================= */}
+
+            {error && (
+              <div className="mt-5 flex items-start gap-3 rounded-xl border border-[#EBCBC7] bg-[#FFF5F3] p-3.5 text-xs font-medium text-[#9B3C32]">
+                <AlertCircle
+                  size={16}
+                  className="mt-0.5 shrink-0"
                 />
-              </div>
-            </div>
 
-            <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1">
-                Password (पासवर्ड) *
-              </label>
-              <div className="relative">
-                <span className="absolute left-3.5 top-2.5 text-slate-400">
-                  <Lock size={16} />
-                </span>
-                <input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Minimum 6 characters"
-                  className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs font-bold focus:outline-none focus:border-emerald-600 focus:bg-white"
-                  required
-                />
+                <span>{error}</span>
               </div>
-            </div>
+            )}
 
-            <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1">
-                Primary APMC Market (बाजार समिती) *
-              </label>
-              <div className="relative">
-                <select
-                  value={mandi}
-                  onChange={(e) => setRegMandi ? setRegMandi(e.target.value) : setMandi(e.target.value)}
-                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs font-bold text-slate-800 focus:outline-none focus:border-emerald-600"
-                >
-                  {MANDI_LIST.map((m) => (
-                    <option key={m} value={m}>
-                      {m}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
+            {/* =================================================
+                FORM
+            ================================================= */}
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full py-3 rounded-xl bg-[#EA8F0B] hover:bg-[#d47f06] text-white font-extrabold text-xs shadow-md transition active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2 mt-2"
+            <form
+              onSubmit={handleSubmit}
+              className="mt-6 space-y-4"
             >
-              <span>{loading ? "Registering..." : "Create Farmer Account"}</span>
-              <ArrowRight size={14} />
-            </button>
-          </form>
+              {/* Full Name */}
 
-          <div className="text-center pt-2 border-t border-slate-100 text-xs text-slate-500 font-medium">
-            Already registered?{" "}
-            <button
-              onClick={onNavigateToLogin}
-              className="font-bold text-emerald-700 hover:underline"
-            >
-              Sign In here &rarr;
-            </button>
+              <div>
+                <label className="mb-2 block text-xs font-semibold text-[#465557]">
+                  {isMarathi
+                    ? "पूर्ण नाव"
+                    : "Full Name"}
+
+                  <span className="ml-1 text-[#B44D42]">
+                    *
+                  </span>
+                </label>
+
+                <div className="relative">
+                  <User
+                    size={17}
+                    className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#8A9695]"
+                  />
+
+                  <input
+                    type="text"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder={
+                      isMarathi
+                        ? "उदा. रमेश पाटील"
+                        : "e.g. Ramesh Patil"
+                    }
+                    className="w-full rounded-lg border border-[#D6DED7] bg-[#FAFBF9] py-3 pl-10 pr-4 text-sm text-[#19343A] outline-none transition placeholder:text-[#9AA4A3] focus:border-[#285C3A] focus:bg-white focus:ring-2 focus:ring-[#285C3A]/10"
+                    required
+                  />
+                </div>
+              </div>
+
+              {/* Mobile */}
+
+              <div>
+                <label className="mb-2 block text-xs font-semibold text-[#465557]">
+                  {isMarathi
+                    ? "10 अंकी मोबाईल नंबर"
+                    : "10-Digit Mobile Number"}
+
+                  <span className="ml-1 text-[#B44D42]">
+                    *
+                  </span>
+                </label>
+
+                <div className="relative">
+                  <Phone
+                    size={17}
+                    className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#8A9695]"
+                  />
+
+                  <input
+                    type="tel"
+                    value={mobile}
+                    onChange={(e) => setMobile(e.target.value)}
+                    placeholder="9876543210"
+                    maxLength={10}
+                    inputMode="numeric"
+                    className="w-full rounded-lg border border-[#D6DED7] bg-[#FAFBF9] py-3 pl-10 pr-4 text-sm text-[#19343A] outline-none transition placeholder:text-[#9AA4A3] focus:border-[#285C3A] focus:bg-white focus:ring-2 focus:ring-[#285C3A]/10"
+                    required
+                  />
+                </div>
+              </div>
+
+              {/* Password */}
+
+              <div>
+                <label className="mb-2 block text-xs font-semibold text-[#465557]">
+                  {isMarathi
+                    ? "पासवर्ड"
+                    : "Password"}
+
+                  <span className="ml-1 text-[#B44D42]">
+                    *
+                  </span>
+                </label>
+
+                <div className="relative">
+                  <Lock
+                    size={17}
+                    className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#8A9695]"
+                  />
+
+                  <input
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder={
+                      isMarathi
+                        ? "किमान 6 अक्षरे"
+                        : "Minimum 6 characters"
+                    }
+                    className="w-full rounded-lg border border-[#D6DED7] bg-[#FAFBF9] py-3 pl-10 pr-4 text-sm text-[#19343A] outline-none transition placeholder:text-[#9AA4A3] focus:border-[#285C3A] focus:bg-white focus:ring-2 focus:ring-[#285C3A]/10"
+                    required
+                  />
+                </div>
+
+                <p className="mt-1.5 text-[10px] text-[#899493]">
+                  {isMarathi
+                    ? "पासवर्ड किमान 6 अक्षरांचा असावा."
+                    : "Password must contain at least 6 characters."}
+                </p>
+              </div>
+
+              {/* Mandi */}
+
+              <div>
+                <label className="mb-2 block text-xs font-semibold text-[#465557]">
+                  {isMarathi
+                    ? "प्राथमिक APMC बाजार"
+                    : "Primary APMC Market"}
+
+                  <span className="ml-1 text-[#B44D42]">
+                    *
+                  </span>
+                </label>
+
+                <div className="relative">
+                  <MapPin
+                    size={17}
+                    className="pointer-events-none absolute left-3.5 top-1/2 z-10 -translate-y-1/2 text-[#8A9695]"
+                  />
+
+                  <select
+                    value={mandi}
+                    onChange={(e) => setMandi(e.target.value)}
+                    className="w-full appearance-none rounded-lg border border-[#D6DED7] bg-[#FAFBF9] py-3 pl-10 pr-10 text-sm font-medium text-[#19343A] outline-none transition focus:border-[#285C3A] focus:bg-white focus:ring-2 focus:ring-[#285C3A]/10"
+                    required
+                  >
+                    {MANDI_LIST.map((m) => (
+                      <option key={m} value={m}>
+                        {m}
+                      </option>
+                    ))}
+                  </select>
+
+                  <div className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-[#8A9695]">
+                    <svg
+                      width="14"
+                      height="14"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    >
+                      <path d="m6 9 6 6 6-6" />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+
+              {/* Submit */}
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="group mt-2 flex w-full items-center justify-center gap-2 rounded-lg bg-[#285C3A] py-3.5 text-sm font-semibold text-white transition hover:bg-[#214D31] active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {loading
+                  ? isMarathi
+                    ? "नोंदणी सुरू आहे..."
+                    : "Registering..."
+                  : isMarathi
+                    ? "शेतकरी खाते तयार करा"
+                    : "Create Farmer Account"}
+
+                {!loading && (
+                  <ArrowRight
+                    size={16}
+                    className="transition-transform group-hover:translate-x-1"
+                  />
+                )}
+              </button>
+            </form>
+
+            {/* =================================================
+                LOGIN LINK
+            ================================================= */}
+
+            <div className="mt-7 border-t border-[#E7EAE5] pt-5 text-center">
+              <p className="text-xs text-[#718080]">
+                {isMarathi
+                  ? "तुमचे खाते आधीपासून आहे?"
+                  : "Already registered?"}
+              </p>
+
+              <button
+                type="button"
+                onClick={onNavigateToLogin}
+                className="mt-1 text-xs font-semibold text-[#285C3A] transition hover:text-[#214D31] hover:underline"
+              >
+                {isMarathi
+                  ? "लॉगिन करा"
+                  : "Sign in here"}
+
+                <span className="ml-1">→</span>
+              </button>
+            </div>
+
+            {/* Security note */}
+
+            <div className="mt-6 flex items-center justify-center gap-2 text-[10px] text-[#899493]">
+              <ShieldCheck size={13} />
+
+              {isMarathi
+                ? "तुमची माहिती सुरक्षितपणे हाताळली जाते."
+                : "Your information is handled securely."}
+            </div>
           </div>
         </div>
       </main>
+    </div>
+  );
+}
+
+/* =========================================================
+   BENEFIT COMPONENT
+========================================================= */
+
+function RegisterBenefit({ text }) {
+  return (
+    <div className="flex items-center gap-3">
+      <div className="flex h-7 w-7 items-center justify-center rounded-full bg-white/10">
+        <CheckCircle2
+          size={14}
+          className="text-[#D9E8D9]"
+        />
+      </div>
+
+      <span className="text-xs font-medium text-[#D5E3D7]">
+        {text}
+      </span>
     </div>
   );
 }
