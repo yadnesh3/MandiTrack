@@ -1,5 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { Volume2, VolumeX, Mic, X, Play, Square, Globe } from "lucide-react";
+import {
+  Volume2,
+  Mic,
+  X,
+  Play,
+  Square,
+  Globe,
+  CheckCircle2,
+} from "lucide-react";
 import { useLang } from "../context/LanguageContext";
 
 const VOICE_GUIDES = {
@@ -49,6 +57,7 @@ const VOICE_GUIDES = {
       },
     ],
   },
+
   mr: {
     title: "मंडीट्रॅक व्हॉईस असिस्टंट",
     subtitle: "मंडी प्रक्रियेचे संपूर्ण मार्गदर्शन मराठीत ऐका",
@@ -98,8 +107,12 @@ const VOICE_GUIDES = {
 };
 
 export default function VoiceHelpModal({ isOpen, onClose }) {
-  const { locale, t } = useLang();
-  const [selectedLang, setSelectedLang] = useState(locale === "mr" ? "mr" : "en");
+  const { locale } = useLang();
+
+  const [selectedLang, setSelectedLang] = useState(
+    locale === "mr" ? "mr" : "en"
+  );
+
   const [activeTopicId, setActiveTopicId] = useState("overview");
   const [isSpeaking, setIsSpeaking] = useState(false);
 
@@ -118,9 +131,17 @@ export default function VoiceHelpModal({ isOpen, onClose }) {
 
   if (!isOpen) return null;
 
-  const currentContent = VOICE_GUIDES[selectedLang] || VOICE_GUIDES.en;
+  const currentContent =
+    VOICE_GUIDES[selectedLang] || VOICE_GUIDES.en;
+
   const activeTopic =
-    currentContent.topics.find((t) => t.id === activeTopicId) || currentContent.topics[0];
+    currentContent.topics.find(
+      (topic) => topic.id === activeTopicId
+    ) || currentContent.topics[0];
+
+  // --------------------------------------------------
+  // SPEAK
+  // --------------------------------------------------
 
   const handleSpeak = (text) => {
     if (!("speechSynthesis" in window)) {
@@ -131,22 +152,37 @@ export default function VoiceHelpModal({ isOpen, onClose }) {
     window.speechSynthesis.cancel();
 
     const utterance = new SpeechSynthesisUtterance(text);
-    // Prefer Marathi or Hindi voices for Marathi; English Indian or standard for English
+
     if (selectedLang === "mr") {
       utterance.lang = "mr-IN";
+
       const voices = window.speechSynthesis.getVoices();
+
       const marathiVoice =
-        voices.find((v) => v.lang.includes("mr") || v.name.toLowerCase().includes("marathi")) ||
-        voices.find((v) => v.lang.includes("hi"));
-      if (marathiVoice) utterance.voice = marathiVoice;
+        voices.find(
+          (voice) =>
+            voice.lang.includes("mr") ||
+            voice.name.toLowerCase().includes("marathi")
+        ) || voices.find((voice) => voice.lang.includes("hi"));
+
+      if (marathiVoice) {
+        utterance.voice = marathiVoice;
+      }
     } else {
       utterance.lang = "en-IN";
+
       const voices = window.speechSynthesis.getVoices();
-      const indianVoice = voices.find((v) => v.lang.includes("en-IN"));
-      if (indianVoice) utterance.voice = indianVoice;
+
+      const indianVoice = voices.find((voice) =>
+        voice.lang.includes("en-IN")
+      );
+
+      if (indianVoice) {
+        utterance.voice = indianVoice;
+      }
     }
 
-    utterance.rate = 0.95; // Slightly slower for clarity
+    utterance.rate = 0.95;
     utterance.pitch = 1.0;
 
     utterance.onstart = () => setIsSpeaking(true);
@@ -156,90 +192,160 @@ export default function VoiceHelpModal({ isOpen, onClose }) {
     window.speechSynthesis.speak(utterance);
   };
 
+  // --------------------------------------------------
+  // STOP
+  // --------------------------------------------------
+
   const handleStop = () => {
     if ("speechSynthesis" in window) {
       window.speechSynthesis.cancel();
     }
+
     setIsSpeaking(false);
   };
 
+  // --------------------------------------------------
+  // CLOSE
+  // --------------------------------------------------
+
+  const handleClose = () => {
+    handleStop();
+    onClose();
+  };
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-fadeIn">
-      <div className="bg-[#FBF8EF] border-2 border-[#D9A227]/40 w-full max-w-2xl rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
-        {/* Header */}
-        <div className="bg-[#0E2A3F] text-white px-6 py-5 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center border border-amber-500/40">
-              <Volume2 size={22} />
-            </div>
-            <div>
-              <h2 className="text-lg font-bold leading-snug">{currentContent.title}</h2>
-              <p className="text-xs text-white/60">{currentContent.subtitle}</p>
-            </div>
-          </div>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#19343A]/60 p-4 backdrop-blur-sm animate-fadeIn">
+      {/* =================================================
+          MODAL
+      ================================================== */}
 
-          <div className="flex items-center gap-2">
-            {/* Language switch button */}
-            <button
-              onClick={() => {
-                handleStop();
-                setSelectedLang((prev) => (prev === "en" ? "mr" : "en"));
-              }}
-              className="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-xs font-bold flex items-center gap-1.5 transition text-amber-300 border border-white/10"
-            >
-              <Globe size={14} />
-              {selectedLang === "en" ? "मराठीत ऐका" : "Listen in EN"}
-            </button>
+      <div className="flex max-h-[92vh] w-full max-w-3xl flex-col overflow-hidden rounded-2xl border border-[#DCE3DB] bg-[#F8F7F2] shadow-2xl animate-scaleUp">
+        {/* =================================================
+            HEADER
+        ================================================== */}
 
-            <button
-              onClick={() => {
-                handleStop();
-                onClose();
-              }}
-              className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white/70 hover:text-white transition"
-              aria-label="Close"
-            >
-              <X size={18} />
-            </button>
+        <div className="border-b border-white/10 bg-[#214D31] px-5 py-4 text-white sm:px-6 sm:py-5">
+          <div className="flex items-start justify-between gap-4">
+            {/* Title */}
+            <div className="flex min-w-0 items-center gap-3">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#B58A35] text-white shadow-sm">
+                <Volume2 size={20} />
+              </div>
+
+              <div className="min-w-0">
+                <h2 className="truncate text-base font-bold sm:text-lg">
+                  {currentContent.title}
+                </h2>
+
+                <p className="mt-0.5 line-clamp-2 text-[11px] text-[#D6E4D2] sm:text-xs">
+                  {currentContent.subtitle}
+                </p>
+              </div>
+            </div>
+
+            {/* Header Controls */}
+            <div className="flex shrink-0 items-center gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  handleStop();
+
+                  setSelectedLang((prev) =>
+                    prev === "en" ? "mr" : "en"
+                  );
+                }}
+                className="inline-flex items-center gap-1.5 rounded-lg border border-white/15 bg-white/10 px-2.5 py-2 text-[10px] font-semibold text-white transition hover:bg-white/15 sm:px-3 sm:text-xs"
+              >
+                <Globe size={13} />
+
+                <span className="hidden sm:inline">
+                  {selectedLang === "en"
+                    ? "मराठीत ऐका"
+                    : "Listen in EN"}
+                </span>
+
+                <span className="sm:hidden">
+                  {selectedLang === "en" ? "MR" : "EN"}
+                </span>
+              </button>
+
+              <button
+                type="button"
+                onClick={handleClose}
+                className="flex h-8 w-8 items-center justify-center rounded-lg border border-white/10 bg-white/10 text-white/70 transition hover:bg-white/15 hover:text-white"
+                aria-label="Close"
+              >
+                <X size={17} />
+              </button>
+            </div>
           </div>
         </div>
 
-        {/* Modal Body */}
-        <div className="p-6 overflow-y-auto space-y-6 flex-1">
-          {/* Active Audio Player Card */}
-          <div className="bg-white rounded-2xl border-2 border-[#E3DCC8] p-5 shadow-xs space-y-4">
-            <div className="flex items-start justify-between gap-4">
-              <div className="flex items-center gap-3">
-                <span className="text-3xl">{activeTopic.icon}</span>
-                <div>
-                  <h3 className="font-bold text-slate-900 text-base">{activeTopic.title}</h3>
-                  <p className="text-xs text-slate-500">{activeTopic.desc}</p>
+        {/* =================================================
+            BODY
+        ================================================== */}
+
+        <div className="flex-1 space-y-6 overflow-y-auto p-5 sm:p-6">
+          {/* =================================================
+              ACTIVE AUDIO CARD
+          ================================================== */}
+
+          <div className="rounded-xl border border-[#DCE3DB] bg-white p-5 shadow-sm">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+              <div className="flex min-w-0 items-start gap-3">
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#F5EFDE] text-2xl">
+                  {activeTopic.icon}
+                </div>
+
+                <div className="min-w-0">
+                  <h3 className="text-sm font-bold text-[#19343A] sm:text-base">
+                    {activeTopic.title}
+                  </h3>
+
+                  <p className="mt-1 text-xs leading-5 text-[#687779]">
+                    {activeTopic.desc}
+                  </p>
                 </div>
               </div>
 
+              {/* Audio Button */}
               {isSpeaking ? (
                 <button
+                  type="button"
                   onClick={handleStop}
-                  className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-xs transition active:scale-95 shrink-0"
+                  className="inline-flex shrink-0 items-center justify-center gap-2 rounded-lg bg-[#A64B4B] px-4 py-2.5 text-xs font-semibold text-white transition hover:bg-[#913F3F] active:scale-[0.98]"
                 >
-                  <Square size={14} fill="white" />
-                  {selectedLang === "mr" ? "थांबवा" : "Stop Audio"}
+                  <Square size={13} fill="currentColor" />
+
+                  {selectedLang === "mr"
+                    ? "थांबवा"
+                    : "Stop Audio"}
                 </button>
               ) : (
                 <button
-                  onClick={() => handleSpeak(activeTopic.speech)}
-                  className="px-4 py-2 bg-[#0E2A3F] hover:bg-[#163b57] text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-xs transition active:scale-95 shrink-0 border border-[#D9A227]/40"
+                  type="button"
+                  onClick={() =>
+                    handleSpeak(activeTopic.speech)
+                  }
+                  className="inline-flex shrink-0 items-center justify-center gap-2 rounded-lg bg-[#285C3A] px-4 py-2.5 text-xs font-semibold text-white transition hover:bg-[#214D31] active:scale-[0.98]"
                 >
-                  <Play size={14} fill="currentColor" />
-                  {selectedLang === "mr" ? "मराठीत ऐका" : "Listen Now"}
+                  <Play size={13} fill="currentColor" />
+
+                  {selectedLang === "mr"
+                    ? "मराठीत ऐका"
+                    : "Listen Now"}
                 </button>
               )}
             </div>
 
-            {/* Speaking animation indicator */}
+            {/* Speaking Indicator */}
             {isSpeaking && (
-              <div className="flex items-center gap-2 p-2.5 bg-amber-50 rounded-xl border border-amber-200/70 text-amber-900 text-xs font-medium animate-pulse">
-                <Mic size={16} className="text-amber-600 animate-bounce" />
+              <div className="mt-5 flex items-center gap-2 rounded-lg border border-[#E8DDBF] bg-[#F5EFDE] px-3 py-2.5 text-xs font-medium text-[#80672C]">
+                <Mic
+                  size={15}
+                  className="shrink-0 text-[#B58A35] animate-bounce"
+                />
+
                 <span>
                   {selectedLang === "mr"
                     ? "आवाज सुरू आहे... कृपया काळजीपूर्वक ऐका."
@@ -248,41 +354,91 @@ export default function VoiceHelpModal({ isOpen, onClose }) {
               </div>
             )}
 
-            <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 text-sm text-slate-700 leading-relaxed italic">
+            {/* Speech Text */}
+            <div className="mt-5 rounded-lg border border-[#E1E4DE] bg-[#F8F7F2] px-4 py-4 text-sm leading-6 text-[#526260]">
               "{activeTopic.speech}"
             </div>
           </div>
 
-          {/* Topic Select List */}
-          <div>
-            <h4 className="text-xs uppercase font-bold text-slate-500 tracking-wider mb-3">
-              {selectedLang === "mr" ? "विषय निवडा" : "Select Topic"}
-            </h4>
+          {/* =================================================
+              TOPIC SELECTOR
+          ================================================== */}
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+          <div>
+            <div className="mb-3 flex items-center justify-between">
+              <div>
+                <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[#687779]">
+                  {selectedLang === "mr"
+                    ? "विषय निवडा"
+                    : "Select Topic"}
+                </p>
+
+                <h4 className="mt-1 text-sm font-bold text-[#19343A]">
+                  {selectedLang === "mr"
+                    ? "मार्गदर्शन विषय"
+                    : "Guidance Topics"}
+                </h4>
+              </div>
+
+              <span className="rounded-full bg-[#EAF2E9] px-2.5 py-1 text-[10px] font-semibold text-[#285C3A]">
+                {currentContent.topics.length} Topics
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
               {currentContent.topics.map((topic) => {
                 const isActive = topic.id === activeTopicId;
+
                 return (
                   <button
                     key={topic.id}
+                    type="button"
                     onClick={() => {
                       setActiveTopicId(topic.id);
+
                       if (isSpeaking) {
                         handleStop();
                       }
                     }}
-                    className={`p-3.5 rounded-2xl border text-left flex items-center gap-3 transition ${
+                    className={`flex items-center gap-3 rounded-xl border p-3.5 text-left transition ${
                       isActive
-                        ? "bg-white border-[#0E2A3F] shadow-sm ring-1 ring-[#0E2A3F]"
-                        : "bg-white/60 border-[#E3DCC8] hover:bg-white hover:border-slate-300"
+                        ? "border-[#285C3A] bg-[#EAF2E9] shadow-sm"
+                        : "border-[#DCE3DB] bg-white hover:border-[#B8CDB8] hover:bg-[#FAFAF7]"
                     }`}
                   >
-                    <span className="text-2xl shrink-0">{topic.icon}</span>
+                    {/* Topic Icon */}
+                    <div
+                      className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-xl ${
+                        isActive
+                          ? "bg-white"
+                          : "bg-[#F8F7F2]"
+                      }`}
+                    >
+                      {topic.icon}
+                    </div>
+
+                    {/* Topic Details */}
                     <div className="min-w-0 flex-1">
-                      <div className="font-bold text-xs text-slate-900 truncate">
-                        {topic.title}
+                      <div className="flex items-center gap-2">
+                        <div
+                          className={`truncate text-xs font-bold ${
+                            isActive
+                              ? "text-[#285C3A]"
+                              : "text-[#19343A]"
+                          }`}
+                        >
+                          {topic.title}
+                        </div>
+
+                        {isActive && (
+                          <CheckCircle2
+                            size={13}
+                            className="shrink-0 text-[#285C3A]"
+                          />
+                        )}
                       </div>
-                      <div className="text-[11px] text-slate-500 truncate">
+
+                      <div className="mt-1 truncate text-[11px] text-[#687779]">
                         {topic.desc}
                       </div>
                     </div>
@@ -293,15 +449,20 @@ export default function VoiceHelpModal({ isOpen, onClose }) {
           </div>
         </div>
 
-        {/* Footer */}
-        <div className="px-6 py-4 bg-white border-t border-[#E3DCC8] flex items-center justify-between text-xs text-slate-500">
-          <span>🌾 Web Speech API Voice Guidance</span>
+        {/* =================================================
+            FOOTER
+        ================================================== */}
+
+        <div className="flex flex-col gap-3 border-t border-[#DCE3DB] bg-white px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+          <div className="flex items-center gap-2 text-[10px] font-medium text-[#687779]">
+            <Volume2 size={13} className="text-[#285C3A]" />
+            <span>Web Speech API Voice Guidance</span>
+          </div>
+
           <button
-            onClick={() => {
-              handleStop();
-              onClose();
-            }}
-            className="px-4 py-1.5 rounded-xl border border-slate-300 hover:bg-slate-100 text-slate-700 font-bold transition"
+            type="button"
+            onClick={handleClose}
+            className="rounded-lg border border-[#DCE3DB] bg-white px-4 py-2 text-xs font-semibold text-[#687779] transition hover:bg-[#F8F7F2] hover:text-[#19343A]"
           >
             {selectedLang === "mr" ? "बंद करा" : "Close"}
           </button>

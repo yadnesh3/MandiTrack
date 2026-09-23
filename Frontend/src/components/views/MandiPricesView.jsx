@@ -4,17 +4,17 @@ import { useLang } from "../../context/LanguageContext";
 import {
   BarChart3,
   Search,
-  Filter,
   RefreshCw,
   TrendingUp,
   MapPin,
-  Calendar,
   IndianRupee,
   Sparkles,
+  Calendar,
 } from "lucide-react";
 
 export default function MandiPricesView() {
   const { t, locale } = useLang();
+
   const [rates, setRates] = useState([]);
   const [sourceInfo, setSourceInfo] = useState("");
   const [updatedAt, setUpdatedAt] = useState("");
@@ -26,21 +26,37 @@ export default function MandiPricesView() {
   const fetchPrices = async () => {
     setLoading(true);
     setUnavailableError("");
+
     try {
       const res = await getMandiPricesApi();
-      if (res && res.success && res.records && res.records.length > 0) {
+
+      if (
+        res &&
+        res.success &&
+        res.records &&
+        res.records.length > 0
+      ) {
         setRates(res.records);
-        setSourceInfo(res.source || "Agmarknet / data.gov.in");
+
+        setSourceInfo(
+          res.source || "Agmarknet / data.gov.in"
+        );
+
         setUpdatedAt(
           res.updatedAt
             ? new Date(res.updatedAt).toLocaleString(locale)
             : new Date().toLocaleDateString(locale)
         );
       } else {
-        setUnavailableError(res.message || "Daily Agmarknet price feed is momentarily synchronizing.");
+        setUnavailableError(
+          res.message ||
+            "Daily Agmarknet price feed is momentarily synchronizing."
+        );
       }
     } catch {
-      setUnavailableError("Unable to fetch live prices from Agmarknet API at this time.");
+      setUnavailableError(
+        "Unable to fetch live prices from Agmarknet API at this time."
+      );
     } finally {
       setLoading(false);
     }
@@ -53,130 +69,277 @@ export default function MandiPricesView() {
   const filteredRates = rates.filter((item) => {
     const cropMatch =
       !searchCrop ||
-      item.crop?.toLowerCase().includes(searchCrop.toLowerCase()) ||
-      item.variety?.toLowerCase().includes(searchCrop.toLowerCase());
+      item.crop
+        ?.toLowerCase()
+        .includes(searchCrop.toLowerCase()) ||
+      item.variety
+        ?.toLowerCase()
+        .includes(searchCrop.toLowerCase());
+
     const mandiMatch =
       !searchMandi ||
-      item.mandi?.toLowerCase().includes(searchMandi.toLowerCase()) ||
-      item.district?.toLowerCase().includes(searchMandi.toLowerCase());
+      item.mandi
+        ?.toLowerCase()
+        .includes(searchMandi.toLowerCase()) ||
+      item.district
+        ?.toLowerCase()
+        .includes(searchMandi.toLowerCase());
+
     return cropMatch && mandiMatch;
   });
 
   return (
-    <div className="space-y-6 animate-fadeIn">
-      {/* Header Banner */}
-      <div className="bg-white rounded-2xl p-6 border border-slate-200/90 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-50 text-amber-800 text-xs font-bold border border-amber-200 mb-2">
-            <BarChart3 size={14} className="text-[#EA8F0B]" />
-            Official APMC Market Rates
-          </div>
-          <h1 className="text-2xl font-black text-[#0C192C] tracking-tight">
-            Today's Mandi Commodity Prices
-          </h1>
-          <p className="text-xs sm:text-sm font-medium text-slate-500 mt-1">
-            Real-time wholesale modal, min & max rates sourced directly from official Agmarknet APMC terminals.
-          </p>
-        </div>
+    <div className="mx-auto max-w-7xl space-y-6 bg-[#F8F7F2] pb-8 animate-fadeIn">
+      {/* =====================================================
+          HEADER
+      ====================================================== */}
 
-        <button
-          onClick={fetchPrices}
-          className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs flex items-center gap-2 transition active:scale-95 shrink-0"
-        >
-          <RefreshCw size={13} className={loading ? "animate-spin" : ""} />
-          <span>Refresh Rates</span>
-        </button>
+      <div className="rounded-xl border border-[#DCE3DB] bg-white p-5 shadow-sm sm:p-6">
+        <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <div className="mb-2 inline-flex items-center gap-1.5 rounded-full border border-[#E8DDBF] bg-[#F5EFDE] px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-[#80672C]">
+              <BarChart3
+                size={13}
+                className="text-[#B58A35]"
+              />
+              Official APMC Market Rates
+            </div>
+
+            <h1 className="text-xl font-bold tracking-tight text-[#19343A] sm:text-2xl">
+              Today's Mandi Commodity Prices
+            </h1>
+
+            <p className="mt-1 max-w-3xl text-xs leading-5 text-[#687779] sm:text-sm">
+              Real-time wholesale modal, min & max rates sourced
+              directly from official Agmarknet APMC terminals.
+            </p>
+          </div>
+
+          <button
+            type="button"
+            onClick={fetchPrices}
+            className="inline-flex shrink-0 items-center justify-center gap-2 rounded-lg border border-[#DCE3DB] bg-[#F8F7F2] px-4 py-2.5 text-xs font-semibold text-[#285C3A] transition hover:border-[#CFE2D4] hover:bg-[#EAF2E9] active:scale-[0.98]"
+          >
+            <RefreshCw
+              size={13}
+              className={loading ? "animate-spin" : ""}
+            />
+            Refresh Rates
+          </button>
+        </div>
       </div>
 
-      {/* Filter Row */}
-      <div className="bg-white rounded-2xl p-4 border border-slate-200/90 shadow-xs grid grid-cols-1 sm:grid-cols-2 gap-3">
+      {/* =====================================================
+          FILTERS
+      ====================================================== */}
+
+      <div className="grid grid-cols-1 gap-3 rounded-xl border border-[#DCE3DB] bg-white p-4 shadow-sm sm:grid-cols-2">
+        {/* Crop Search */}
         <div className="relative">
-          <Search size={15} className="absolute left-3.5 top-3 text-slate-400" />
+          <Search
+            size={15}
+            className="absolute left-3.5 top-3 text-[#8A9695]"
+          />
+
           <input
             type="text"
             value={searchCrop}
             onChange={(e) => setSearchCrop(e.target.value)}
             placeholder="Search crop or variety (e.g. Onion, Wheat, Tomato)..."
-            className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:border-emerald-600"
+            className="w-full rounded-lg border border-[#DCE3DB] bg-[#F8F7F2] py-2.5 pl-9 pr-4 text-xs font-medium text-[#19343A] outline-none transition placeholder:text-[#9AA5A3] focus:border-[#285C3A] focus:bg-white focus:ring-2 focus:ring-[#EAF2E9]"
           />
         </div>
 
+        {/* Mandi Search */}
         <div className="relative">
-          <MapPin size={15} className="absolute left-3.5 top-3 text-slate-400" />
+          <MapPin
+            size={15}
+            className="absolute left-3.5 top-3 text-[#8A9695]"
+          />
+
           <input
             type="text"
             value={searchMandi}
             onChange={(e) => setSearchMandi(e.target.value)}
             placeholder="Search APMC market or district (e.g. Pune, Nashik)..."
-            className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:border-emerald-600"
+            className="w-full rounded-lg border border-[#DCE3DB] bg-[#F8F7F2] py-2.5 pl-9 pr-4 text-xs font-medium text-[#19343A] outline-none transition placeholder:text-[#9AA5A3] focus:border-[#285C3A] focus:bg-white focus:ring-2 focus:ring-[#EAF2E9]"
           />
         </div>
       </div>
 
-      {/* Data Table */}
+      {/* =====================================================
+          LOADING
+      ====================================================== */}
+
       {loading ? (
-        <div className="p-12 text-center bg-white rounded-2xl border border-slate-200 text-xs font-bold text-slate-400">
-          Loading live Agmarknet prices...
+        <div className="flex min-h-[280px] flex-col items-center justify-center rounded-xl border border-[#DCE3DB] bg-white px-6 text-center shadow-sm">
+          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#EAF2E9]">
+            <RefreshCw
+              size={21}
+              className="animate-spin text-[#285C3A]"
+            />
+          </div>
+
+          <h2 className="mt-4 text-sm font-bold text-[#19343A]">
+            Loading live Agmarknet prices
+          </h2>
+
+          <p className="mt-1 text-xs font-medium text-[#687779]">
+            Fetching the latest available mandi rates...
+          </p>
         </div>
       ) : unavailableError && rates.length === 0 ? (
-        <div className="bg-white rounded-2xl p-10 border border-slate-200 text-center space-y-3">
-          <div className="w-12 h-12 rounded-full bg-amber-50 text-[#EA8F0B] flex items-center justify-center mx-auto">
-            <Sparkles size={24} />
+        /* ===================================================
+           UNAVAILABLE
+        ==================================================== */
+
+        <div className="rounded-xl border border-[#E8DDBF] bg-white p-10 text-center shadow-sm">
+          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-[#F5EFDE] text-[#B58A35]">
+            <Sparkles size={22} />
           </div>
-          <div className="text-sm font-black text-slate-800">
+
+          <h2 className="mt-4 text-sm font-bold text-[#19343A]">
             Official Feed Sync in Progress
-          </div>
-          <p className="text-xs text-slate-500 max-w-md mx-auto">{unavailableError}</p>
+          </h2>
+
+          <p className="mx-auto mt-2 max-w-md text-xs font-medium leading-5 text-[#687779]">
+            {unavailableError}
+          </p>
+
           <button
+            type="button"
             onClick={fetchPrices}
-            className="px-5 py-2 rounded-xl bg-[#EA8F0B] text-white text-xs font-bold shadow-xs"
+            className="mt-5 inline-flex items-center gap-2 rounded-lg bg-[#285C3A] px-5 py-2.5 text-xs font-semibold text-white shadow-sm transition hover:bg-[#214D31] active:scale-[0.98]"
           >
+            <RefreshCw size={13} />
             Retry Fetch
           </button>
         </div>
       ) : (
-        <div className="bg-white rounded-2xl border border-slate-200/90 shadow-xs overflow-hidden">
+        /* ===================================================
+           DATA TABLE
+        ==================================================== */
+
+        <div className="overflow-hidden rounded-xl border border-[#DCE3DB] bg-white shadow-sm">
+          <div className="flex items-center justify-between border-b border-[#E5E9E3] px-4 py-3 sm:px-5">
+            <div>
+              <h2 className="text-sm font-bold text-[#19343A]">
+                Available Market Rates
+              </h2>
+
+              <p className="mt-0.5 text-[10px] font-medium text-[#8A9695]">
+                Showing {Math.min(filteredRates.length, 30)} available
+                records
+              </p>
+            </div>
+
+            <div className="hidden items-center gap-1.5 rounded-full border border-[#CFE2D4] bg-[#EAF2E9] px-2.5 py-1 text-[10px] font-semibold text-[#285C3A] sm:flex">
+              <span className="h-1.5 w-1.5 rounded-full bg-[#285C3A]" />
+              Official Feed
+            </div>
+          </div>
+
           <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
+            <table className="w-full min-w-[950px] border-collapse text-left">
               <thead>
-                <tr className="border-b border-slate-200 bg-slate-50/70 text-[11px] font-black uppercase text-slate-500 tracking-wider">
-                  <th className="py-3.5 px-4">Crop</th>
-                  <th className="py-3.5 px-4">Variety</th>
-                  <th className="py-3.5 px-4">Market / Mandi</th>
-                  <th className="py-3.5 px-4">District</th>
-                  <th className="py-3.5 px-4 text-right">Min Price</th>
-                  <th className="py-3.5 px-4 text-right">Max Price</th>
-                  <th className="py-3.5 px-4 text-right">Modal Price</th>
-                  <th className="py-3.5 px-4 text-center">Trend</th>
+                <tr className="border-b border-[#DCE3DB] bg-[#F8F7F2] text-[10px] font-bold uppercase tracking-[0.08em] text-[#687779]">
+                  <th className="px-4 py-3.5">
+                    Crop
+                  </th>
+
+                  <th className="px-4 py-3.5">
+                    Variety
+                  </th>
+
+                  <th className="px-4 py-3.5">
+                    Market / Mandi
+                  </th>
+
+                  <th className="px-4 py-3.5">
+                    District
+                  </th>
+
+                  <th className="px-4 py-3.5 text-right">
+                    Min Price
+                  </th>
+
+                  <th className="px-4 py-3.5 text-right">
+                    Max Price
+                  </th>
+
+                  <th className="px-4 py-3.5 text-right">
+                    Modal Price
+                  </th>
+
+                  <th className="px-4 py-3.5 text-center">
+                    Trend
+                  </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100 text-xs font-medium text-slate-800">
+
+              <tbody className="divide-y divide-[#E5E9E3] text-xs font-medium text-[#19343A]">
                 {filteredRates.slice(0, 30).map((item, idx) => (
-                  <tr key={idx} className="hover:bg-amber-50/20 transition-colors">
-                    <td className="py-3.5 px-4 font-black text-slate-900">
-                      {item.crop}
+                  <tr
+                    key={idx}
+                    className="transition-colors hover:bg-[#F8F7F2]"
+                  >
+                    {/* Crop */}
+                    <td className="px-4 py-3.5">
+                      <div className="font-bold text-[#19343A]">
+                        {item.crop}
+                      </div>
                     </td>
-                    <td className="py-3.5 px-4 text-slate-500 font-semibold">
+
+                    {/* Variety */}
+                    <td className="px-4 py-3.5 text-[#687779]">
                       {item.variety || "Standard / Local"}
                     </td>
-                    <td className="py-3.5 px-4 text-slate-700 font-bold">
-                      {item.mandi}
+
+                    {/* Mandi */}
+                    <td className="px-4 py-3.5">
+                      <div className="flex items-center gap-1.5 font-semibold text-[#285C3A]">
+                        <MapPin
+                          size={12}
+                          className="shrink-0 text-[#B58A35]"
+                        />
+                        {item.mandi}
+                      </div>
                     </td>
-                    <td className="py-3.5 px-4 text-slate-500">
+
+                    {/* District */}
+                    <td className="px-4 py-3.5 text-[#687779]">
                       {item.district || "Maharashtra"}
                     </td>
-                    <td className="py-3.5 px-4 text-right font-mono text-slate-600 font-bold">
-                      ₹{item.minPrice || item.min_price || "-"}
+
+                    {/* Min */}
+                    <td className="px-4 py-3.5 text-right">
+                      <span className="font-mono font-semibold text-[#687779]">
+                        ₹{item.minPrice || item.min_price || "-"}
+                      </span>
                     </td>
-                    <td className="py-3.5 px-4 text-right font-mono text-slate-600 font-bold">
-                      ₹{item.maxPrice || item.max_price || "-"}
+
+                    {/* Max */}
+                    <td className="px-4 py-3.5 text-right">
+                      <span className="font-mono font-semibold text-[#687779]">
+                        ₹{item.maxPrice || item.max_price || "-"}
+                      </span>
                     </td>
-                    <td className="py-3.5 px-4 text-right font-mono font-black text-emerald-700 text-sm">
-                      ₹{item.modalPrice || item.modal_price || "-"}
+
+                    {/* Modal */}
+                    <td className="px-4 py-3.5 text-right">
+                      <span className="inline-flex items-center gap-0.5 rounded-md border border-[#CFE2D4] bg-[#EAF2E9] px-2 py-1 font-mono text-sm font-bold text-[#285C3A]">
+                        <IndianRupee size={11} />
+                        {item.modalPrice ||
+                          item.modal_price ||
+                          "-"}
+                      </span>
                     </td>
-                    <td className="py-3.5 px-4 text-center">
-                      <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                        <TrendingUp size={11} className="mr-0.5" /> Stable
+
+                    {/* Trend */}
+                    <td className="px-4 py-3.5 text-center">
+                      <span className="inline-flex items-center gap-1 rounded-full border border-[#D5DDE0] bg-[#EEF2F3] px-2.5 py-1 text-[10px] font-semibold text-[#477A7A]">
+                        <TrendingUp size={10} />
+                        Stable
                       </span>
                     </td>
                   </tr>
@@ -185,11 +348,42 @@ export default function MandiPricesView() {
             </table>
           </div>
 
-          <div className="p-4 bg-slate-50 border-t border-slate-100 text-[11px] text-slate-500 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          {/* =================================================
+              NO FILTER RESULTS
+          ================================================== */}
+
+          {filteredRates.length === 0 && (
+            <div className="border-t border-[#E5E9E3] px-6 py-12 text-center">
+              <div className="mx-auto flex h-11 w-11 items-center justify-center rounded-full bg-[#F8F7F2] text-[#687779]">
+                <Search size={19} />
+              </div>
+
+              <h3 className="mt-3 text-sm font-bold text-[#19343A]">
+                No matching market rates
+              </h3>
+
+              <p className="mt-1 text-xs font-medium text-[#687779]">
+                Try a different crop, variety, mandi, or district.
+              </p>
+            </div>
+          )}
+
+          {/* =================================================
+              SOURCE FOOTER
+          ================================================== */}
+
+          <div className="flex flex-col gap-2 border-t border-[#E5E9E3] bg-[#F8F7F2] px-4 py-3.5 text-[10px] font-medium text-[#687779] sm:flex-row sm:items-center sm:justify-between sm:px-5">
             <span>
-              Source: <strong className="text-slate-700">{sourceInfo}</strong>
+              Source:{" "}
+              <strong className="font-semibold text-[#19343A]">
+                {sourceInfo}
+              </strong>
             </span>
-            <span>Last Updated: {updatedAt}</span>
+
+            <span className="flex items-center gap-1.5">
+              <Calendar size={11} />
+              Last Updated: {updatedAt}
+            </span>
           </div>
         </div>
       )}

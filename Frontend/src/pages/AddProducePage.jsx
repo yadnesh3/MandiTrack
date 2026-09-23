@@ -1,4 +1,13 @@
 import React, { useState } from "react";
+import {
+  Wheat,
+  Package,
+  MapPin,
+  IndianRupee,
+  CheckCircle2,
+  AlertCircle,
+  ChevronDown,
+} from "lucide-react";
 import { createLotApi } from "../services/api";
 
 const CROP_OPTIONS = [
@@ -69,6 +78,7 @@ function AddProducePage({ onLotCreatedSuccess }) {
       };
 
       await createLotApi(payload);
+
       setSuccess("Produce lot submitted successfully!");
 
       // Reset form
@@ -88,66 +98,129 @@ function AddProducePage({ onLotCreatedSuccess }) {
     }
   };
 
+  const inputClass =
+    "w-full rounded-lg border border-[#DCE3DB] bg-white px-4 py-3 text-sm font-medium text-[#19343A] outline-none transition placeholder:text-[#9AA5A4] focus:border-[#285C3A] focus:ring-2 focus:ring-[#EAF2E9]";
+
+  const selectClass =
+    "w-full appearance-none rounded-lg border border-[#DCE3DB] bg-white px-4 py-3 pr-10 text-sm font-medium text-[#19343A] outline-none transition focus:border-[#285C3A] focus:ring-2 focus:ring-[#EAF2E9]";
+
   return (
-    <div className="max-w-2xl mx-auto space-y-6">
-      {/* Header Container Matching Panel 5 */}
-      <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-1">
-        <h2 className="text-2xl font-extrabold text-slate-900">
-          Add New Produce
-        </h2>
-        <p className="text-xs text-slate-500 font-medium">
-          Enter the details of your produce
-        </p>
+    <div className="mx-auto max-w-3xl space-y-6 bg-[#F8F7F2] pb-8 animate-fadeIn">
+      {/* =====================================================
+          PAGE HEADER
+      ====================================================== */}
+
+      <div className="rounded-xl border border-[#DCE3DB] bg-white p-5 shadow-sm sm:p-6">
+        <div className="flex items-start gap-4">
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#EAF2E9] text-[#285C3A]">
+            <Wheat size={21} />
+          </div>
+
+          <div>
+            <h2 className="text-xl font-bold tracking-tight text-[#19343A] sm:text-2xl">
+              Add New Produce
+            </h2>
+
+            <p className="mt-1 text-xs font-medium text-[#687779] sm:text-sm">
+              Enter the details of your produce to create a new mandi lot.
+            </p>
+          </div>
+        </div>
       </div>
 
-      {/* Alert Banners */}
+      {/* =====================================================
+          ALERTS
+      ====================================================== */}
+
       {error && (
-        <div className="p-4 bg-red-50 border border-red-200 text-red-700 text-xs font-semibold rounded-2xl">
-          ⚠️ {error}
+        <div className="flex items-start gap-3 rounded-xl border border-[#E8CCCC] bg-[#FAEEEE] p-4 text-[#A64B4B]">
+          <AlertCircle size={18} className="mt-0.5 shrink-0" />
+
+          <div>
+            <p className="text-xs font-bold">Submission Error</p>
+            <p className="mt-0.5 text-xs font-medium">
+              {error}
+            </p>
+          </div>
         </div>
       )}
 
       {success && (
-        <div className="p-4 bg-green-50 border border-green-200 text-green-700 text-xs font-semibold rounded-2xl">
-          ✅ {success}
+        <div className="flex items-start gap-3 rounded-xl border border-[#CFE2D4] bg-[#EAF2E9] p-4 text-[#285C3A]">
+          <CheckCircle2 size={18} className="mt-0.5 shrink-0" />
+
+          <div>
+            <p className="text-xs font-bold">Submission Successful</p>
+            <p className="mt-0.5 text-xs font-medium">
+              {success}
+            </p>
+          </div>
         </div>
       )}
 
-      {/* Form Container Matching Panel 5 */}
-      <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm">
-        <form onSubmit={handleSubmit} className="space-y-5">
-          
-          {/* Crop Field */}
+      {/* =====================================================
+          FORM
+      ====================================================== */}
+
+      <div className="rounded-xl border border-[#DCE3DB] bg-white shadow-sm">
+        {/* Form Header */}
+        <div className="border-b border-[#E5E9E3] px-5 py-4 sm:px-6">
+          <div className="flex items-center gap-2">
+            <Package size={16} className="text-[#285C3A]" />
+
+            <h3 className="text-sm font-bold text-[#19343A]">
+              Produce Details
+            </h3>
+          </div>
+
+          <p className="mt-1 pl-6 text-[10px] font-medium text-[#8A9695]">
+            Provide accurate information for your mandi lot.
+          </p>
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-6 p-5 sm:p-6">
+          {/* =====================================================
+              CROP
+          ====================================================== */}
+
           <div>
-            <label className="block text-xs font-semibold uppercase text-slate-600 mb-1.5">
-              Crop
+            <label className="mb-1.5 block text-[10px] font-bold uppercase tracking-[0.08em] text-[#687779]">
+              Crop <span className="text-[#A64B4B]">*</span>
             </label>
+
             <div className="relative">
               <select
                 required
                 value={crop}
                 onChange={(e) => setCrop(e.target.value)}
-                className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-green-600 focus:border-green-600 outline-none text-sm bg-white font-medium text-slate-800 appearance-none"
+                className={selectClass}
               >
                 <option value="">Select crop</option>
+
                 {CROP_OPTIONS.map((c) => (
                   <option key={c} value={c}>
                     {c}
                   </option>
                 ))}
               </select>
-              <div className="absolute right-3.5 top-3.5 pointer-events-none text-slate-400 text-xs">
-                ▼
-              </div>
+
+              <ChevronDown
+                size={16}
+                className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-[#687779]"
+              />
             </div>
           </div>
 
-          {/* Quantity & Unit Row Matching Panel 5 */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {/* =====================================================
+              QUANTITY + UNIT
+          ====================================================== */}
+
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
-              <label className="block text-xs font-semibold uppercase text-slate-600 mb-1.5">
-                Quantity
+              <label className="mb-1.5 block text-[10px] font-bold uppercase tracking-[0.08em] text-[#687779]">
+                Quantity <span className="text-[#A64B4B]">*</span>
               </label>
+
               <input
                 type="number"
                 min="1"
@@ -155,81 +228,135 @@ function AddProducePage({ onLotCreatedSuccess }) {
                 placeholder="Enter quantity"
                 value={quantity}
                 onChange={(e) => setQuantity(e.target.value)}
-                className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-green-600 focus:border-green-600 outline-none text-sm text-slate-800 placeholder-slate-400 font-medium"
+                className={inputClass}
               />
             </div>
 
             <div>
-              <label className="block text-xs font-semibold uppercase text-slate-600 mb-1.5">
+              <label className="mb-1.5 block text-[10px] font-bold uppercase tracking-[0.08em] text-[#687779]">
                 Unit
               </label>
+
               <div className="relative">
                 <select
                   value={unit}
                   onChange={(e) => setUnit(e.target.value)}
-                  className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-green-600 focus:border-green-600 outline-none text-sm bg-white font-medium text-slate-800 appearance-none"
+                  className={selectClass}
                 >
                   <option value="quintal">quintal</option>
                   <option value="kg">kg</option>
                   <option value="ton">ton</option>
                 </select>
-                <div className="absolute right-3.5 top-3.5 pointer-events-none text-slate-400 text-xs">
-                  ▼
-                </div>
+
+                <ChevronDown
+                  size={16}
+                  className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-[#687779]"
+                />
               </div>
             </div>
           </div>
 
-          {/* Mandi & Expected Price Row Matching Panel 5 */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {/* =====================================================
+              MANDI + EXPECTED PRICE
+          ====================================================== */}
+
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
-              <label className="block text-xs font-semibold uppercase text-slate-600 mb-1.5">
-                Mandi
+              <label className="mb-1.5 block text-[10px] font-bold uppercase tracking-[0.08em] text-[#687779]">
+                Mandi <span className="text-[#A64B4B]">*</span>
               </label>
+
               <div className="relative">
                 <select
                   required
                   value={mandi}
                   onChange={(e) => setMandi(e.target.value)}
-                  className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-green-600 focus:border-green-600 outline-none text-sm bg-white font-medium text-slate-800 appearance-none"
+                  className={selectClass}
                 >
                   <option value="">Select mandi</option>
+
                   {MANDI_OPTIONS.map((m) => (
                     <option key={m} value={m}>
                       {m}
                     </option>
                   ))}
                 </select>
-                <div className="absolute right-3.5 top-3.5 pointer-events-none text-slate-400 text-xs">
-                  ▼
-                </div>
+
+                <ChevronDown
+                  size={16}
+                  className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-[#687779]"
+                />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-semibold uppercase text-slate-600 mb-1.5">
-                Expected Price (₹)
+              <label className="mb-1.5 block text-[10px] font-bold uppercase tracking-[0.08em] text-[#687779]">
+                Expected Price (₹){" "}
+                <span className="text-[#A64B4B]">*</span>
               </label>
-              <input
-                type="number"
-                min="0"
-                required
-                placeholder="Enter expected price"
-                value={expectedPrice}
-                onChange={(e) => setExpectedPrice(e.target.value)}
-                className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-green-600 focus:border-green-600 outline-none text-sm text-slate-800 placeholder-slate-400 font-medium"
-              />
+
+              <div className="relative">
+                <IndianRupee
+                  size={15}
+                  className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-[#8A9695]"
+                />
+
+                <input
+                  type="number"
+                  min="0"
+                  required
+                  placeholder="Enter expected price"
+                  value={expectedPrice}
+                  onChange={(e) => setExpectedPrice(e.target.value)}
+                  className={`${inputClass} pl-10`}
+                />
+              </div>
             </div>
           </div>
 
-          {/* Submit Button Matching Panel 5 */}
-          <div className="pt-3">
+          {/* =====================================================
+              SUBMISSION NOTE
+          ====================================================== */}
+
+          <div className="flex items-start gap-3 rounded-lg border border-[#E8DDBF] bg-[#F5EFDE] p-3.5">
+            <MapPin
+              size={16}
+              className="mt-0.5 shrink-0 text-[#B58A35]"
+            />
+
+            <div>
+              <p className="text-[11px] font-bold text-[#80672C]">
+                Mandi Lot Submission
+              </p>
+
+              <p className="mt-0.5 text-[10px] leading-4 text-[#80672C]">
+                Your produce will be submitted to the selected mandi
+                for processing and tracking.
+              </p>
+            </div>
+          </div>
+
+          {/* =====================================================
+              SUBMIT
+          ====================================================== */}
+
+          <div className="border-t border-[#E5E9E3] pt-5">
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-4 bg-green-700 hover:bg-green-800 active:scale-98 text-white font-extrabold rounded-2xl shadow-md transition-all text-sm disabled:opacity-50"
+              className="flex w-full items-center justify-center gap-2 rounded-lg bg-[#285C3A] py-3.5 text-sm font-bold text-white shadow-sm transition hover:bg-[#214D31] active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50"
             >
-              {loading ? "Submitting..." : "Submit"}
+              {loading ? (
+                <>
+                  <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white" />
+                  Submitting...
+                </>
+              ) : (
+                <>
+                  <CheckCircle2 size={17} />
+                  Submit Produce Lot
+                </>
+              )}
             </button>
           </div>
         </form>

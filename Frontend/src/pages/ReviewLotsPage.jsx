@@ -1,5 +1,19 @@
 import React, { useState, useEffect } from "react";
-import { getPendingLotsApi, getAllLotsApi, updateLotStatusApi } from "../services/api";
+import {
+  ClipboardList,
+  Clock3,
+  CheckCircle2,
+  XCircle,
+  PackageCheck,
+  RefreshCw,
+  AlertCircle,
+  Check,
+} from "lucide-react";
+import {
+  getPendingLotsApi,
+  getAllLotsApi,
+  updateLotStatusApi,
+} from "../services/api";
 import StatusBadge from "../components/StatusBadge";
 
 function ReviewLotsPage() {
@@ -8,16 +22,18 @@ function ReviewLotsPage() {
   const [error, setError] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
   const [updatingId, setUpdatingId] = useState(null);
-  const [filterMode, setFilterMode] = useState("pending"); // "pending" | "all"
+  const [filterMode, setFilterMode] = useState("pending");
 
   const fetchLots = async () => {
     setLoading(true);
     setError("");
+
     try {
       const response =
         filterMode === "pending"
           ? await getPendingLotsApi()
           : await getAllLotsApi();
+
       setLots(response.lots || []);
     } catch (err) {
       setError(err.message || "Failed to load lots for review.");
@@ -37,17 +53,22 @@ function ReviewLotsPage() {
 
     try {
       await updateLotStatusApi(lotId, newStatus);
+
       setSuccessMsg(
         `Lot status updated to "${newStatus.toUpperCase()}" successfully.`
       );
 
       if (filterMode === "pending") {
-        // Remove from pending list since status changed
-        setLots((prev) => prev.filter((l) => l._id !== lotId));
-      } else {
-        // Update status in-place for "all" view
         setLots((prev) =>
-          prev.map((l) => (l._id === lotId ? { ...l, status: newStatus } : l))
+          prev.filter((l) => l._id !== lotId)
+        );
+      } else {
+        setLots((prev) =>
+          prev.map((l) =>
+            l._id === lotId
+              ? { ...l, status: newStatus }
+              : l
+          )
         );
       }
 
@@ -60,76 +81,146 @@ function ReviewLotsPage() {
   };
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm flex items-center justify-between flex-wrap gap-4">
-        <div>
-          <h2 className="text-2xl font-extrabold text-slate-900">
-            {filterMode === "pending"
-              ? "Pending Lots"
-              : "All Produce Submissions"}
-          </h2>
-          <p className="text-xs text-slate-500 font-medium">
-            Review and take action on submitted produce
-          </p>
-        </div>
+    <div className="space-y-6 bg-[#F8F7F2] pb-8 animate-fadeIn">
+      {/* =====================================================
+          HEADER
+      ====================================================== */}
 
-        {/* Filter Toggle */}
-        <div className="flex gap-2 bg-slate-100 p-1 rounded-2xl border border-slate-200 text-xs font-bold">
-          <button
-            onClick={() => setFilterMode("pending")}
-            className={`px-4 py-2 rounded-xl transition-all ${
-              filterMode === "pending"
-                ? "bg-[#064e3b] text-white shadow-xs"
-                : "text-slate-600 hover:text-slate-900"
-            }`}
-          >
-            Pending Only
-          </button>
-          <button
-            onClick={() => setFilterMode("all")}
-            className={`px-4 py-2 rounded-xl transition-all ${
-              filterMode === "all"
-                ? "bg-[#064e3b] text-white shadow-xs"
-                : "text-slate-600 hover:text-slate-900"
-            }`}
-          >
-            All Submissions
-          </button>
+      <div className="rounded-xl border border-[#DCE3DB] bg-white p-5 shadow-sm sm:p-6">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+          <div className="flex items-start gap-3">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[#EAF2E9] text-[#285C3A]">
+              <ClipboardList size={19} />
+            </div>
+
+            <div>
+              <h2 className="text-xl font-bold tracking-tight text-[#19343A] sm:text-2xl">
+                {filterMode === "pending"
+                  ? "Pending Lots"
+                  : "All Produce Submissions"}
+              </h2>
+
+              <p className="mt-1 text-xs font-medium text-[#687779]">
+                Review and take action on submitted produce
+              </p>
+            </div>
+          </div>
+
+          {/* Filter Toggle */}
+          <div className="flex w-full rounded-lg border border-[#DCE3DB] bg-[#F8F7F2] p-1 sm:w-fit">
+            <button
+              type="button"
+              onClick={() => setFilterMode("pending")}
+              className={`flex flex-1 items-center justify-center gap-1.5 rounded-md px-3 py-2 text-[11px] font-bold transition sm:flex-none ${
+                filterMode === "pending"
+                  ? "bg-[#285C3A] text-white shadow-sm"
+                  : "text-[#687779] hover:text-[#19343A]"
+              }`}
+            >
+              <Clock3 size={13} />
+              Pending Only
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setFilterMode("all")}
+              className={`flex flex-1 items-center justify-center gap-1.5 rounded-md px-3 py-2 text-[11px] font-bold transition sm:flex-none ${
+                filterMode === "all"
+                  ? "bg-[#285C3A] text-white shadow-sm"
+                  : "text-[#687779] hover:text-[#19343A]"
+              }`}
+            >
+              <ClipboardList size={13} />
+              All Submissions
+            </button>
+          </div>
         </div>
       </div>
 
-      {/* Success */}
+      {/* =====================================================
+          SUCCESS
+      ====================================================== */}
+
       {successMsg && (
-        <div className="p-4 bg-green-50 border border-green-200 text-green-800 text-xs font-bold rounded-2xl">
-          ✅ {successMsg}
+        <div className="flex items-start gap-3 rounded-xl border border-[#CFE2D4] bg-[#EAF2E9] p-4 text-[#285C3A]">
+          <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-white">
+            <Check size={15} />
+          </div>
+
+          <div>
+            <p className="text-xs font-bold">
+              Action completed
+            </p>
+
+            <p className="mt-0.5 text-[11px] font-medium">
+              {successMsg}
+            </p>
+          </div>
         </div>
       )}
 
-      {/* Error */}
+      {/* =====================================================
+          ERROR
+      ====================================================== */}
+
       {error && (
-        <div className="p-4 bg-red-50 border border-red-200 text-red-700 text-xs font-bold rounded-2xl">
-          ⚠️ {error}
+        <div className="flex items-start gap-3 rounded-xl border border-[#E8CCCC] bg-[#FAEEEE] p-4 text-[#A64B4B]">
+          <AlertCircle
+            size={18}
+            className="mt-0.5 shrink-0"
+          />
+
+          <div>
+            <p className="text-xs font-bold">
+              Something went wrong
+            </p>
+
+            <p className="mt-0.5 text-[11px] font-medium">
+              {error}
+            </p>
+          </div>
         </div>
       )}
 
-      {/* Table Card */}
-      <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+      {/* =====================================================
+          LOTS CARD
+      ====================================================== */}
+
+      <div className="overflow-hidden rounded-xl border border-[#DCE3DB] bg-white shadow-sm">
         {loading ? (
-          <div className="p-12 text-center text-slate-500 text-sm">
-            Loading lots for review...
+          <div className="flex min-h-[300px] flex-col items-center justify-center p-8 text-center">
+            <div className="flex h-11 w-11 items-center justify-center rounded-full bg-[#EAF2E9]">
+              <RefreshCw
+                size={19}
+                className="animate-spin text-[#285C3A]"
+              />
+            </div>
+
+            <p className="mt-4 text-sm font-semibold text-[#19343A]">
+              Loading lots for review...
+            </p>
+
+            <p className="mt-1 text-xs text-[#8A9695]">
+              Fetching the latest produce submissions.
+            </p>
           </div>
         ) : lots.length === 0 ? (
-          <div className="p-12 text-center max-w-sm mx-auto space-y-2">
-            <div className="w-12 h-12 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center text-2xl mx-auto">
-              📋
+          <div className="mx-auto flex min-h-[320px] max-w-sm flex-col items-center justify-center p-8 text-center">
+            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-[#F8F7F2] text-[#8A9695]">
+              {filterMode === "pending" ? (
+                <Clock3 size={24} />
+              ) : (
+                <ClipboardList size={24} />
+              )}
             </div>
-            <h3 className="font-bold text-slate-800 text-base">
+
+            <h3 className="mt-4 text-base font-bold text-[#19343A]">
               {filterMode === "pending"
                 ? "No pending lots"
                 : "No lots found"}
             </h3>
-            <p className="text-xs text-slate-500">
+
+            <p className="mt-1.5 text-xs leading-5 text-[#687779]">
               There are currently no produce lots{" "}
               {filterMode === "pending"
                 ? "requiring officer review"
@@ -139,108 +230,192 @@ function ReviewLotsPage() {
           </div>
         ) : (
           <>
-            {/* Desktop Table */}
-            <div className="hidden md:block overflow-x-auto">
-              <table className="w-full text-left text-sm border-collapse">
+            {/* =================================================
+                DESKTOP TABLE
+            ================================================= */}
+
+            <div className="hidden overflow-x-auto md:block">
+              <table className="w-full min-w-[1050px] border-collapse text-left text-sm">
                 <thead>
-                  <tr className="bg-slate-100/70 border-b border-slate-200 text-xs font-bold text-slate-600">
-                    <th className="py-4 px-6 w-10">#</th>
-                    <th className="py-4 px-4">Farmer</th>
-                    <th className="py-4 px-4">Crop</th>
-                    <th className="py-4 px-4">Qty</th>
-                    <th className="py-4 px-4">Mandi</th>
-                    <th className="py-4 px-4">Expected Price</th>
-                    <th className="py-4 px-4">Date</th>
+                  <tr className="border-b border-[#DCE3DB] bg-[#F8F7F2] text-[10px] font-bold uppercase tracking-[0.08em] text-[#687779]">
+                    <th className="w-10 px-6 py-3.5">
+                      #
+                    </th>
+
+                    <th className="px-4 py-3.5">
+                      Farmer
+                    </th>
+
+                    <th className="px-4 py-3.5">
+                      Crop
+                    </th>
+
+                    <th className="px-4 py-3.5">
+                      Qty
+                    </th>
+
+                    <th className="px-4 py-3.5">
+                      Mandi
+                    </th>
+
+                    <th className="px-4 py-3.5">
+                      Expected Price
+                    </th>
+
+                    <th className="px-4 py-3.5">
+                      Date
+                    </th>
+
                     {filterMode === "all" && (
-                      <th className="py-4 px-4">Status</th>
+                      <th className="px-4 py-3.5">
+                        Status
+                      </th>
                     )}
-                    <th className="py-4 px-6 text-right">Action</th>
+
+                    <th className="px-6 py-3.5 text-right">
+                      Action
+                    </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100">
+
+                <tbody className="divide-y divide-[#E5E9E3]">
                   {lots.map((lot, index) => (
                     <tr
                       key={lot._id}
-                      className="hover:bg-slate-50/80 transition-colors"
+                      className="transition-colors hover:bg-[#F8F7F2]"
                     >
-                      <td className="py-4 px-6 font-semibold text-slate-400 text-xs">
+                      {/* Number */}
+                      <td className="px-6 py-4 text-xs font-semibold text-[#9AA5A4]">
                         {index + 1}
                       </td>
-                      <td className="py-4 px-4 font-bold text-slate-900">
-                        <div>{lot.farmer?.name || "Farmer"}</div>
-                        <div className="text-[11px] font-mono text-slate-400 font-normal">
-                          📱 {lot.farmer?.mobile || "N/A"}
+
+                      {/* Farmer */}
+                      <td className="px-4 py-4">
+                        <div className="font-bold text-[#19343A]">
+                          {lot.farmer?.name || "Farmer"}
+                        </div>
+
+                        <div className="mt-0.5 font-mono text-[10px] text-[#8A9695]">
+                          {lot.farmer?.mobile || "N/A"}
                         </div>
                       </td>
-                      <td className="py-4 px-4 font-semibold text-slate-800">
-                        {lot.crop}
+
+                      {/* Crop */}
+                      <td className="px-4 py-4">
+                        <span className="font-semibold text-[#19343A]">
+                          {lot.crop}
+                        </span>
                       </td>
-                      <td className="py-4 px-4 text-slate-700 font-medium">
-                        {lot.quantity} {lot.unit}
+
+                      {/* Quantity */}
+                      <td className="px-4 py-4">
+                        <span className="text-xs font-medium text-[#687779]">
+                          {lot.quantity} {lot.unit}
+                        </span>
                       </td>
-                      <td className="py-4 px-4 text-slate-800 font-medium">
-                        {lot.mandi}
+
+                      {/* Mandi */}
+                      <td className="px-4 py-4">
+                        <span className="text-xs font-semibold text-[#19343A]">
+                          {lot.mandi}
+                        </span>
                       </td>
-                      <td className="py-4 px-4 font-extrabold text-green-800">
-                        ₹{lot.expectedPrice.toLocaleString()}
+
+                      {/* Expected Price */}
+                      <td className="px-4 py-4">
+                        <span className="font-mono text-xs font-bold text-[#285C3A]">
+                          ₹{lot.expectedPrice.toLocaleString()}
+                        </span>
                       </td>
-                      <td className="py-4 px-4 text-slate-500 text-xs">
-                        {new Date(lot.createdAt).toLocaleDateString("en-IN", {
+
+                      {/* Date */}
+                      <td className="px-4 py-4 text-xs font-medium text-[#687779]">
+                        {new Date(
+                          lot.createdAt
+                        ).toLocaleDateString("en-IN", {
                           day: "2-digit",
                           month: "short",
                           year: "numeric",
                         })}
                       </td>
+
+                      {/* Status */}
                       {filterMode === "all" && (
-                        <td className="py-4 px-4">
+                        <td className="px-4 py-4">
                           <StatusBadge status={lot.status} />
                         </td>
                       )}
-                      <td className="py-4 px-6 text-right">
-                        <div className="flex justify-end gap-2 flex-wrap">
-                          {/* Approve — only if not already approved or sold */}
+
+                      {/* Actions */}
+                      <td className="px-6 py-4">
+                        <div className="flex flex-wrap justify-end gap-1.5">
+                          {/* Approve */}
                           {lot.status !== "approved" &&
                             lot.status !== "sold" && (
                               <button
-                                disabled={updatingId === lot._id}
-                                onClick={() =>
-                                  handleAction(lot._id, "approved")
+                                type="button"
+                                disabled={
+                                  updatingId === lot._id
                                 }
-                                className="px-3 py-1.5 bg-green-700 hover:bg-green-800 active:scale-95 disabled:opacity-50 text-white text-xs font-bold rounded-xl shadow-xs transition-all"
+                                onClick={() =>
+                                  handleAction(
+                                    lot._id,
+                                    "approved"
+                                  )
+                                }
+                                className="inline-flex items-center gap-1 rounded-md bg-[#285C3A] px-2.5 py-1.5 text-[10px] font-bold text-white transition hover:bg-[#214D31] active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-50"
                               >
+                                <CheckCircle2 size={12} />
                                 Approve
                               </button>
                             )}
 
-                          {/* Reject — only if not already rejected or sold */}
+                          {/* Reject */}
                           {lot.status !== "rejected" &&
                             lot.status !== "sold" && (
                               <button
-                                disabled={updatingId === lot._id}
-                                onClick={() =>
-                                  handleAction(lot._id, "rejected")
+                                type="button"
+                                disabled={
+                                  updatingId === lot._id
                                 }
-                                className="px-3 py-1.5 bg-red-600 hover:bg-red-700 active:scale-95 disabled:opacity-50 text-white text-xs font-bold rounded-xl shadow-xs transition-all"
+                                onClick={() =>
+                                  handleAction(
+                                    lot._id,
+                                    "rejected"
+                                  )
+                                }
+                                className="inline-flex items-center gap-1 rounded-md border border-[#E8CCCC] bg-[#FAEEEE] px-2.5 py-1.5 text-[10px] font-bold text-[#A64B4B] transition hover:bg-[#F6E5E5] active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-50"
                               >
+                                <XCircle size={12} />
                                 Reject
                               </button>
                             )}
 
-                          {/* Mark Sold — only if approved */}
+                          {/* Mark Sold */}
                           {lot.status === "approved" && (
                             <button
-                              disabled={updatingId === lot._id}
-                              onClick={() => handleAction(lot._id, "sold")}
-                              className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 active:scale-95 disabled:opacity-50 text-white text-xs font-bold rounded-xl shadow-xs transition-all"
+                              type="button"
+                              disabled={
+                                updatingId === lot._id
+                              }
+                              onClick={() =>
+                                handleAction(
+                                  lot._id,
+                                  "sold"
+                                )
+                              }
+                              className="inline-flex items-center gap-1 rounded-md bg-[#477A7A] px-2.5 py-1.5 text-[10px] font-bold text-white transition hover:opacity-90 active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-50"
                             >
+                              <PackageCheck size={12} />
                               Mark Sold
                             </button>
                           )}
 
-                          {/* Sold badge — final state */}
+                          {/* Sold */}
                           {lot.status === "sold" && (
-                            <span className="px-3 py-1.5 bg-slate-100 text-slate-500 text-xs font-bold rounded-xl border border-slate-200">
-                              ✅ Sold
+                            <span className="inline-flex items-center gap-1 rounded-md border border-[#D5DDE0] bg-[#EEF2F3] px-2.5 py-1.5 text-[10px] font-bold text-[#477A7A]">
+                              <Check size={12} />
+                              Sold
                             </span>
                           )}
                         </div>
@@ -251,80 +426,139 @@ function ReviewLotsPage() {
               </table>
             </div>
 
-            {/* Mobile Cards */}
-            <div className="block md:hidden divide-y divide-slate-100">
+            {/* =================================================
+                MOBILE CARDS
+            ================================================= */}
+
+            <div className="divide-y divide-[#E5E9E3] md:hidden">
               {lots.map((lot) => (
-                <div key={lot._id} className="p-4 space-y-3">
-                  <div className="flex items-start justify-between gap-2">
+                <div
+                  key={lot._id}
+                  className="space-y-4 p-4"
+                >
+                  {/* Farmer + Status */}
+                  <div className="flex items-start justify-between gap-3">
                     <div>
-                      <div className="font-bold text-slate-900 text-sm">
+                      <div className="text-sm font-bold text-[#19343A]">
                         {lot.farmer?.name || "Farmer"}
                       </div>
-                      <div className="text-xs text-slate-400">
-                        📱 {lot.farmer?.mobile || "N/A"}
+
+                      <div className="mt-0.5 font-mono text-[10px] text-[#8A9695]">
+                        {lot.farmer?.mobile || "N/A"}
                       </div>
                     </div>
+
                     {filterMode === "all" && (
                       <StatusBadge status={lot.status} />
                     )}
                   </div>
 
-                  <div className="grid grid-cols-2 gap-2 text-xs text-slate-600 bg-slate-50 p-2.5 rounded-lg border">
-                    <div>
-                      <span className="text-slate-400 block">Crop</span>
-                      <span className="font-semibold text-slate-800">
+                  {/* Details */}
+                  <div className="grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-[#DCE3DB] bg-[#DCE3DB]">
+                    <div className="bg-[#F8F7F2] p-3">
+                      <span className="block text-[9px] font-bold uppercase tracking-wide text-[#8A9695]">
+                        Crop
+                      </span>
+
+                      <span className="mt-1 block text-xs font-bold text-[#19343A]">
                         {lot.crop}
                       </span>
                     </div>
-                    <div>
-                      <span className="text-slate-400 block">Quantity</span>
-                      <span className="font-semibold text-slate-800">
+
+                    <div className="bg-[#F8F7F2] p-3">
+                      <span className="block text-[9px] font-bold uppercase tracking-wide text-[#8A9695]">
+                        Quantity
+                      </span>
+
+                      <span className="mt-1 block text-xs font-bold text-[#19343A]">
                         {lot.quantity} {lot.unit}
                       </span>
                     </div>
-                    <div>
-                      <span className="text-slate-400 block">Mandi</span>
-                      <span className="font-semibold text-slate-800">
+
+                    <div className="bg-[#F8F7F2] p-3">
+                      <span className="block text-[9px] font-bold uppercase tracking-wide text-[#8A9695]">
+                        Mandi
+                      </span>
+
+                      <span className="mt-1 block text-xs font-bold text-[#19343A]">
                         {lot.mandi}
                       </span>
                     </div>
-                    <div>
-                      <span className="text-slate-400 block">
+
+                    <div className="bg-[#F8F7F2] p-3">
+                      <span className="block text-[9px] font-bold uppercase tracking-wide text-[#8A9695]">
                         Expected Price
                       </span>
-                      <span className="font-bold text-green-800">
+
+                      <span className="mt-1 block font-mono text-xs font-bold text-[#285C3A]">
                         ₹{lot.expectedPrice.toLocaleString()}
                       </span>
                     </div>
                   </div>
 
-                  <div className="flex gap-2 pt-1 flex-wrap">
-                    {lot.status !== "approved" && lot.status !== "sold" && (
-                      <button
-                        disabled={updatingId === lot._id}
-                        onClick={() => handleAction(lot._id, "approved")}
-                        className="flex-1 py-2 bg-green-700 text-white text-xs font-bold rounded-xl shadow-xs active:scale-95 disabled:opacity-50"
-                      >
-                        Approve
-                      </button>
-                    )}
+                  {/* Date */}
+                  <div className="text-[10px] font-medium text-[#8A9695]">
+                    Submitted{" "}
+                    {new Date(
+                      lot.createdAt
+                    ).toLocaleDateString("en-IN", {
+                      day: "2-digit",
+                      month: "short",
+                      year: "numeric",
+                    })}
+                  </div>
 
-                    {lot.status !== "rejected" && lot.status !== "sold" && (
-                      <button
-                        disabled={updatingId === lot._id}
-                        onClick={() => handleAction(lot._id, "rejected")}
-                        className="flex-1 py-2 bg-red-600 text-white text-xs font-bold rounded-xl shadow-xs active:scale-95 disabled:opacity-50"
-                      >
-                        Reject
-                      </button>
-                    )}
+                  {/* Actions */}
+                  <div className="flex flex-wrap gap-2">
+                    {lot.status !== "approved" &&
+                      lot.status !== "sold" && (
+                        <button
+                          type="button"
+                          disabled={updatingId === lot._id}
+                          onClick={() =>
+                            handleAction(
+                              lot._id,
+                              "approved"
+                            )
+                          }
+                          className="flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-[#285C3A] py-2.5 text-xs font-bold text-white transition active:scale-[0.98] disabled:opacity-50"
+                        >
+                          <CheckCircle2 size={14} />
+                          Approve
+                        </button>
+                      )}
+
+                    {lot.status !== "rejected" &&
+                      lot.status !== "sold" && (
+                        <button
+                          type="button"
+                          disabled={updatingId === lot._id}
+                          onClick={() =>
+                            handleAction(
+                              lot._id,
+                              "rejected"
+                            )
+                          }
+                          className="flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-[#E8CCCC] bg-[#FAEEEE] py-2.5 text-xs font-bold text-[#A64B4B] transition active:scale-[0.98] disabled:opacity-50"
+                        >
+                          <XCircle size={14} />
+                          Reject
+                        </button>
+                      )}
 
                     {lot.status === "approved" && (
                       <button
+                        type="button"
                         disabled={updatingId === lot._id}
-                        onClick={() => handleAction(lot._id, "sold")}
-                        className="flex-1 py-2 bg-blue-600 text-white text-xs font-bold rounded-xl shadow-xs active:scale-95 disabled:opacity-50"
+                        onClick={() =>
+                          handleAction(
+                            lot._id,
+                            "sold"
+                          )
+                        }
+                        className="flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-[#477A7A] py-2.5 text-xs font-bold text-white transition active:scale-[0.98] disabled:opacity-50"
                       >
+                        <PackageCheck size={14} />
                         Mark Sold
                       </button>
                     )}

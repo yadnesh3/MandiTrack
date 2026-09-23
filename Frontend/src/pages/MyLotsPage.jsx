@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Package, RefreshCw, Plus, AlertCircle } from "lucide-react";
 import { getMyLotsApi } from "../services/api";
 import StatusBadge from "../components/StatusBadge";
 
@@ -10,6 +11,7 @@ function MyLotsPage({ onNavigateToAddProduce }) {
   const fetchLots = async () => {
     setLoading(true);
     setError("");
+
     try {
       const response = await getMyLotsApi();
       setLots(response.lots || []);
@@ -25,99 +27,216 @@ function MyLotsPage({ onNavigateToAddProduce }) {
   }, []);
 
   return (
-    <div className="space-y-6">
-      {/* Header Container Matching Panel 6 */}
-      <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-extrabold text-slate-900">
-            My Lots
-          </h2>
-          <p className="text-xs text-slate-500 font-medium">
-            View all your submitted produce
-          </p>
-        </div>
+    <div className="space-y-6 bg-[#F8F7F2] pb-8 animate-fadeIn">
+      {/* =====================================================
+          HEADER
+      ====================================================== */}
 
-        <button
-          onClick={fetchLots}
-          className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs transition-colors border border-slate-200"
-        >
-          🔄 Refresh
-        </button>
+      <div className="rounded-xl border border-[#DCE3DB] bg-white p-5 shadow-sm sm:p-6">
+        <div className="flex items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[#EAF2E9] text-[#285C3A]">
+              <Package size={19} />
+            </div>
+
+            <div>
+              <h2 className="text-xl font-bold tracking-tight text-[#19343A] sm:text-2xl">
+                My Lots
+              </h2>
+
+              <p className="mt-0.5 text-xs font-medium text-[#687779]">
+                View all your submitted produce
+              </p>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            onClick={fetchLots}
+            disabled={loading}
+            className="inline-flex shrink-0 items-center gap-2 rounded-lg border border-[#DCE3DB] bg-[#F8F7F2] px-3.5 py-2 text-xs font-semibold text-[#285C3A] transition hover:border-[#B9C8BC] hover:bg-[#EAF2E9] disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            <RefreshCw
+              size={14}
+              className={loading ? "animate-spin" : ""}
+            />
+            <span className="hidden sm:inline">Refresh</span>
+          </button>
+        </div>
       </div>
 
-      {/* Table Card Container Matching Panel 6 */}
-      <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+      {/* =====================================================
+          TABLE / STATES
+      ====================================================== */}
+
+      <div className="overflow-hidden rounded-xl border border-[#DCE3DB] bg-white shadow-sm">
         {loading ? (
-          <div className="p-12 text-center text-slate-500 text-sm">
-            Loading your produce lots...
+          <div className="flex min-h-[280px] flex-col items-center justify-center p-8 text-center">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#EAF2E9]">
+              <RefreshCw
+                size={18}
+                className="animate-spin text-[#285C3A]"
+              />
+            </div>
+
+            <p className="mt-4 text-sm font-semibold text-[#19343A]">
+              Loading your produce lots...
+            </p>
+
+            <p className="mt-1 text-xs text-[#8A9695]">
+              Please wait while we fetch your submissions.
+            </p>
           </div>
         ) : error ? (
-          <div className="p-8 text-center text-red-600 text-sm bg-red-50">
-            ⚠️ {error}
+          <div className="flex min-h-[260px] flex-col items-center justify-center bg-[#FAEEEE] p-8 text-center">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-[#A64B4B]">
+              <AlertCircle size={19} />
+            </div>
+
+            <h3 className="mt-4 text-sm font-bold text-[#A64B4B]">
+              Unable to load lots
+            </h3>
+
+            <p className="mt-1 max-w-md text-xs font-medium text-[#A64B4B]/80">
+              {error}
+            </p>
+
+            <button
+              type="button"
+              onClick={fetchLots}
+              className="mt-4 inline-flex items-center gap-2 rounded-lg bg-[#285C3A] px-4 py-2 text-xs font-bold text-white transition hover:bg-[#214D31]"
+            >
+              <RefreshCw size={13} />
+              Try Again
+            </button>
           </div>
         ) : lots.length === 0 ? (
-          <div className="p-12 text-center max-w-sm mx-auto space-y-3">
-            <div className="w-12 h-12 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center text-2xl mx-auto">
-              🌾
+          <div className="mx-auto flex min-h-[320px] max-w-md flex-col items-center justify-center p-8 text-center">
+            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-[#EAF2E9] text-[#285C3A]">
+              <Package size={24} />
             </div>
-            <h3 className="font-bold text-slate-800 text-base">No produce lots found</h3>
-            <p className="text-xs text-slate-500">
-              You haven't submitted any produce lot yet. Click below to submit your crop!
+
+            <h3 className="mt-4 text-base font-bold text-[#19343A]">
+              No produce lots found
+            </h3>
+
+            <p className="mt-1.5 text-xs leading-5 text-[#687779]">
+              You haven't submitted any produce lot yet. Click below
+              to submit your crop.
             </p>
+
             {onNavigateToAddProduce && (
               <button
+                type="button"
                 onClick={onNavigateToAddProduce}
-                className="mt-2 px-4 py-2 bg-green-700 text-white rounded-xl text-xs font-bold hover:bg-green-800 transition-colors shadow-xs"
+                className="mt-5 inline-flex items-center gap-2 rounded-lg bg-[#285C3A] px-4 py-2.5 text-xs font-bold text-white shadow-sm transition hover:bg-[#214D31] active:scale-[0.98]"
               >
-                + Add New Produce
+                <Plus size={15} />
+                Add New Produce
               </button>
             )}
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm border-collapse">
+            <table className="w-full min-w-[900px] border-collapse text-left text-sm">
               <thead>
-                <tr className="bg-slate-100/70 border-b border-slate-200 text-xs font-bold text-slate-600">
-                  <th className="py-4 px-6 w-12">#</th>
-                  <th className="py-4 px-4 font-extrabold">Crop</th>
-                  <th className="py-4 px-4 font-extrabold">Quantity</th>
-                  <th className="py-4 px-4 font-extrabold">Unit</th>
-                  <th className="py-4 px-4 font-extrabold">Mandi</th>
-                  <th className="py-4 px-4 font-extrabold">Expected Price</th>
-                  <th className="py-4 px-4 font-extrabold">Status</th>
-                  <th className="py-4 px-6 font-extrabold text-right">Date</th>
+                <tr className="border-b border-[#DCE3DB] bg-[#F8F7F2] text-[10px] font-bold uppercase tracking-[0.08em] text-[#687779]">
+                  <th className="w-12 px-6 py-3.5">
+                    #
+                  </th>
+
+                  <th className="px-4 py-3.5">
+                    Crop
+                  </th>
+
+                  <th className="px-4 py-3.5">
+                    Quantity
+                  </th>
+
+                  <th className="px-4 py-3.5">
+                    Unit
+                  </th>
+
+                  <th className="px-4 py-3.5">
+                    Mandi
+                  </th>
+
+                  <th className="px-4 py-3.5">
+                    Expected Price
+                  </th>
+
+                  <th className="px-4 py-3.5">
+                    Status
+                  </th>
+
+                  <th className="px-6 py-3.5 text-right">
+                    Date
+                  </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+
+              <tbody className="divide-y divide-[#E5E9E3]">
                 {lots.map((lot, index) => (
-                  <tr key={lot._id} className="hover:bg-slate-50/80 transition-colors">
-                    <td className="py-4 px-6 font-semibold text-slate-400 text-xs">
+                  <tr
+                    key={lot._id}
+                    className="transition-colors hover:bg-[#F8F7F2]"
+                  >
+                    {/* Number */}
+                    <td className="px-6 py-4 text-xs font-semibold text-[#9AA5A4]">
                       {index + 1}
                     </td>
-                    <td className="py-4 px-4 font-bold text-slate-900">
-                      {lot.crop}
+
+                    {/* Crop */}
+                    <td className="px-4 py-4">
+                      <span className="font-bold text-[#19343A]">
+                        {lot.crop}
+                      </span>
                     </td>
-                    <td className="py-4 px-4 font-semibold text-slate-800">
-                      {lot.quantity}
+
+                    {/* Quantity */}
+                    <td className="px-4 py-4">
+                      <span className="font-semibold text-[#19343A]">
+                        {lot.quantity}
+                      </span>
                     </td>
-                    <td className="py-4 px-4 text-slate-600 font-medium">
-                      {lot.unit}
+
+                    {/* Unit */}
+                    <td className="px-4 py-4">
+                      <span className="text-xs font-medium text-[#687779]">
+                        {lot.unit}
+                      </span>
                     </td>
-                    <td className="py-4 px-4 font-medium text-slate-800">
-                      {lot.mandi}
+
+                    {/* Mandi */}
+                    <td className="px-4 py-4">
+                      <span className="text-xs font-semibold text-[#19343A]">
+                        {lot.mandi}
+                      </span>
                     </td>
-                    <td className="py-4 px-4 font-extrabold text-green-800">
-                      ₹{lot.expectedPrice.toLocaleString()}
+
+                    {/* Expected Price */}
+                    <td className="px-4 py-4">
+                      <span className="font-mono text-xs font-bold text-[#285C3A]">
+                        ₹{lot.expectedPrice.toLocaleString()}
+                      </span>
                     </td>
-                    <td className="py-4 px-4">
+
+                    {/* Status */}
+                    <td className="px-4 py-4">
                       <StatusBadge status={lot.status} />
                     </td>
-                    <td className="py-4 px-6 text-right text-xs font-semibold text-slate-500">
-                      {new Date(lot.createdAt).toLocaleDateString("en-IN", {
-                        day: "2-digit",
-                        month: "short",
-                        year: "numeric",
-                      })}
+
+                    {/* Date */}
+                    <td className="px-6 py-4 text-right">
+                      <span className="text-xs font-medium text-[#687779]">
+                        {new Date(
+                          lot.createdAt
+                        ).toLocaleDateString("en-IN", {
+                          day: "2-digit",
+                          month: "short",
+                          year: "numeric",
+                        })}
+                      </span>
                     </td>
                   </tr>
                 ))}
@@ -126,6 +245,23 @@ function MyLotsPage({ onNavigateToAddProduce }) {
           </div>
         )}
       </div>
+
+      {/* =====================================================
+          TABLE FOOTER
+      ====================================================== */}
+
+      {!loading && !error && lots.length > 0 && (
+        <div className="flex items-center justify-between px-1 text-[10px] font-medium text-[#8A9695]">
+          <span>
+            Showing {lots.length}{" "}
+            {lots.length === 1 ? "lot" : "lots"}
+          </span>
+
+          <span>
+            MandiTrack Produce Records
+          </span>
+        </div>
+      )}
     </div>
   );
 }

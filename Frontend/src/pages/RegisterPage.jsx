@@ -14,6 +14,7 @@ import {
   Sprout,
   Globe2,
   CheckCircle2,
+  ChevronDown,
 } from "lucide-react";
 
 const MOBILE_PATTERN = /^[6-9]\d{9}$/;
@@ -113,35 +114,39 @@ export default function RegisterPage({
           HEADER
       ====================================================== */}
 
-      <header className="border-b border-[#E1E4DE] bg-[#F8F7F2]">
-        <div className="mx-auto flex h-[76px] max-w-[1280px] items-center justify-between px-5 sm:px-8">
+      <header className="border-b border-[#DCE3DB] bg-white">
+        <div className="mx-auto flex h-[72px] max-w-[1200px] items-center justify-between px-5 sm:px-8">
           {/* Logo */}
-
           <button
             type="button"
             onClick={onNavigateToHome}
-            className="flex items-center gap-2"
+            className="flex items-center gap-2.5"
           >
             <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#285C3A]">
               <Sprout
-                size={21}
+                size={20}
                 strokeWidth={1.8}
                 className="text-white"
               />
             </div>
 
-            <span className="text-[25px] font-semibold tracking-[-0.7px]">
-              <span className="text-[#285C3A]">Mandi</span>
-              <span className="text-[#B58A35]">Track</span>
-            </span>
+            <div className="text-left leading-tight">
+              <div className="text-[22px] font-bold tracking-[-0.6px]">
+                <span className="text-[#285C3A]">Mandi</span>
+                <span className="text-[#B58A35]">Track</span>
+              </div>
+
+              <div className="text-[9px] font-medium text-[#8A9695]">
+                Apala Mandi Saathi
+              </div>
+            </div>
           </button>
 
           {/* Language */}
-
           <button
             type="button"
             onClick={() => setLang(lang === "en" ? "mr" : "en")}
-            className="flex items-center gap-2 rounded-lg border border-[#D5DAD4] bg-white px-3.5 py-2 text-xs font-semibold text-[#596769] transition hover:border-[#285C3A] hover:text-[#285C3A]"
+            className="inline-flex items-center gap-2 rounded-lg border border-[#DCE3DB] bg-[#F8F7F2] px-3.5 py-2 text-xs font-semibold text-[#596769] transition hover:border-[#285C3A] hover:text-[#285C3A]"
           >
             <Globe2 size={15} />
 
@@ -154,27 +159,27 @@ export default function RegisterPage({
           MAIN
       ====================================================== */}
 
-      <main className="flex min-h-[calc(100vh-76px)] items-center justify-center px-5 py-10 sm:px-8">
+      <main className="flex min-h-[calc(100vh-72px)] items-center justify-center px-5 py-8 sm:px-8 sm:py-10">
         <div className="grid w-full max-w-[1000px] overflow-hidden rounded-2xl border border-[#DCE3DB] bg-white shadow-[0_12px_40px_rgba(39,72,52,0.08)] lg:grid-cols-[0.85fr_1.15fr]">
-
           {/* =================================================
               LEFT INFORMATION PANEL
           ================================================= */}
 
-          <div className="hidden bg-[#285C3A] p-10 text-white lg:flex lg:flex-col lg:justify-between">
+          <div className="hidden bg-[#214D31] p-9 text-white lg:flex lg:flex-col lg:justify-between xl:p-10">
             <div>
               <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-white/10">
                 <Sprout
                   size={21}
                   strokeWidth={1.8}
+                  className="text-[#EAF2E9]"
                 />
               </div>
 
-              <p className="mt-7 text-xs font-semibold uppercase tracking-[1.8px] text-[#D9E8D9]">
+              <p className="mt-7 text-[10px] font-bold uppercase tracking-[0.18em] text-[#D9E8D9]">
                 MandiTrack
               </p>
 
-              <h2 className="mt-3 text-3xl font-semibold leading-tight tracking-[-0.8px]">
+              <h2 className="mt-3 text-3xl font-bold leading-tight tracking-[-0.8px]">
                 {isMarathi
                   ? "तुमच्या मंडी प्रवासाची सुरुवात करा."
                   : "Start your mandi journey."}
@@ -187,6 +192,7 @@ export default function RegisterPage({
               </p>
             </div>
 
+            {/* Benefits */}
             <div className="mt-12 space-y-4">
               <RegisterBenefit
                 text={
@@ -212,6 +218,9 @@ export default function RegisterPage({
                 }
               />
             </div>
+
+            {/* Bottom accent */}
+            <div className="mt-10 h-1 w-12 rounded-full bg-[#B58A35]" />
           </div>
 
           {/* =================================================
@@ -219,19 +228,17 @@ export default function RegisterPage({
           ================================================= */}
 
           <div className="p-6 sm:p-9 lg:p-10">
-
             {/* Heading */}
-
             <div>
-              <div className="inline-flex items-center gap-2 rounded-full border border-[#D8E1D8] bg-[#EEF3EC] px-3 py-1.5 text-[11px] font-semibold text-[#386044]">
-                <span className="h-1.5 w-1.5 rounded-full bg-[#4C8658]" />
+              <div className="inline-flex items-center gap-2 rounded-full border border-[#CFE2D4] bg-[#EAF2E9] px-3 py-1.5 text-[10px] font-bold text-[#285C3A]">
+                <span className="h-1.5 w-1.5 rounded-full bg-[#285C3A]" />
 
                 {isMarathi
                   ? "शेतकरी नोंदणी"
                   : "Farmer registration"}
               </div>
 
-              <h1 className="mt-5 text-3xl font-semibold tracking-[-1px] text-[#19343A]">
+              <h1 className="mt-5 text-2xl font-bold tracking-tight text-[#19343A] sm:text-3xl">
                 {isMarathi
                   ? "तुमचे खाते तयार करा"
                   : "Create your account"}
@@ -248,7 +255,7 @@ export default function RegisterPage({
                 OFFICER NOTICE
             ================================================= */}
 
-            <div className="mt-6 flex items-start gap-3 rounded-xl border border-[#E4D8B9] bg-[#F8F3E5] p-3.5">
+            <div className="mt-6 flex items-start gap-3 rounded-xl border border-[#E8DDBF] bg-[#F5EFDE] p-3.5">
               <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#B58A35]/10">
                 <ShieldCheck
                   size={15}
@@ -257,7 +264,7 @@ export default function RegisterPage({
               </div>
 
               <div>
-                <p className="text-xs font-semibold text-[#72571F]">
+                <p className="text-xs font-bold text-[#72571F]">
                   {isMarathi
                     ? "अधिकारी नोंदणीबद्दल सूचना"
                     : "Officer registration notice"}
@@ -276,7 +283,7 @@ export default function RegisterPage({
             ================================================= */}
 
             {error && (
-              <div className="mt-5 flex items-start gap-3 rounded-xl border border-[#EBCBC7] bg-[#FFF5F3] p-3.5 text-xs font-medium text-[#9B3C32]">
+              <div className="mt-5 flex items-start gap-3 rounded-xl border border-[#E8CCCC] bg-[#FAEEEE] p-3.5 text-xs font-medium text-[#A64B4B]">
                 <AlertCircle
                   size={16}
                   className="mt-0.5 shrink-0"
@@ -295,14 +302,11 @@ export default function RegisterPage({
               className="mt-6 space-y-4"
             >
               {/* Full Name */}
-
               <div>
                 <label className="mb-2 block text-xs font-semibold text-[#465557]">
-                  {isMarathi
-                    ? "पूर्ण नाव"
-                    : "Full Name"}
+                  {isMarathi ? "पूर्ण नाव" : "Full Name"}
 
-                  <span className="ml-1 text-[#B44D42]">
+                  <span className="ml-1 text-[#A64B4B]">
                     *
                   </span>
                 </label>
@@ -322,21 +326,20 @@ export default function RegisterPage({
                         ? "उदा. रमेश पाटील"
                         : "e.g. Ramesh Patil"
                     }
-                    className="w-full rounded-lg border border-[#D6DED7] bg-[#FAFBF9] py-3 pl-10 pr-4 text-sm text-[#19343A] outline-none transition placeholder:text-[#9AA4A3] focus:border-[#285C3A] focus:bg-white focus:ring-2 focus:ring-[#285C3A]/10"
+                    className="w-full rounded-lg border border-[#DCE3DB] bg-[#FAFBF9] py-3 pl-10 pr-4 text-sm text-[#19343A] outline-none transition placeholder:text-[#9AA4A3] focus:border-[#285C3A] focus:bg-white focus:ring-2 focus:ring-[#285C3A]/10"
                     required
                   />
                 </div>
               </div>
 
               {/* Mobile */}
-
               <div>
                 <label className="mb-2 block text-xs font-semibold text-[#465557]">
                   {isMarathi
                     ? "10 अंकी मोबाईल नंबर"
                     : "10-Digit Mobile Number"}
 
-                  <span className="ml-1 text-[#B44D42]">
+                  <span className="ml-1 text-[#A64B4B]">
                     *
                   </span>
                 </label>
@@ -354,21 +357,18 @@ export default function RegisterPage({
                     placeholder="9876543210"
                     maxLength={10}
                     inputMode="numeric"
-                    className="w-full rounded-lg border border-[#D6DED7] bg-[#FAFBF9] py-3 pl-10 pr-4 text-sm text-[#19343A] outline-none transition placeholder:text-[#9AA4A3] focus:border-[#285C3A] focus:bg-white focus:ring-2 focus:ring-[#285C3A]/10"
+                    className="w-full rounded-lg border border-[#DCE3DB] bg-[#FAFBF9] py-3 pl-10 pr-4 text-sm text-[#19343A] outline-none transition placeholder:text-[#9AA4A3] focus:border-[#285C3A] focus:bg-white focus:ring-2 focus:ring-[#285C3A]/10"
                     required
                   />
                 </div>
               </div>
 
               {/* Password */}
-
               <div>
                 <label className="mb-2 block text-xs font-semibold text-[#465557]">
-                  {isMarathi
-                    ? "पासवर्ड"
-                    : "Password"}
+                  {isMarathi ? "पासवर्ड" : "Password"}
 
-                  <span className="ml-1 text-[#B44D42]">
+                  <span className="ml-1 text-[#A64B4B]">
                     *
                   </span>
                 </label>
@@ -388,7 +388,7 @@ export default function RegisterPage({
                         ? "किमान 6 अक्षरे"
                         : "Minimum 6 characters"
                     }
-                    className="w-full rounded-lg border border-[#D6DED7] bg-[#FAFBF9] py-3 pl-10 pr-4 text-sm text-[#19343A] outline-none transition placeholder:text-[#9AA4A3] focus:border-[#285C3A] focus:bg-white focus:ring-2 focus:ring-[#285C3A]/10"
+                    className="w-full rounded-lg border border-[#DCE3DB] bg-[#FAFBF9] py-3 pl-10 pr-4 text-sm text-[#19343A] outline-none transition placeholder:text-[#9AA4A3] focus:border-[#285C3A] focus:bg-white focus:ring-2 focus:ring-[#285C3A]/10"
                     required
                   />
                 </div>
@@ -401,14 +401,13 @@ export default function RegisterPage({
               </div>
 
               {/* Mandi */}
-
               <div>
                 <label className="mb-2 block text-xs font-semibold text-[#465557]">
                   {isMarathi
                     ? "प्राथमिक APMC बाजार"
                     : "Primary APMC Market"}
 
-                  <span className="ml-1 text-[#B44D42]">
+                  <span className="ml-1 text-[#A64B4B]">
                     *
                   </span>
                 </label>
@@ -422,7 +421,7 @@ export default function RegisterPage({
                   <select
                     value={mandi}
                     onChange={(e) => setMandi(e.target.value)}
-                    className="w-full appearance-none rounded-lg border border-[#D6DED7] bg-[#FAFBF9] py-3 pl-10 pr-10 text-sm font-medium text-[#19343A] outline-none transition focus:border-[#285C3A] focus:bg-white focus:ring-2 focus:ring-[#285C3A]/10"
+                    className="w-full appearance-none rounded-lg border border-[#DCE3DB] bg-[#FAFBF9] py-3 pl-10 pr-10 text-sm font-medium text-[#19343A] outline-none transition focus:border-[#285C3A] focus:bg-white focus:ring-2 focus:ring-[#285C3A]/10"
                     required
                   >
                     {MANDI_LIST.map((m) => (
@@ -432,35 +431,26 @@ export default function RegisterPage({
                     ))}
                   </select>
 
-                  <div className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-[#8A9695]">
-                    <svg
-                      width="14"
-                      height="14"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                    >
-                      <path d="m6 9 6 6 6-6" />
-                    </svg>
-                  </div>
+                  <ChevronDown
+                    size={15}
+                    className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-[#8A9695]"
+                  />
                 </div>
               </div>
 
               {/* Submit */}
-
               <button
                 type="submit"
                 disabled={loading}
-                className="group mt-2 flex w-full items-center justify-center gap-2 rounded-lg bg-[#285C3A] py-3.5 text-sm font-semibold text-white transition hover:bg-[#214D31] active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60"
+                className="group mt-2 flex w-full items-center justify-center gap-2 rounded-lg bg-[#285C3A] py-3.5 text-sm font-bold text-white transition hover:bg-[#214D31] active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {loading
                   ? isMarathi
                     ? "नोंदणी सुरू आहे..."
                     : "Registering..."
                   : isMarathi
-                    ? "शेतकरी खाते तयार करा"
-                    : "Create Farmer Account"}
+                  ? "शेतकरी खाते तयार करा"
+                  : "Create Farmer Account"}
 
                 {!loading && (
                   <ArrowRight
@@ -487,16 +477,13 @@ export default function RegisterPage({
                 onClick={onNavigateToLogin}
                 className="mt-1 text-xs font-semibold text-[#285C3A] transition hover:text-[#214D31] hover:underline"
               >
-                {isMarathi
-                  ? "लॉगिन करा"
-                  : "Sign in here"}
+                {isMarathi ? "लॉगिन करा" : "Sign in here"}
 
                 <span className="ml-1">→</span>
               </button>
             </div>
 
-            {/* Security note */}
-
+            {/* Security Note */}
             <div className="mt-6 flex items-center justify-center gap-2 text-[10px] text-[#899493]">
               <ShieldCheck size={13} />
 

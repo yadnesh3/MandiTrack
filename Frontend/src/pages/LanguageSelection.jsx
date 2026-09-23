@@ -1,5 +1,10 @@
 import React, { useState } from "react";
-import { ArrowRight, Globe2, Check } from "lucide-react";
+import {
+  ArrowRight,
+  Globe2,
+  Check,
+  Languages,
+} from "lucide-react";
 
 function LanguageSelection({ currentLang = "en" }) {
   const [selectedLanguage, setSelectedLanguage] = useState(
@@ -14,153 +19,184 @@ function LanguageSelection({ currentLang = "en" }) {
     // Save selected language
     localStorage.setItem("manditrack_language", language);
 
-    // Reload application.
-    // App.jsx will read manditrack_language and open
-    // the landing page automatically.
+    // Reload application
     window.location.reload();
   };
 
   return (
-    <div className="min-h-screen bg-[#F4EFDF] text-[#16283A] flex flex-col">
+    <div className="min-h-screen bg-[#F8F7F2] text-[#19343A] flex flex-col">
+      {/* =====================================================
+          HEADER
+      ====================================================== */}
 
-      {/* Header */}
-      <header className="bg-[#0E2A3F] text-white">
-        <div className="max-w-[1200px] mx-auto px-6 py-5 flex items-center justify-between">
+      <header className="border-b border-[#DCE3DB] bg-[#214D31] text-white">
+        <div className="mx-auto flex max-w-[1200px] items-center justify-between px-5 py-4 sm:px-6">
+          {/* Logo */}
+          <div className="flex items-center gap-3">
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/10">
+              <span className="text-lg font-bold text-[#B58A35]">
+                M
+              </span>
+            </div>
 
-          <div>
-            <h1 className="text-2xl font-bold">
-              MandiTrack
-            </h1>
+            <div>
+              <h1 className="text-lg font-bold tracking-tight sm:text-xl">
+                Mandi<span className="text-[#B58A35]">Track</span>
+              </h1>
 
-            <p className="text-xs text-white/55 mt-1">
-              Apala Mandi Saathi
-            </p>
+              <p className="mt-0.5 text-[10px] font-medium text-white/65">
+                Apala Mandi Saathi
+              </p>
+            </div>
           </div>
 
-          <div className="flex items-center gap-2 text-sm text-white/70">
-            <Globe2 size={18} />
+          {/* Language indicator */}
+          <div className="flex items-center gap-2 rounded-lg border border-white/15 bg-white/5 px-3 py-2 text-xs font-medium text-white/80">
+            <Globe2 size={15} />
             <span>Language</span>
           </div>
-
         </div>
       </header>
 
-      {/* Main */}
-      <main className="flex-1 flex items-center justify-center px-5 py-12">
+      {/* =====================================================
+          MAIN
+      ====================================================== */}
 
+      <main className="flex flex-1 items-center justify-center px-5 py-12 sm:py-16">
         <div className="w-full max-w-[760px]">
-
+          {/* Heading */}
           <div className="text-center">
+            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl border border-[#DCE3DB] bg-white text-[#285C3A] shadow-sm">
+              <Languages size={22} />
+            </div>
 
-            <p className="text-xs uppercase tracking-[0.18em] font-semibold text-[#7B806D]">
+            <p className="mt-5 text-[10px] font-bold uppercase tracking-[0.16em] text-[#B58A35]">
               MandiTrack
             </p>
 
-            <h2 className="mt-3 text-4xl sm:text-5xl font-bold text-[#0A2131]">
+            <h2 className="mt-2 text-3xl font-bold tracking-tight text-[#19343A] sm:text-4xl">
               Choose your language
             </h2>
 
-            <p className="mt-3 text-base text-[#5B6B78]">
+            <p className="mt-2 text-sm font-medium text-[#687779]">
               आपली भाषा निवडा
             </p>
-
           </div>
 
-          {/* Language cards */}
-          <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-5">
+          {/* =====================================================
+              LANGUAGE CARDS
+          ====================================================== */}
 
+          <div className="mt-9 grid grid-cols-1 gap-4 md:grid-cols-2">
             {/* English */}
             <button
               type="button"
               onClick={() => setSelectedLanguage("en")}
-              className={`relative text-left bg-white rounded-2xl border-2 p-7 sm:p-8 transition-all ${
+              className={`relative rounded-xl border bg-white p-6 text-left transition-all sm:p-7 ${
                 selectedLanguage === "en"
-                  ? "border-[#0E2A3F] shadow-lg"
-                  : "border-[#DED7C7] hover:border-[#9C998F]"
+                  ? "border-[#285C3A] shadow-md ring-1 ring-[#285C3A]/10"
+                  : "border-[#DCE3DB] shadow-sm hover:border-[#B9C8BC] hover:shadow-md"
               }`}
             >
               {selectedLanguage === "en" && (
-                <div className="absolute top-5 right-5 w-7 h-7 rounded-full bg-[#0E2A3F] text-white flex items-center justify-center">
+                <div className="absolute right-5 top-5 flex h-7 w-7 items-center justify-center rounded-full bg-[#285C3A] text-white">
                   <Check size={15} strokeWidth={3} />
                 </div>
               )}
 
-              <div className="w-14 h-14 rounded-xl bg-[#EEF3F6] flex items-center justify-center">
-                <span className="text-lg font-bold text-[#0E2A3F]">
+              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-[#EAF2E9]">
+                <span className="text-sm font-bold text-[#285C3A]">
                   EN
                 </span>
               </div>
 
-              <h3 className="mt-6 text-2xl font-bold text-[#0E2A3F]">
+              <h3 className="mt-5 text-xl font-bold text-[#19343A]">
                 English
               </h3>
 
-              <p className="mt-2 text-sm text-[#687887]">
+              <p className="mt-1.5 max-w-xs text-xs leading-5 text-[#687779]">
                 Continue using MandiTrack in English.
               </p>
+
+              <div
+                className={`mt-5 h-1 w-10 rounded-full transition-all ${
+                  selectedLanguage === "en"
+                    ? "bg-[#B58A35]"
+                    : "bg-[#E1E4DE]"
+                }`}
+              />
             </button>
 
             {/* Marathi */}
             <button
               type="button"
               onClick={() => setSelectedLanguage("mr")}
-              className={`relative text-left bg-white rounded-2xl border-2 p-7 sm:p-8 transition-all ${
+              className={`relative rounded-xl border bg-white p-6 text-left transition-all sm:p-7 ${
                 selectedLanguage === "mr"
-                  ? "border-[#0E2A3F] shadow-lg"
-                  : "border-[#DED7C7] hover:border-[#9C998F]"
+                  ? "border-[#285C3A] shadow-md ring-1 ring-[#285C3A]/10"
+                  : "border-[#DCE3DB] shadow-sm hover:border-[#B9C8BC] hover:shadow-md"
               }`}
             >
               {selectedLanguage === "mr" && (
-                <div className="absolute top-5 right-5 w-7 h-7 rounded-full bg-[#0E2A3F] text-white flex items-center justify-center">
+                <div className="absolute right-5 top-5 flex h-7 w-7 items-center justify-center rounded-full bg-[#285C3A] text-white">
                   <Check size={15} strokeWidth={3} />
                 </div>
               )}
 
-              <div className="w-14 h-14 rounded-xl bg-[#F6EDDB] flex items-center justify-center">
-                <span className="text-xl font-bold text-[#0E2A3F]">
+              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-[#F5EFDE]">
+                <span className="text-lg font-bold text-[#80672C]">
                   अ
                 </span>
               </div>
 
-              <h3 className="mt-6 text-2xl font-bold text-[#0E2A3F]">
+              <h3 className="mt-5 text-xl font-bold text-[#19343A]">
                 मराठी
               </h3>
 
-              <p className="mt-2 text-sm text-[#687887]">
+              <p className="mt-1.5 max-w-xs text-xs leading-5 text-[#687779]">
                 MandiTrack मराठीमध्ये वापरा.
               </p>
-            </button>
 
+              <div
+                className={`mt-5 h-1 w-10 rounded-full transition-all ${
+                  selectedLanguage === "mr"
+                    ? "bg-[#B58A35]"
+                    : "bg-[#E1E4DE]"
+                }`}
+              />
+            </button>
           </div>
 
-          {/* Continue */}
-          <div className="mt-8 flex justify-center">
+          {/* =====================================================
+              CONTINUE
+          ====================================================== */}
 
+          <div className="mt-7 flex justify-center">
             <button
               type="button"
               onClick={handleContinue}
-              className="w-full sm:w-[260px] bg-[#0E2A3F] hover:bg-[#092235] text-white font-semibold py-4 px-8 rounded-xl flex items-center justify-center gap-3 transition cursor-pointer"
+              className="flex w-full items-center justify-center gap-2 rounded-lg bg-[#285C3A] px-8 py-3.5 text-sm font-bold text-white shadow-sm transition hover:bg-[#214D31] active:scale-[0.99] sm:w-[260px]"
             >
               Continue
-              <ArrowRight size={18} />
+              <ArrowRight size={17} />
             </button>
-
           </div>
 
-          <p className="mt-5 text-center text-xs text-[#7B8792]">
+          <p className="mt-4 text-center text-[10px] font-medium text-[#8A9695]">
             You can change your language later from the application.
           </p>
-
         </div>
       </main>
 
-      {/* Footer */}
-      <footer className="bg-[#0A2131] text-white/60 py-5">
-        <div className="max-w-[1200px] mx-auto px-6 text-center text-xs">
+      {/* =====================================================
+          FOOTER
+      ====================================================== */}
+
+      <footer className="border-t border-[#DCE3DB] bg-white">
+        <div className="mx-auto max-w-[1200px] px-5 py-4 text-center text-[10px] font-medium text-[#8A9695] sm:px-6">
           MandiTrack — Apala Mandi Saathi
         </div>
       </footer>
-
     </div>
   );
 }

@@ -116,19 +116,19 @@ export default function FarmerDashboard({
         <div className="lg:col-span-7 space-y-6">
           {/* Active Token Card */}
           {activeLot ? (
-            <div className="bg-white rounded-3xl p-6 border border-slate-200/90 shadow-xs space-y-5">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
+            <div className="bg-white rounded-xl p-6 border border-[#DCE3DB] shadow-sm space-y-5">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#E7EBE5] pb-4">
                 <div>
-                  <span className="px-3 py-1 rounded-full text-xs font-black bg-amber-50 text-[#EA8F0B] border border-amber-200">
+                  <span className="px-3 py-1 rounded-full text-xs font-bold bg-[#F5EFDE] text-[#B58A35] border border-[#E8DDBF]">
                     Current Active Token
                   </span>
-                  <div className="text-2xl font-black text-slate-900 mt-2 flex items-center gap-2">
+                  <div className="text-2xl font-bold text-[#19343A] mt-2 flex items-center gap-2">
                     <span>Token:</span>
-                    <span className="text-[#EA8F0B]">
+                    <span className="text-[#B58A35]">
                       {activeLot.tokenNumber || "TK-101"}
                     </span>
                   </div>
-                  <div className="text-xs text-slate-500 font-semibold mt-0.5 font-mono">
+                  <div className="text-xs text-[#687779] font-semibold mt-0.5 font-mono">
                     Lot ID: {activeLot.lotId}
                   </div>
                 </div>
@@ -136,7 +136,7 @@ export default function FarmerDashboard({
                 {onNavigateToTab && (
                   <button
                     onClick={() => onNavigateToTab("lot-tracking")}
-                    className="px-4 py-2 rounded-xl bg-[#EA8F0B] hover:bg-[#d47f06] text-white font-extrabold text-xs shadow-xs transition flex items-center justify-center gap-1.5 active:scale-95 shrink-0"
+                    className="px-4 py-2 rounded-xl bg-[#285C3A] hover:bg-[#214D31] text-white font-semibold text-xs shadow-sm transition flex items-center justify-center gap-1.5 active:scale-95 shrink-0"
                   >
                     <span>Full Live Journey</span>
                     <ArrowRight size={13} />
@@ -145,26 +145,26 @@ export default function FarmerDashboard({
               </div>
 
               {/* Crop & Mandi details */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-slate-50 p-4 rounded-2xl border border-slate-200/80">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-[#F8F7F2] p-4 rounded-xl border border-[#E1E4DE]">
                 <div>
-                  <div className="text-[10px] font-bold text-slate-400 uppercase">Crop</div>
-                  <div className="text-sm font-black text-slate-900 mt-0.5">{activeLot.crop}</div>
+                  <div className="text-[10px] font-bold text-[#8A9695] uppercase">Crop</div>
+                  <div className="text-sm font-bold text-[#19343A] mt-0.5">{activeLot.crop}</div>
                 </div>
                 <div>
-                  <div className="text-[10px] font-bold text-slate-400 uppercase">Quantity</div>
-                  <div className="text-sm font-black text-slate-900 mt-0.5">
+                  <div className="text-[10px] font-bold text-[#8A9695] uppercase">Quantity</div>
+                  <div className="text-sm font-bold text-[#19343A] mt-0.5">
                     {activeLot.quantity} {activeLot.unit}
                   </div>
                 </div>
                 <div>
-                  <div className="text-[10px] font-bold text-slate-400 uppercase">Target Mandi</div>
-                  <div className="text-sm font-bold text-slate-700 mt-0.5 truncate">
+                  <div className="text-[10px] font-bold text-[#8A9695] uppercase">Target Mandi</div>
+                  <div className="text-sm font-bold text-[#19343A] mt-0.5 truncate">
                     {activeLot.mandi}
                   </div>
                 </div>
                 <div>
-                  <div className="text-[10px] font-bold text-slate-400 uppercase">Est. Wait</div>
-                  <div className="text-sm font-black text-rose-600 mt-0.5">
+                  <div className="text-[10px] font-bold text-[#8A9695] uppercase">Est. Wait</div>
+                  <div className="text-sm font-bold text-[#A64B4B] mt-0.5">
                     ~{activeLot.estimatedWaitMinutes || 25} min
                   </div>
                 </div>
@@ -180,20 +180,20 @@ export default function FarmerDashboard({
             </div>
           ) : (
             /* Empty State if no active lot */
-            <div className="bg-white rounded-3xl p-8 border border-slate-200 text-center space-y-4 shadow-xs">
-              <div className="w-14 h-14 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto">
+            <div className="bg-white rounded-xl p-8 border border-[#DCE3DB] text-center space-y-4 shadow-sm">
+              <div className="w-14 h-14 rounded-full bg-[#EAF2E9] text-[#285C3A] flex items-center justify-center mx-auto">
                 <PlusCircle size={32} />
               </div>
-              <h2 className="text-base font-black text-slate-900">
+              <h2 className="text-base font-bold text-[#19343A]">
                 No Active Lot in Queue
               </h2>
-              <p className="text-xs text-slate-500 max-w-sm mx-auto font-medium">
+              <p className="text-xs text-[#687779] max-w-sm mx-auto font-medium">
                 Bringing produce to the mandi today? Register your harvest now to reserve your queue token.
               </p>
               {onNavigateToTab && (
                 <button
                   onClick={() => onNavigateToTab("add-produce")}
-                  className="px-6 py-2.5 rounded-xl bg-[#EA8F0B] hover:bg-[#d47f06] text-white font-extrabold text-xs shadow-xs transition active:scale-95"
+                  className="px-6 py-2.5 rounded-xl bg-[#285C3A] hover:bg-[#214D31] text-white font-semibold text-xs shadow-sm transition active:scale-95"
                 >
                   Add Produce Now
                 </button>
@@ -202,20 +202,20 @@ export default function FarmerDashboard({
           )}
 
           {/* Today's Mandi Prices Preview Card */}
-          <div className="bg-white rounded-3xl p-6 border border-slate-200/90 shadow-xs space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+          <div className="bg-white rounded-xl p-6 border border-[#DCE3DB] shadow-sm space-y-4">
+            <div className="flex items-center justify-between border-b border-[#E7EBE5] pb-3">
               <div>
-                <h2 className="text-base font-extrabold text-slate-900 tracking-tight">
+                <h2 className="text-base font-semibold text-[#19343A] tracking-tight">
                   Today's APMC Mandi Rates
                 </h2>
-                <p className="text-[11px] font-semibold text-slate-400">
+                <p className="text-[11px] font-semibold text-[#8A9695]">
                   Live Agmarknet prices for top commodities
                 </p>
               </div>
               {onNavigateToTab && (
                 <button
                   onClick={() => onNavigateToTab("mandi-prices")}
-                  className="text-xs font-bold text-emerald-700 hover:text-emerald-800"
+                  className="text-xs font-bold text-[#285C3A] hover:text-[#214D31]"
                 >
                   View All Prices &rarr;
                 </button>
@@ -229,10 +229,10 @@ export default function FarmerDashboard({
                 { crop: "Soybean (सोयाबीन)", modal: "₹4,280", trend: "Stable", mandi: "Pune APMC" },
                 { crop: "Wheat (गहू)", modal: "₹2,650", trend: "+2%", mandi: "Pune APMC" },
               ].map((rate, i) => (
-                <div key={i} className="p-3 rounded-2xl bg-slate-50 border border-slate-200/80">
-                  <div className="text-xs font-black text-slate-900 truncate">{rate.crop}</div>
-                  <div className="text-base font-black text-emerald-700 mt-1">{rate.modal}</div>
-                  <div className="text-[10px] text-slate-400 font-semibold mt-0.5">{rate.mandi}</div>
+                <div key={i} className="p-3 rounded-xl bg-[#F8F7F2] border border-[#E1E4DE]">
+                  <div className="text-xs font-bold text-[#19343A] truncate">{rate.crop}</div>
+                  <div className="text-base font-bold text-[#285C3A] mt-1">{rate.modal}</div>
+                  <div className="text-[10px] text-[#8A9695] font-semibold mt-0.5">{rate.mandi}</div>
                 </div>
               ))}
             </div>
@@ -250,12 +250,12 @@ export default function FarmerDashboard({
           <AskMandiTrackCard onOpenFullVoiceModal={onOpenVoiceModal} />
 
           {/* Quick Actions Helper Card */}
-          <div className="bg-gradient-to-br from-[#0C192C] to-[#122b4d] text-white rounded-3xl p-6 shadow-sm border border-slate-800 space-y-4">
+          <div className="bg-[#214D31] text-white rounded-xl p-6 shadow-sm border border-[#285C3A] space-y-4">
             <div className="flex items-center gap-2">
               <span className="text-xl">🚜</span>
-              <h3 className="text-sm font-extrabold">Farmer Quick Services</h3>
+              <h3 className="text-sm font-semibold">Farmer Quick Services</h3>
             </div>
-            <p className="text-xs text-slate-300 font-medium leading-relaxed">
+            <p className="text-xs text-[#D9E7DC] font-medium leading-relaxed">
               Need to add harvest produce, view weighing certificates, or check your bank settlement status?
             </p>
             <div className="grid grid-cols-2 gap-2 pt-1">
@@ -267,7 +267,7 @@ export default function FarmerDashboard({
               </button>
               <button
                 onClick={() => onNavigateToTab && onNavigateToTab("my-lots")}
-                className="p-2.5 rounded-xl bg-[#EA8F0B] hover:bg-[#d47f06] text-xs font-extrabold text-[#0C192C] transition text-center shadow-xs"
+                className="p-2.5 rounded-xl bg-[#B58A35] hover:bg-[#9F782D] text-xs font-semibold text-white transition text-center shadow-sm"
               >
                 📦 View All Lots
               </button>

@@ -13,14 +13,55 @@ import {
 } from "lucide-react";
 
 export const MANDI_STAGES_CONFIG = [
-  { id: "Gate Entry", label: "Gate Entry", icon: CheckCircle2, desc: "Vehicle entry & token verification" },
-  { id: "Queue", label: "Queue", icon: Clock, desc: "Lots waiting in vehicle queue for unloading" },
-  { id: "Quality Check", label: "Quality Check", icon: FileCheck, desc: "Assaying and quality grade certification (Grade A/B/C)" },
-  { id: "Trading", label: "Trading", icon: Gavel, desc: "Open auction & dynamic bidding among licensed buyers" },
-  { id: "Weighing", label: "Weighing", icon: Scale, desc: "Electronic weighing bridge slip & tare deduction" },
-  { id: "Settlement", label: "Settlement", icon: Receipt, desc: "Bill calculation, commission & mandi cess billing" },
-  { id: "Payment", label: "Payment", icon: CreditCard, desc: "Direct Bank / UPI transfer to farmer account" },
-  { id: "Exit", label: "Exit", labelAlt: "Gate Pass", icon: LogOut, desc: "Gate pass generation and produce clearance" },
+  {
+    id: "Gate Entry",
+    label: "Gate Entry",
+    icon: CheckCircle2,
+    desc: "Vehicle entry & token verification",
+  },
+  {
+    id: "Queue",
+    label: "Queue",
+    icon: Clock,
+    desc: "Lots waiting in vehicle queue for unloading",
+  },
+  {
+    id: "Quality Check",
+    label: "Quality Check",
+    icon: FileCheck,
+    desc: "Assaying and quality grade certification (Grade A/B/C)",
+  },
+  {
+    id: "Trading",
+    label: "Trading",
+    icon: Gavel,
+    desc: "Open auction & dynamic bidding among licensed buyers",
+  },
+  {
+    id: "Weighing",
+    label: "Weighing",
+    icon: Scale,
+    desc: "Electronic weighing bridge slip & tare deduction",
+  },
+  {
+    id: "Settlement",
+    label: "Settlement",
+    icon: Receipt,
+    desc: "Bill calculation, commission & mandi cess billing",
+  },
+  {
+    id: "Payment",
+    label: "Payment",
+    icon: CreditCard,
+    desc: "Direct Bank / UPI transfer to farmer account",
+  },
+  {
+    id: "Exit",
+    label: "Exit",
+    labelAlt: "Gate Pass",
+    icon: LogOut,
+    desc: "Gate pass generation and produce clearance",
+  },
 ];
 
 export default function ProcessFlowCard({
@@ -35,45 +76,49 @@ export default function ProcessFlowCard({
   const activeIndex = MANDI_STAGES_CONFIG.findIndex(
     (s) => s.id.toLowerCase() === currentStage.toLowerCase()
   );
-  const resolvedIndex = activeIndex !== -1 ? activeIndex : currentStageIndex;
+
+  const resolvedIndex =
+    activeIndex !== -1 ? activeIndex : currentStageIndex;
 
   const currentStageObj =
     MANDI_STAGES_CONFIG[resolvedIndex] || MANDI_STAGES_CONFIG[1];
 
   return (
     <div
-      className={`bg-white rounded-2xl p-5 sm:p-6 border border-slate-200/80 shadow-xs ${className}`}
+      className={`bg-white rounded-xl p-5 sm:p-6 border border-[#DCE3DB] shadow-sm ${className}`}
     >
       {/* Header */}
       <div className="flex items-center justify-between mb-5">
-        <div className="flex items-center gap-2">
-          <h2 className="text-base font-extrabold text-slate-900 tracking-tight">
+        <div className="flex items-center gap-2.5">
+          <h2 className="text-base font-bold text-[#19343A] tracking-tight">
             Mandi Process Flow
           </h2>
-          <span className="text-[11px] font-bold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">
+
+          <span className="text-[10px] font-semibold text-[#285C3A] bg-[#EAF2E9] border border-[#D5E4D5] px-2 py-1 rounded-full">
             8 Checkpoints
           </span>
         </div>
+
         {onViewAll && (
           <button
             onClick={onViewAll}
-            className="text-xs font-bold text-emerald-700 hover:text-emerald-800 transition-colors"
+            className="flex items-center gap-1.5 text-xs font-semibold text-[#285C3A] hover:text-[#214D31] transition-colors"
           >
-            View All &rarr;
+            View All
+            <span>→</span>
           </button>
         )}
       </div>
 
-      {/* Horizontal Node Stepper matching reference */}
+      {/* Horizontal Stepper */}
       <div className="overflow-x-auto pb-2 pt-1">
         <div className="min-w-[620px] flex items-center justify-between relative px-2">
           {/* Background Connecting Line */}
-          <div className="absolute left-6 right-6 top-4.5 h-[2px] bg-slate-200 -z-0" />
+          <div className="absolute left-6 right-6 top-[18px] h-[2px] bg-[#E1E4DE] z-0" />
 
           {MANDI_STAGES_CONFIG.map((stage, idx) => {
             const isCompleted = idx < resolvedIndex;
             const isCurrent = idx === resolvedIndex;
-            const isUpcoming = idx > resolvedIndex;
 
             const Icon = stage.icon;
 
@@ -83,14 +128,14 @@ export default function ProcessFlowCard({
                 className="relative z-10 flex flex-col items-center group cursor-pointer"
                 title={`${stage.label}: ${stage.desc}`}
               >
-                {/* Node Circle */}
+                {/* Node */}
                 <div
-                  className={`w-9 h-9 rounded-full flex items-center justify-center transition-all shadow-xs ${
+                  className={`w-9 h-9 rounded-full flex items-center justify-center transition-all ${
                     isCompleted
-                      ? "bg-emerald-600 text-white ring-4 ring-emerald-100"
+                      ? "bg-[#285C3A] text-white ring-4 ring-[#EAF2E9]"
                       : isCurrent
-                      ? "bg-[#EA8F0B] text-white ring-4 ring-amber-100 scale-105"
-                      : "bg-white border-2 border-slate-300 text-slate-400 group-hover:border-slate-400"
+                      ? "bg-[#B58A35] text-white ring-4 ring-[#F5EFDE] scale-105"
+                      : "bg-white border-2 border-[#CBD5CF] text-[#8A9695] group-hover:border-[#285C3A] group-hover:text-[#285C3A]"
                   }`}
                 >
                   {isCompleted ? (
@@ -100,14 +145,14 @@ export default function ProcessFlowCard({
                   )}
                 </div>
 
-                {/* Node Label */}
+                {/* Label */}
                 <span
-                  className={`text-[11px] font-bold mt-2 text-center whitespace-nowrap ${
+                  className={`text-[10px] sm:text-[11px] font-semibold mt-2 text-center whitespace-nowrap ${
                     isCompleted
-                      ? "text-emerald-800"
+                      ? "text-[#285C3A]"
                       : isCurrent
-                      ? "text-[#EA8F0B]"
-                      : "text-slate-500"
+                      ? "text-[#B58A35]"
+                      : "text-[#687779]"
                   }`}
                 >
                   {stage.label}
@@ -118,17 +163,19 @@ export default function ProcessFlowCard({
         </div>
       </div>
 
-      {/* Current Stage Callout Box matching reference */}
-      <div className="mt-4 p-3.5 rounded-xl bg-[#FDF6ED] border border-[#F6DCBA] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      {/* Current Stage Callout */}
+      <div className="mt-4 p-3.5 rounded-xl bg-[#F5EFDE] border border-[#E8DDBF] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-[#EA8F0B]/15 text-[#EA8F0B] flex items-center justify-center shrink-0">
-            <Users size={18} />
+          <div className="w-9 h-9 rounded-lg bg-white text-[#B58A35] border border-[#E8DDBF] flex items-center justify-center shrink-0">
+            <Users size={17} strokeWidth={2} />
           </div>
+
           <div>
-            <div className="text-xs font-black text-[#925400]">
+            <div className="text-xs font-bold text-[#6F531D]">
               Current Stage: {currentStageObj.label}
             </div>
-            <div className="text-[11px] text-[#A36605] font-medium">
+
+            <div className="text-[11px] text-[#80672C] font-medium mt-0.5">
               {currentStageObj.desc}
             </div>
           </div>
@@ -137,9 +184,9 @@ export default function ProcessFlowCard({
         {isOfficer && onAdvanceClick && (
           <button
             onClick={onAdvanceClick}
-            className="shrink-0 px-3.5 py-1.5 bg-[#EA8F0B] hover:bg-[#d47f06] text-white font-bold text-xs rounded-lg shadow-xs transition active:scale-95"
+            className="shrink-0 px-3.5 py-2 bg-[#285C3A] hover:bg-[#214D31] text-white font-semibold text-xs rounded-lg shadow-sm transition active:scale-95"
           >
-            Advance Checkpoint &rarr;
+            Advance Checkpoint →
           </button>
         )}
       </div>

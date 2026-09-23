@@ -10,53 +10,101 @@ function Sidebar({ activeTab, onSelectTab, onLogout, user }) {
   ];
 
   return (
-    <aside className="w-64 bg-[#064e3b] text-white min-h-screen flex flex-col shadow-xl shrink-0">
-      {/* Brand Header */}
-      <div className="p-6 flex items-center gap-3 border-b border-green-800/60">
-        <div className="w-9 h-9 bg-emerald-500 rounded-xl flex items-center justify-center text-white text-xl font-extrabold shadow-sm">
-          🌱
-        </div>
-        <span className="text-2xl font-extrabold tracking-tight text-white">
-          MandiTrack
-        </span>
-      </div>
+    <aside className="flex min-h-screen w-64 shrink-0 flex-col bg-[#214D31] text-white shadow-lg">
+      {/* =====================================================
+          BRAND
+      ====================================================== */}
+      <div className="border-b border-white/10 px-5 py-5">
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 text-xl shadow-sm">
+            🌱
+          </div>
 
-      {/* Nav List */}
-      <nav className="flex-1 px-4 py-6 space-y-2">
-        {navItems.map((item) => {
-          const isActive = activeTab === item.id;
-          return (
-            <button
-              key={item.id}
-              onClick={() => onSelectTab(item.id)}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-semibold text-sm transition-all text-left ${
-                isActive
-                  ? "bg-white text-[#064e3b] shadow-md font-bold"
-                  : "text-emerald-100/90 hover:bg-emerald-800/50 hover:text-white"
-              }`}
-            >
-              <span className="text-base">{item.icon}</span>
-              <span>{item.label}</span>
-            </button>
-          );
-        })}
-      </nav>
+          <div className="leading-tight">
+            <div className="text-xl font-bold tracking-tight text-white">
+              Mandi<span className="text-[#B8CFAE]">Track</span>
+            </div>
 
-      {/* User Info & Logout at Bottom */}
-      <div className="p-4 border-t border-green-800/60 space-y-3">
-        {user && (
-          <div className="px-3 py-2 bg-emerald-900/40 rounded-xl text-xs">
-            <div className="font-bold text-white truncate">{user.name}</div>
-            <div className="text-emerald-300 capitalize font-medium">
-              {user.role === "farmer" ? "Farmer" : "Market Officer"}
+            <div className="mt-0.5 text-[10px] font-medium tracking-wide text-[#C9DCC2]">
+              Apala Mandi Saathi
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* =====================================================
+          NAVIGATION
+      ====================================================== */}
+      <nav className="flex-1 px-3 py-5">
+        <p className="mb-3 px-3 text-[10px] font-semibold uppercase tracking-[0.16em] text-[#B8C9B3]">
+          Main Menu
+        </p>
+
+        <div className="space-y-1.5">
+          {navItems.map((item) => {
+            const isActive = activeTab === item.id;
+
+            return (
+              <button
+                key={item.id}
+                type="button"
+                onClick={() => onSelectTab(item.id)}
+                className={`group flex w-full items-center gap-3 rounded-lg px-3.5 py-3 text-left text-sm transition-all ${
+                  isActive
+                    ? "bg-[#B58A35] font-semibold text-white shadow-sm"
+                    : "font-medium text-[#D9E5D5] hover:bg-white/10 hover:text-white"
+                }`}
+              >
+                <span
+                  className={`flex h-8 w-8 items-center justify-center rounded-lg text-sm transition ${
+                    isActive
+                      ? "bg-white/15"
+                      : "bg-white/5 group-hover:bg-white/10"
+                  }`}
+                >
+                  {item.icon}
+                </span>
+
+                <span>{item.label}</span>
+              </button>
+            );
+          })}
+        </div>
+      </nav>
+
+      {/* =====================================================
+          USER / LOGOUT
+      ====================================================== */}
+      <div className="border-t border-white/10 p-3">
+        {user && (
+          <div className="mb-3 rounded-lg border border-white/10 bg-white/5 px-3 py-3">
+            <div className="truncate text-sm font-semibold text-white">
+              {user.name}
+            </div>
+
+            <div className="mt-1 text-[11px] font-medium text-[#C9DCC2]">
+              {user.role === "farmer"
+                ? "Farmer"
+                : "Market Officer"}
+            </div>
+
+            {user.mandi && (
+              <div className="mt-2 truncate text-[10px] text-[#AFC3A9]">
+                {user.mandi}
+              </div>
+            )}
+          </div>
         )}
+
         <button
+          type="button"
           onClick={onLogout}
-          className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl font-semibold text-sm text-emerald-200 hover:bg-red-900/40 hover:text-red-200 transition-colors text-left"
+          className="flex w-full items-center gap-3 rounded-lg px-3.5 py-3 text-left text-sm font-medium text-[#D9E5D5] transition hover:bg-[#8F4141]/30 hover:text-white"
         >
-          <span className="text-base">🚪</span>
+          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/5 text-sm">
+            🚪
+          </span>
+
           <span>Logout</span>
         </button>
       </div>

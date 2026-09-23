@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { getTranslation, getUnitLabel } from "../utils/translations";
 
 const STORAGE_KEY = "manditrack_lang";
@@ -21,6 +27,7 @@ export function LanguageProvider({ children }) {
 
   const setLang = (next) => {
     if (!SUPPORTED.includes(next)) return;
+
     setLangState(next);
 
     try {
@@ -30,39 +37,48 @@ export function LanguageProvider({ children }) {
     }
   };
 
-  // Keep the document in sync so screen readers announce the right language.
+  // Keep the document language in sync for accessibility and screen readers.
   useEffect(() => {
-    document.documentElement.lang = lang === "mr" ? "mr-IN" : "en-IN";
+    document.documentElement.lang =
+      lang === "mr" ? "mr-IN" : "en-IN";
   }, [lang]);
 
   const value = useMemo(
     () => ({
       lang,
+
       setLang,
-      toggleLang: () => setLang(lang === "en" ? "mr" : "en"),
+
+      toggleLang: () => {
+        setLang(lang === "en" ? "mr" : "en");
+      },
+
       t: (key) => getTranslation(lang, key),
+
       // Lots store their unit in English; this is display only.
       tUnit: (unit) => getUnitLabel(lang, unit),
-      // Locale for dates and numbers; both of our languages are Indian.
-      // Marathi asks for Latin digits (-nu-latn) on purpose: it keeps Marathi
-      // month names but writes ₹2,400 rather than ₹२,४००, which is how money
-      // is written on mandi boards — and it stops one page from mixing digit
-      // systems with plain counts rendered straight from JavaScript numbers.
-      locale: lang === "mr" ? "mr-IN-u-nu-latn" : "en-IN",
+
+      // Marathi keeps Latin digits intentionally.
+      locale:
+        lang === "mr"
+          ? "mr-IN-u-nu-latn"
+          : "en-IN",
     }),
     [lang]
   );
 
   return (
-    <LanguageContext.Provider value={value}>{children}</LanguageContext.Provider>
+    <LanguageContext.Provider value={value}>
+      {children}
+    </LanguageContext.Provider>
   );
 }
 
 /**
  * Reads the active language.
  *
- * Falls back to English rather than throwing when used outside the provider,
- * so a component rendered in isolation still shows readable text.
+ * Falls back to English rather than throwing when used outside
+ * the provider, so isolated components remain readable.
  */
 export function useLang() {
   const context = useContext(LanguageContext);

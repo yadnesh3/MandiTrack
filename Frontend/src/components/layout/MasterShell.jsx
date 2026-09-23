@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import MandiTrackLogo from "../MandiTrackLogo";
-import SidebarChalkArt from "../common/SidebarChalkArt";
 import BottomBanner from "../common/BottomBanner";
 import { useLang } from "../../context/LanguageContext";
+
 import {
   Home,
   Clock,
@@ -46,18 +46,27 @@ export default function MasterShell({
   children,
 }) {
   const { lang, setLang } = useLang();
+
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
-  const [selectedMandi, setSelectedMandi] = useState(user?.mandi || "Pune APMC");
+
+  const [selectedMandi, setSelectedMandi] = useState(
+    user?.mandi || "Pune APMC"
+  );
+
   const [mandiDropdownOpen, setMandiDropdownOpen] = useState(false);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
 
-  // Live formatted date & time clock matching reference "Tue, 12 Aug 2025 | 10:15 AM"
+  // ============================================================
+  // LIVE CLOCK
+  // ============================================================
+
   const [currentTimeStr, setCurrentTimeStr] = useState("");
 
   useEffect(() => {
     const updateTime = () => {
       const now = new Date();
+
       const options = {
         weekday: "short",
         day: "numeric",
@@ -67,76 +76,224 @@ export default function MasterShell({
         minute: "2-digit",
         hour12: true,
       };
+
       const formatted = now.toLocaleString("en-GB", options);
-      // Transform into "Tue, 12 Aug 2025 | 10:15 AM" format
+
       const parts = formatted.split(", ");
+
       if (parts.length >= 2) {
-        const datePart = parts[0] + ", " + parts[1].replace(/,/g, "");
+        const datePart =
+          parts[0] + ", " + parts[1].replace(/,/g, "");
+
         const timePart = parts[2] || "";
-        setCurrentTimeStr(`${datePart} | ${timePart}`.replace("at ", ""));
+
+        setCurrentTimeStr(
+          `${datePart} | ${timePart}`.replace("at ", "")
+        );
       } else {
         setCurrentTimeStr(formatted);
       }
     };
 
     updateTime();
+
     const interval = setInterval(updateTime, 1000);
+
     return () => clearInterval(interval);
   }, []);
 
-  // Update selected mandi if user's changes
+  // ============================================================
+  // UPDATE SELECTED MANDI
+  // ============================================================
+
   useEffect(() => {
-    if (user?.mandi) setSelectedMandi(user.mandi);
+    if (user?.mandi) {
+      setSelectedMandi(user.mandi);
+    }
   }, [user?.mandi]);
 
-  // Define navigation items based on user role
+  // ============================================================
+  // USER ROLE
+  // ============================================================
+
   const role = user?.role || "farmer";
 
+  // ============================================================
+  // ROLE BASED NAVIGATION
+  // ============================================================
+
   const getNavItems = () => {
+    // ----------------------------------------------------------
+    // ADMIN
+    // ----------------------------------------------------------
+
     if (role === "admin") {
       return [
-        { id: "dashboard", label: "Dashboard", icon: Home },
-        { id: "manage-officers", label: "Manage Officers", icon: ShieldCheck },
-        { id: "all-lots", label: "All Lots", icon: Package },
-        { id: "mandi-prices", label: "Mandi Prices", icon: BarChart3 },
-        { id: "reports", label: "Reports", icon: FileText },
-        { id: "announcements", label: "Announcements", icon: Megaphone },
-        { id: "voice-assistant", label: "Voice Assistant", icon: Mic },
-        { id: "profile", label: "Profile", icon: User },
-        { id: "help", label: "Help & Support", icon: HelpCircle },
+        {
+          id: "dashboard",
+          label: "Dashboard",
+          icon: Home,
+        },
+        {
+          id: "manage-officers",
+          label: "Manage Officers",
+          icon: ShieldCheck,
+        },
+        {
+          id: "all-lots",
+          label: "All Lots",
+          icon: Package,
+        },
+        {
+          id: "mandi-prices",
+          label: "Mandi Prices",
+          icon: BarChart3,
+        },
+        {
+          id: "reports",
+          label: "Reports",
+          icon: FileText,
+        },
+        {
+          id: "announcements",
+          label: "Announcements",
+          icon: Megaphone,
+        },
+        {
+          id: "voice-assistant",
+          label: "Voice Assistant",
+          icon: Mic,
+        },
+        {
+          id: "profile",
+          label: "Profile",
+          icon: User,
+        },
+        {
+          id: "help",
+          label: "Help & Support",
+          icon: HelpCircle,
+        },
       ];
     }
+
+    // ----------------------------------------------------------
+    // OFFICER
+    // ----------------------------------------------------------
 
     if (role === "officer") {
       return [
-        { id: "dashboard", label: "Dashboard", icon: Home },
-        { id: "waiting-queue", label: "Waiting Queue", icon: Clock },
-        { id: "process-lot", label: "Process Lot", icon: Settings },
-        { id: "all-lots", label: "All Lots", icon: Package },
-        { id: "mandi-prices", label: "Mandi Prices", icon: BarChart3 },
-        { id: "reports", label: "Reports", icon: FileText },
-        { id: "announcements", label: "Announcements", icon: Megaphone },
-        { id: "voice-assistant", label: "Voice Assistant", icon: Mic },
-        { id: "profile", label: "Profile", icon: User },
-        { id: "help", label: "Help & Support", icon: HelpCircle },
+        {
+          id: "dashboard",
+          label: "Dashboard",
+          icon: Home,
+        },
+        {
+          id: "waiting-queue",
+          label: "Waiting Queue",
+          icon: Clock,
+        },
+        {
+          id: "process-lot",
+          label: "Process Lot",
+          icon: Settings,
+        },
+        {
+          id: "all-lots",
+          label: "All Lots",
+          icon: Package,
+        },
+        {
+          id: "mandi-prices",
+          label: "Mandi Prices",
+          icon: BarChart3,
+        },
+        {
+          id: "reports",
+          label: "Reports",
+          icon: FileText,
+        },
+        {
+          id: "announcements",
+          label: "Announcements",
+          icon: Megaphone,
+        },
+        {
+          id: "voice-assistant",
+          label: "Voice Assistant",
+          icon: Mic,
+        },
+        {
+          id: "profile",
+          label: "Profile",
+          icon: User,
+        },
+        {
+          id: "help",
+          label: "Help & Support",
+          icon: HelpCircle,
+        },
       ];
     }
 
-    // Default: Farmer
+    // ----------------------------------------------------------
+    // FARMER
+    // ----------------------------------------------------------
+
     return [
-      { id: "dashboard", label: "Dashboard", icon: Home },
-      { id: "add-produce", label: "Add Produce", icon: PlusCircle },
-      { id: "my-lots", label: "My Lots", icon: Package },
-      { id: "lot-tracking", label: "Lot Tracking", icon: Clock },
-      { id: "mandi-prices", label: "Mandi Prices", icon: BarChart3 },
-      { id: "announcements", label: "Announcements", icon: Megaphone },
-      { id: "voice-assistant", label: "Voice Assistant", icon: Mic },
-      { id: "profile", label: "Profile", icon: User },
-      { id: "help", label: "Help & Support", icon: HelpCircle },
+      {
+        id: "dashboard",
+        label: "Dashboard",
+        icon: Home,
+      },
+      {
+        id: "add-produce",
+        label: "Add Produce",
+        icon: PlusCircle,
+      },
+      {
+        id: "my-lots",
+        label: "My Lots",
+        icon: Package,
+      },
+      {
+        id: "lot-tracking",
+        label: "Lot Tracking",
+        icon: Clock,
+      },
+      {
+        id: "mandi-prices",
+        label: "Mandi Prices",
+        icon: BarChart3,
+      },
+      {
+        id: "announcements",
+        label: "Announcements",
+        icon: Megaphone,
+      },
+      {
+        id: "voice-assistant",
+        label: "Voice Assistant",
+        icon: Mic,
+      },
+      {
+        id: "profile",
+        label: "Profile",
+        icon: User,
+      },
+      {
+        id: "help",
+        label: "Help & Support",
+        icon: HelpCircle,
+      },
     ];
   };
 
   const navItems = getNavItems();
+
+  // ============================================================
+  // NAVIGATION HANDLER
+  // ============================================================
 
   const handleNavClick = (id) => {
     if (id === "voice-assistant" && onOpenVoiceHelp) {
@@ -144,8 +301,13 @@ export default function MasterShell({
     } else if (onSelectTab) {
       onSelectTab(id);
     }
+
     setMobileSidebarOpen(false);
   };
+
+  // ============================================================
+  // USER INITIALS
+  // ============================================================
 
   const initials = user?.name
     ? user.name
@@ -156,6 +318,10 @@ export default function MasterShell({
         .toUpperCase()
     : "MT";
 
+  // ============================================================
+  // ROLE LABEL
+  // ============================================================
+
   const roleLabel =
     role === "officer"
       ? `Officer (${selectedMandi})`
@@ -164,19 +330,33 @@ export default function MasterShell({
       : `Farmer (${selectedMandi})`;
 
   return (
-    <div className="min-h-screen bg-[#F4F6F8] flex flex-col font-sans text-slate-900 antialiased selection:bg-amber-200">
+    <div className="min-h-screen bg-[#F8F7F2] flex flex-col font-sans text-[#19343A] antialiased selection:bg-[#F5EFDE]">
       <div className="flex flex-1 relative">
-        {/* =========================================================
-            LEFT SIDEBAR (DESKTOP & TABLET)
-        ========================================================= */}
-        <aside className="hidden lg:flex w-64 xl:w-70 bg-[#0C192C] text-white flex-col justify-between shrink-0 shadow-xl border-r border-slate-800/80 sticky top-0 h-screen z-30 overflow-y-auto">
-          {/* Top Brand Logo */}
-          <div className="p-6 pb-4 border-b border-slate-800/80">
-            <MandiTrackLogo variant="light" subtitle="Apala Mandi Saathi" size="md" />
+
+        {/* ======================================================
+            DESKTOP SIDEBAR
+        ====================================================== */}
+
+        <aside className="hidden lg:flex w-64 xl:w-70 bg-white text-[#19343A] flex-col shrink-0 shadow-[2px_0_12px_rgba(25,52,58,0.05)] border-r border-[#DCE3DB] sticky top-0 h-screen z-30 overflow-y-auto">
+
+          {/* BRAND */}
+
+          <div className="px-6 pt-6 pb-5 border-b border-[#E7EBE5]">
+            <MandiTrackLogo
+              variant="dark"
+              subtitle=""
+              size="md"
+            />
           </div>
 
-          {/* Navigation List matching reference */}
-          <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
+          {/* NAVIGATION */}
+
+          <nav className="flex-1 px-3.5 py-5 space-y-1.5 overflow-y-auto">
+
+            <div className="px-3 pb-2 text-[10px] font-bold uppercase tracking-[0.12em] text-[#8A9695]">
+              Main Menu
+            </div>
+
             {navItems.map((item) => {
               const isActive = activeTab === item.id;
               const Icon = item.icon;
@@ -185,83 +365,140 @@ export default function MasterShell({
                 <button
                   key={item.id}
                   onClick={() => handleNavClick(item.id)}
-                  className={`w-full flex items-center gap-3.5 px-4 py-2.5 rounded-xl font-bold text-xs sm:text-[13px] transition-all text-left group ${
+                  className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-lg font-semibold text-xs sm:text-[13px] transition-all text-left group border ${
                     isActive
-                      ? "bg-[#EA8F0B] text-[#0C192C] shadow-md font-extrabold"
-                      : "text-slate-300 hover:bg-white/10 hover:text-white"
+                      ? "bg-[#F5EFDE] border-[#E8DDBF] text-[#214D31] shadow-sm"
+                      : "border-transparent text-[#526765] hover:bg-[#F8F7F2] hover:text-[#285C3A]"
                   }`}
                 >
-                  <Icon
-                    size={18}
-                    className={`shrink-0 transition-transform group-hover:scale-110 ${
-                      isActive ? "text-[#0C192C] fill-current" : "text-slate-300"
+                  <span
+                    className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-all ${
+                      isActive
+                        ? "bg-[#B58A35] text-white"
+                        : "bg-[#EEF3EC] text-[#477A7A] group-hover:bg-[#EAF2E9] group-hover:text-[#285C3A]"
                     }`}
-                  />
-                  <span className="truncate">{item.label}</span>
+                  >
+                    <Icon
+                      size={17}
+                      strokeWidth={isActive ? 2.4 : 2}
+                    />
+                  </span>
+
+                  <span className="truncate flex-1">
+                    {item.label}
+                  </span>
+
+                  {isActive && (
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#B58A35] shrink-0" />
+                  )}
                 </button>
               );
             })}
           </nav>
 
-          {/* Lower Section: Chalk Art + Govt of Maharashtra Footer */}
-          <div className="border-t border-slate-800/80 pt-2 pb-4 space-y-3">
-            <SidebarChalkArt />
+          {/* CLEAN SIDEBAR FOOTER */}
 
-            <div className="px-5 pt-2 flex items-center gap-2 border-t border-slate-800/60 text-[10px] text-slate-400">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              <span>MandiTrack &bull; Govt. of Maharashtra Initiative</span>
+          <div className="border-t border-[#E7EBE5] px-5 py-4">
+            <div className="flex items-center gap-2 text-[10px] text-[#7B8987]">
+              <span className="w-2 h-2 rounded-full bg-[#6D9B76]" />
+
+              <span>
+                MandiTrack &bull; Govt. of Maharashtra Initiative
+              </span>
             </div>
           </div>
         </aside>
 
-        {/* =========================================================
-            MOBILE SIDEBAR DRAWER (OVERLAY)
-        ========================================================= */}
+        {/* ======================================================
+            MOBILE SIDEBAR
+        ====================================================== */}
+
         {mobileSidebarOpen && (
           <div className="fixed inset-0 z-50 lg:hidden flex">
-            {/* Backdrop */}
+
+            {/* BACKDROP */}
+
             <div
-              className="fixed inset-0 bg-slate-950/70 backdrop-blur-xs transition-opacity"
+              className="fixed inset-0 bg-[#19343A]/55 backdrop-blur-sm transition-opacity"
               onClick={() => setMobileSidebarOpen(false)}
             />
 
-            {/* Sidebar drawer panel */}
-            <aside className="relative w-72 bg-[#0C192C] text-white flex flex-col justify-between h-full shadow-2xl z-10 overflow-y-auto">
-              <div className="p-5 flex items-center justify-between border-b border-slate-800">
-                <MandiTrackLogo variant="light" subtitle="Apala Mandi Saathi" size="sm" />
+            {/* DRAWER */}
+
+            <aside className="relative w-72 bg-white text-[#19343A] flex flex-col h-full shadow-2xl z-10 overflow-y-auto">
+
+              {/* MOBILE HEADER */}
+
+              <div className="px-5 py-5 flex items-center justify-between border-b border-[#E7EBE5]">
+
+                <MandiTrackLogo
+                  variant="dark"
+                  subtitle=""
+                  size="sm"
+                />
+
                 <button
                   onClick={() => setMobileSidebarOpen(false)}
-                  className="w-8 h-8 rounded-lg bg-slate-800 text-slate-300 hover:text-white flex items-center justify-center"
+                  className="w-8 h-8 rounded-lg bg-[#F8F7F2] border border-[#DCE3DB] text-[#526765] hover:bg-[#EEF3EC] hover:text-[#285C3A] flex items-center justify-center transition"
+                  aria-label="Close Menu"
                 >
                   <X size={18} />
                 </button>
               </div>
 
-              <nav className="flex-1 px-3 py-4 space-y-1">
+              {/* MOBILE NAVIGATION */}
+
+              <nav className="flex-1 px-3.5 py-5 space-y-1.5">
+
+                <div className="px-3 pb-2 text-[10px] font-bold uppercase tracking-[0.12em] text-[#8A9695]">
+                  Main Menu
+                </div>
+
                 {navItems.map((item) => {
                   const isActive = activeTab === item.id;
                   const Icon = item.icon;
+
                   return (
                     <button
                       key={item.id}
                       onClick={() => handleNavClick(item.id)}
-                      className={`w-full flex items-center gap-3.5 px-4 py-2.5 rounded-xl font-bold text-xs transition-all text-left ${
+                      className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-lg font-semibold text-xs transition-all text-left border ${
                         isActive
-                          ? "bg-[#EA8F0B] text-[#0C192C] shadow-md font-extrabold"
-                          : "text-slate-300 hover:bg-white/10 hover:text-white"
+                          ? "bg-[#F5EFDE] border-[#E8DDBF] text-[#214D31]"
+                          : "border-transparent text-[#526765] hover:bg-[#F8F7F2] hover:text-[#285C3A]"
                       }`}
                     >
-                      <Icon size={18} />
-                      <span>{item.label}</span>
+                      <span
+                        className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${
+                          isActive
+                            ? "bg-[#B58A35] text-white"
+                            : "bg-[#EEF3EC] text-[#477A7A]"
+                        }`}
+                      >
+                        <Icon
+                          size={17}
+                          strokeWidth={isActive ? 2.4 : 2}
+                        />
+                      </span>
+
+                      <span className="flex-1">
+                        {item.label}
+                      </span>
+
+                      {isActive && (
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#B58A35]" />
+                      )}
                     </button>
                   );
                 })}
               </nav>
 
-              <div className="p-4 border-t border-slate-800">
+              {/* MOBILE LOGOUT */}
+
+              <div className="p-4 border-t border-[#E7EBE5]">
                 <button
                   onClick={onLogout}
-                  className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-red-950/40 text-red-300 hover:bg-red-900/50 text-xs font-bold transition"
+                  className="w-full flex items-center justify-center gap-2 py-2.5 rounded-lg bg-[#FAEEEE] border border-[#E8CCCC] text-[#A64B4B] hover:bg-[#F7E4E4] text-xs font-semibold transition"
                 >
                   <LogOut size={16} />
                   <span>Logout</span>
@@ -271,45 +508,75 @@ export default function MasterShell({
           </div>
         )}
 
-        {/* =========================================================
-            MAIN CONTENT AREA
-        ========================================================= */}
+        {/* ======================================================
+            MAIN CONTENT
+        ====================================================== */}
+
         <div className="flex-1 flex flex-col min-w-0">
-          {/* =======================================================
-              TOP BAR MATCHING REFERENCE
-          ======================================================= */}
-          <header className="bg-white border-b border-slate-200/90 px-4 sm:px-6 py-3 sticky top-0 z-20 shadow-2xs">
+
+          {/* ====================================================
+              TOP BAR
+          ==================================================== */}
+
+          <header className="bg-white border-b border-[#DCE3DB] px-4 sm:px-6 py-3 sticky top-0 z-20 shadow-sm">
+
             <div className="max-w-[1440px] mx-auto flex items-center justify-between gap-3">
-              {/* Mobile Hamburger Button */}
+
+              {/* MOBILE BRAND */}
+
               <div className="flex items-center gap-2 lg:hidden">
+
                 <button
                   onClick={() => setMobileSidebarOpen(true)}
-                  className="p-2 rounded-xl bg-slate-100 text-slate-700 hover:bg-slate-200"
+                  className="p-2 rounded-lg bg-[#EEF3EC] text-[#285C3A] hover:bg-[#E1EBDD] transition"
                   aria-label="Open Menu"
                 >
                   <Menu size={20} />
                 </button>
-                <MandiTrackLogo variant="dark" subtitle="" size="sm" />
+
+                <MandiTrackLogo
+                  variant="dark"
+                  subtitle=""
+                  size="sm"
+                />
               </div>
 
-              {/* Mandi Location Pill Selector matching reference */}
+              {/* MANDI SELECTOR + CLOCK */}
+
               <div className="hidden sm:flex items-center gap-3">
+
                 <div className="relative">
+
                   <button
-                    onClick={() => setMandiDropdownOpen(!mandiDropdownOpen)}
-                    className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-50/70 border border-amber-200 text-slate-800 text-xs font-bold hover:bg-amber-100/70 transition shadow-2xs"
+                    onClick={() =>
+                      setMandiDropdownOpen(
+                        !mandiDropdownOpen
+                      )
+                    }
+                    className="flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-[#F5EFDE] border border-[#E8DDBF] text-[#19343A] text-xs font-semibold hover:bg-[#F1E8D2] transition"
                   >
-                    <MapPin size={14} className="text-[#EA8F0B]" />
+                    <MapPin
+                      size={14}
+                      className="text-[#B58A35]"
+                    />
+
                     <span>{selectedMandi}</span>
-                    <ChevronDown size={14} className="text-slate-400" />
+
+                    <ChevronDown
+                      size={14}
+                      className="text-[#687779]"
+                    />
                   </button>
 
-                  {/* Dropdown list */}
+                  {/* MANDI DROPDOWN */}
+
                   {mandiDropdownOpen && (
-                    <div className="absolute left-0 mt-2 w-56 bg-white border border-slate-200 rounded-2xl shadow-xl p-2 z-40 animate-fadeIn">
-                      <div className="px-3 py-1.5 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                    <div className="absolute left-0 mt-2 w-56 bg-white border border-[#DCE3DB] rounded-xl shadow-lg p-2 z-40 animate-fadeIn">
+
+                      <div className="px-3 py-1.5 text-[10px] font-bold text-[#8A9695] uppercase tracking-wider">
                         Select APMC Market
                       </div>
+
                       {MANDI_LIST.map((m) => (
                         <button
                           key={m}
@@ -317,15 +584,19 @@ export default function MasterShell({
                             setSelectedMandi(m);
                             setMandiDropdownOpen(false);
                           }}
-                          className={`w-full text-left px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center justify-between ${
+                          className={`w-full text-left px-3 py-2 rounded-lg text-xs font-semibold flex items-center justify-between transition ${
                             selectedMandi === m
-                              ? "bg-amber-50 text-amber-900 font-bold"
-                              : "text-slate-700 hover:bg-slate-50"
+                              ? "bg-[#EAF2E9] text-[#285C3A]"
+                              : "text-[#19343A] hover:bg-[#F8F7F2]"
                           }`}
                         >
                           <span>{m}</span>
+
                           {selectedMandi === m && (
-                            <CheckCircle2 size={13} className="text-[#EA8F0B]" />
+                            <CheckCircle2
+                              size={13}
+                              className="text-[#285C3A]"
+                            />
                           )}
                         </button>
                       ))}
@@ -333,145 +604,225 @@ export default function MasterShell({
                   )}
                 </div>
 
-                {/* Live Clock / Date matching reference */}
-                <div className="text-xs font-semibold text-slate-500 pl-2 border-l border-slate-200">
-                  {currentTimeStr || "Tue, 12 Aug 2025 | 10:15 AM"}
+                {/* CLOCK */}
+
+                <div className="text-xs font-medium text-[#687779] pl-3 border-l border-[#DCE3DB]">
+                  {currentTimeStr ||
+                    "Tue, 12 Aug 2025 | 10:15 AM"}
                 </div>
               </div>
 
-              {/* Right Side Controls: Language Switch, Notification, User Profile */}
-              <div className="flex items-center gap-3">
-                {/* Language Switch Pill matching reference: [EN | मराठी] */}
-                <div className="bg-slate-100 p-0.5 rounded-xl flex items-center border border-slate-200 text-xs font-bold select-none">
+              {/* RIGHT CONTROLS */}
+
+              <div className="flex items-center gap-2 sm:gap-3">
+
+                {/* LANGUAGE */}
+
+                <div className="bg-[#F8F7F2] p-0.5 rounded-lg flex items-center border border-[#DCE3DB] text-xs font-semibold select-none">
+
                   <button
                     onClick={() => setLang("en")}
-                    className={`px-2.5 py-1 rounded-lg transition-all ${
+                    className={`px-2.5 py-1 rounded-md transition-all ${
                       lang === "en"
-                        ? "bg-[#0C192C] text-white shadow-xs font-extrabold"
-                        : "text-slate-600 hover:text-slate-900"
+                        ? "bg-[#285C3A] text-white shadow-sm"
+                        : "text-[#687779] hover:text-[#19343A]"
                     }`}
                   >
                     EN
                   </button>
+
                   <button
                     onClick={() => setLang("mr")}
-                    className={`px-2.5 py-1 rounded-lg transition-all ${
+                    className={`px-2.5 py-1 rounded-md transition-all ${
                       lang === "mr"
-                        ? "bg-[#0C192C] text-white shadow-xs font-extrabold"
-                        : "text-slate-600 hover:text-slate-900"
+                        ? "bg-[#285C3A] text-white shadow-sm"
+                        : "text-[#687779] hover:text-[#19343A]"
                     }`}
                   >
                     मराठी
                   </button>
                 </div>
 
-                {/* Notification Bell with red alert dot */}
+                {/* NOTIFICATIONS */}
+
                 <div className="relative">
+
                   <button
-                    onClick={() => setNotificationsOpen(!notificationsOpen)}
-                    className="w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center transition relative"
+                    onClick={() =>
+                      setNotificationsOpen(
+                        !notificationsOpen
+                      )
+                    }
+                    className="w-9 h-9 rounded-lg bg-[#F8F7F2] border border-[#DCE3DB] hover:bg-[#EEF3EC] text-[#285C3A] flex items-center justify-center transition relative"
                     aria-label="Notifications"
                   >
                     <Bell size={17} />
-                    <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 rounded-full bg-rose-500 ring-2 ring-white" />
+
+                    <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 rounded-full bg-[#B94A48] ring-2 ring-white" />
                   </button>
 
-                  {/* Notification Popover */}
+                  {/* NOTIFICATION POPOVER */}
+
                   {notificationsOpen && (
-                    <div className="absolute right-0 mt-2 w-80 bg-white border border-slate-200 rounded-2xl shadow-xl p-4 z-40 animate-fadeIn">
-                      <div className="flex items-center justify-between border-b border-slate-100 pb-2 mb-3">
-                        <span className="font-extrabold text-xs text-slate-900">
+                    <div className="absolute right-0 mt-2 w-80 bg-white border border-[#DCE3DB] rounded-xl shadow-lg p-4 z-40 animate-fadeIn">
+
+                      <div className="flex items-center justify-between border-b border-[#E7EBE5] pb-2 mb-3">
+
+                        <span className="font-bold text-xs text-[#19343A]">
                           Mandi Notifications
                         </span>
-                        <span className="text-[10px] font-bold bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full">
+
+                        <span className="text-[10px] font-semibold bg-[#F5EFDE] text-[#80672C] px-2 py-1 rounded-full">
                           3 New
                         </span>
                       </div>
+
                       <div className="space-y-2.5 text-xs">
-                        <div className="p-2 rounded-xl bg-emerald-50 text-emerald-900">
-                          <span className="font-bold">Lot F-2846</span> moved to Weighing checkpoint.
-                          <div className="text-[10px] text-emerald-700 mt-0.5">10 min ago</div>
+
+                        <div className="p-2.5 rounded-lg bg-[#EAF2E9] text-[#214D31]">
+                          <span className="font-bold">
+                            Lot F-2846
+                          </span>{" "}
+                          moved to Weighing checkpoint.
+
+                          <div className="text-[10px] text-[#5F8068] mt-1">
+                            10 min ago
+                          </div>
                         </div>
-                        <div className="p-2 rounded-xl bg-amber-50 text-amber-900">
-                          <span className="font-bold">Gate No. 2</span> under scheduled maintenance.
-                          <div className="text-[10px] text-amber-700 mt-0.5">2 hours ago</div>
+
+                        <div className="p-2.5 rounded-lg bg-[#F5EFDE] text-[#6F531D]">
+                          <span className="font-bold">
+                            Gate No. 2
+                          </span>{" "}
+                          under scheduled maintenance.
+
+                          <div className="text-[10px] text-[#80672C] mt-1">
+                            2 hours ago
+                          </div>
                         </div>
-                        <div className="p-2 rounded-xl bg-slate-50 text-slate-800">
-                          <span className="font-bold">Daily APMC Rates</span> updated for 18 crops.
-                          <div className="text-[10px] text-slate-500 mt-0.5">Today morning</div>
+
+                        <div className="p-2.5 rounded-lg bg-[#F8F7F2] text-[#19343A]">
+                          <span className="font-bold">
+                            Daily APMC Rates
+                          </span>{" "}
+                          updated for 18 crops.
+
+                          <div className="text-[10px] text-[#687779] mt-1">
+                            Today morning
+                          </div>
                         </div>
+
                       </div>
                     </div>
                   )}
                 </div>
 
-                {/* User Profile Pill matching reference */}
+                {/* PROFILE */}
+
                 <div className="relative">
+
                   <button
-                    onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
-                    className="flex items-center gap-2.5 pl-1 pr-2 py-1 rounded-full hover:bg-slate-100 transition border border-transparent hover:border-slate-200"
+                    onClick={() =>
+                      setProfileDropdownOpen(
+                        !profileDropdownOpen
+                      )
+                    }
+                    className="flex items-center gap-2.5 pl-1 pr-2 py-1 rounded-full hover:bg-[#F8F7F2] transition border border-transparent hover:border-[#DCE3DB]"
                   >
-                    {/* Circle Avatar matching "SS" in reference */}
-                    <div className="w-8 h-8 rounded-full bg-[#0C192C] text-white flex items-center justify-center font-extrabold text-xs shrink-0 shadow-xs ring-2 ring-emerald-500/40">
+
+                    {/* AVATAR */}
+
+                    <div className="w-8 h-8 rounded-full bg-[#285C3A] text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-sm ring-2 ring-[#EAF2E9]">
                       {initials}
                     </div>
 
+                    {/* USER INFO */}
+
                     <div className="hidden md:flex flex-col text-left leading-tight">
-                      <span className="text-xs font-extrabold text-slate-900 truncate max-w-[120px]">
+
+                      <span className="text-xs font-bold text-[#19343A] truncate max-w-[120px]">
                         {user?.name || "User"}
                       </span>
-                      <span className="text-[10px] font-bold text-slate-500 truncate max-w-[130px]">
+
+                      <span className="text-[10px] font-semibold text-[#687779] truncate max-w-[130px]">
                         {roleLabel}
                       </span>
+
                     </div>
 
-                    <ChevronDown size={14} className="text-slate-400 hidden md:block" />
+                    <ChevronDown
+                      size={14}
+                      className="text-[#8A9695] hidden md:block"
+                    />
                   </button>
 
-                  {/* Profile & Logout Dropdown */}
+                  {/* PROFILE DROPDOWN */}
+
                   {profileDropdownOpen && (
-                    <div className="absolute right-0 mt-2 w-52 bg-white border border-slate-200 rounded-2xl shadow-xl p-2 z-40 animate-fadeIn">
-                      <div className="px-3 py-2 border-b border-slate-100 mb-1">
-                        <div className="text-xs font-bold text-slate-900 truncate">
+                    <div className="absolute right-0 mt-2 w-52 bg-white border border-[#DCE3DB] rounded-xl shadow-lg p-2 z-40 animate-fadeIn">
+
+                      <div className="px-3 py-2 border-b border-[#E7EBE5] mb-1">
+
+                        <div className="text-xs font-bold text-[#19343A] truncate">
                           {user?.name}
                         </div>
-                        <div className="text-[10px] font-semibold text-slate-500">
+
+                        <div className="text-[10px] font-semibold text-[#687779]">
                           {user?.mobile || user?.officerId}
                         </div>
+
                       </div>
+
+                      {/* VIEW PROFILE */}
 
                       <button
                         onClick={() => {
                           handleNavClick("profile");
                           setProfileDropdownOpen(false);
                         }}
-                        className="w-full text-left px-3 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-50 flex items-center gap-2"
+                        className="w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-[#19343A] hover:bg-[#F8F7F2] flex items-center gap-2 transition"
                       >
-                        <User size={14} />
+                        <User
+                          size={14}
+                          className="text-[#285C3A]"
+                        />
+
                         <span>View Profile</span>
                       </button>
+
+                      {/* HELP */}
 
                       <button
                         onClick={() => {
                           handleNavClick("help");
                           setProfileDropdownOpen(false);
                         }}
-                        className="w-full text-left px-3 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-50 flex items-center gap-2"
+                        className="w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-[#19343A] hover:bg-[#F8F7F2] flex items-center gap-2 transition"
                       >
-                        <HelpCircle size={14} />
+                        <HelpCircle
+                          size={14}
+                          className="text-[#285C3A]"
+                        />
+
                         <span>Help & Support</span>
                       </button>
 
-                      <div className="border-t border-slate-100 my-1" />
+                      <div className="border-t border-[#E7EBE5] my-1" />
+
+                      {/* SIGN OUT */}
 
                       <button
                         onClick={() => {
                           setProfileDropdownOpen(false);
-                          if (onLogout) onLogout();
+
+                          if (onLogout) {
+                            onLogout();
+                          }
                         }}
-                        className="w-full text-left px-3 py-2 rounded-xl text-xs font-bold text-rose-700 hover:bg-rose-50 flex items-center gap-2 transition"
+                        className="w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-[#A64B4B] hover:bg-[#FAEEEE] flex items-center gap-2 transition"
                       >
                         <LogOut size={14} />
+
                         <span>Sign Out</span>
                       </button>
                     </div>
@@ -481,13 +832,14 @@ export default function MasterShell({
             </div>
           </header>
 
-          {/* =======================================================
-              DYNAMIC VIEW CONTENT (CHILDREN)
-          ======================================================= */}
+          {/* ====================================================
+              DYNAMIC CONTENT
+          ==================================================== */}
+
           <main className="flex-1 max-w-[1440px] w-full mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-6">
             {children}
 
-            {/* Bottom Green Footer Banner matching reference */}
+            {/* Bottom Banner */}
             <BottomBanner className="mt-8" />
           </main>
         </div>

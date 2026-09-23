@@ -1,5 +1,5 @@
 import React from "react";
-import { Megaphone, ExternalLink } from "lucide-react";
+import { Megaphone, ArrowRight } from "lucide-react";
 
 const DEFAULT_ANNOUNCEMENTS = [
   {
@@ -7,7 +7,7 @@ const DEFAULT_ANNOUNCEMENTS = [
     title: "Gate No. 2 maintenance",
     subtitle: "(11 AM - 1 PM) Gate 1 and 3 operational",
     time: "2h ago",
-    status: "normal", // normal (green) | alert (orange) | high (red)
+    status: "normal",
   },
   {
     id: 2,
@@ -39,62 +39,88 @@ export default function AnnouncementsCard({
 }) {
   return (
     <div
-      className={`bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs ${className}`}
+      className={`bg-white rounded-xl border border-[#DCE3DB] shadow-sm overflow-hidden ${className}`}
     >
       {/* Header */}
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded-lg bg-amber-100 text-amber-600 flex items-center justify-center">
-            <Megaphone size={15} />
+      <div className="flex items-center justify-between px-5 py-4 border-b border-[#E7EBE5]">
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 rounded-lg bg-[#EEF3EC] text-[#285C3A] flex items-center justify-center">
+            <Megaphone size={17} strokeWidth={2} />
           </div>
-          <h2 className="text-xs font-black text-slate-800 uppercase tracking-wider">
-            Important Announcements
-          </h2>
+
+          <div>
+            <h2 className="text-sm font-bold text-[#19343A]">
+              Important Announcements
+            </h2>
+
+            <p className="text-[11px] text-[#687779] mt-0.5">
+              Latest mandi updates
+            </p>
+          </div>
         </div>
+
         {onViewAll && (
           <button
             onClick={onViewAll}
-            className="text-[11px] font-bold text-emerald-700 hover:text-emerald-800"
+            className="group flex items-center gap-1.5 text-xs font-semibold text-[#285C3A] hover:text-[#214D31] transition-colors"
           >
-            View All &rarr;
+            View All
+            <ArrowRight
+              size={13}
+              className="group-hover:translate-x-0.5 transition-transform"
+            />
           </button>
         )}
       </div>
 
-      {/* Announcements List matching reference */}
-      <div className="space-y-3">
-        {announcements.slice(0, 3).map((item) => {
-          const dotColor =
-            item.status === "alert"
-              ? "bg-amber-500"
-              : item.status === "high"
-              ? "bg-rose-500"
-              : "bg-emerald-500";
+      {/* Announcements */}
+      <div className="p-3">
+        {announcements.slice(0, 3).map((item, index) => {
+          const isAlert = item.status === "alert";
+          const isHigh = item.status === "high";
+
+          const dotColor = isHigh
+            ? "bg-[#B94A48]"
+            : isAlert
+            ? "bg-[#B58A35]"
+            : "bg-[#285C3A]";
+
+          const ringColor = isHigh
+            ? "ring-[#F4DEDE]"
+            : isAlert
+            ? "ring-[#F5EFDE]"
+            : "ring-[#EAF2E9]";
 
           return (
             <div
               key={item.id}
-              className="flex items-start justify-between gap-3 p-2 rounded-xl hover:bg-slate-50 transition-colors"
+              className={`flex items-start justify-between gap-4 px-3 py-3 rounded-lg hover:bg-[#F8F7F2] transition-colors ${
+                index !== announcements.slice(0, 3).length - 1
+                  ? "border-b border-[#EEF1ED]"
+                  : ""
+              }`}
             >
-              <div className="flex items-start gap-2.5 min-w-0">
+              {/* Left content */}
+              <div className="flex items-start gap-3 min-w-0">
                 <span
-                  className={`w-2.5 h-2.5 rounded-full ${dotColor} mt-1 shrink-0 ring-3 ${
-                    item.status === "alert" ? "ring-amber-100" : "ring-emerald-100"
-                  }`}
+                  className={`w-2.5 h-2.5 rounded-full ${dotColor} mt-1.5 shrink-0 ring-4 ${ringColor}`}
                 />
+
                 <div className="min-w-0">
-                  <div className="text-xs font-bold text-slate-900 leading-tight truncate">
+                  <div className="text-xs font-semibold text-[#19343A] leading-snug">
                     {item.title}
                   </div>
+
                   {item.subtitle && (
-                    <div className="text-[11px] font-medium text-slate-500 mt-0.5 truncate">
+                    <div className="text-[11px] font-medium text-[#687779] mt-1 leading-relaxed">
                       {item.subtitle}
                     </div>
                   )}
                 </div>
               </div>
 
-              <span className="text-[11px] font-semibold text-slate-400 shrink-0 whitespace-nowrap">
+              {/* Time */}
+              <span className="text-[10px] font-medium text-[#8A9695] shrink-0 whitespace-nowrap pt-0.5">
                 {item.time}
               </span>
             </div>

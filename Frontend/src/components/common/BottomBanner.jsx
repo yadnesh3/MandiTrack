@@ -4,15 +4,13 @@ import MandiTrackLogo from "../MandiTrackLogo";
 export default function BottomBanner({ className = "" }) {
   return (
     <footer
-      className={`relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#0C3B24] via-[#104D30] to-[#0A2E1C] text-white px-6 py-4 shadow-sm border border-emerald-800/40 flex flex-col md:flex-row items-center justify-between gap-4 select-none ${className}`}
+      className={`relative overflow-hidden rounded-xl bg-[#214D31] text-white px-5 sm:px-6 py-4 border border-[#285C3A] shadow-sm flex flex-col md:flex-row items-center justify-between gap-4 select-none ${className}`}
     >
-      {/* Background agriculture field silhouette */}
-      <div
-        className="absolute inset-0 opacity-10 bg-cover bg-center mix-blend-overlay pointer-events-none"
-        style={{ backgroundImage: "url('/banner_art.jpg')" }}
-      />
+      {/* Subtle decorative element */}
+      <div className="absolute -right-10 -top-10 w-32 h-32 rounded-full bg-[#285C3A]/40 pointer-events-none" />
+      <div className="absolute -left-8 -bottom-12 w-28 h-28 rounded-full bg-[#B58A35]/10 pointer-events-none" />
 
-      {/* Left: MandiTrack Logo mark & Govt of Maharashtra */}
+      {/* Left: MandiTrack Logo */}
       <div className="relative z-10 flex items-center gap-3">
         <MandiTrackLogo
           variant="light"
@@ -21,18 +19,26 @@ export default function BottomBanner({ className = "" }) {
         />
       </div>
 
-      {/* Center: Inspiring Motto */}
+      {/* Center: Motto */}
       <div className="relative z-10 flex items-center gap-2 text-center">
-        <span className="text-xl">🍃</span>
-        <span className="font-extrabold text-sm sm:text-base tracking-wide text-emerald-100 font-serif italic">
+        <div className="w-8 h-8 rounded-lg bg-white/10 border border-white/10 flex items-center justify-center">
+          <span className="text-[#B58A35] text-sm">✦</span>
+        </div>
+
+        <span className="font-semibold text-sm sm:text-base tracking-wide text-white">
           Better Mandis. Brighter Tomorrows.
         </span>
       </div>
 
-      {/* Right: Dept & Copyright */}
-      <div className="relative z-10 text-right text-xs text-emerald-200/80 font-medium">
-        <div className="font-bold text-white">Department of Agricultural Marketing</div>
-        <div>Maharashtra State Agricultural Marketing Board (MSAMB)</div>
+      {/* Right: Department & Copyright */}
+      <div className="relative z-10 text-center md:text-right text-[10px] sm:text-xs text-white/70 font-medium">
+        <div className="font-semibold text-white">
+          Department of Agricultural Marketing
+        </div>
+
+        <div className="mt-0.5">
+          Maharashtra State Agricultural Marketing Board (MSAMB)
+        </div>
       </div>
     </footer>
   );

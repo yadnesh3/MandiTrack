@@ -1,6 +1,15 @@
 import React, { useState } from "react";
 import { createLotApi } from "../services/api";
 import { useLang } from "../context/LanguageContext";
+import {
+  X,
+  Wheat,
+  MapPin,
+  Package,
+  IndianRupee,
+  CheckCircle2,
+  AlertCircle,
+} from "lucide-react";
 
 // These strings are stored on the lot itself, so they stay bilingual rather
 // than switching with the UI language — otherwise the same crop would be
@@ -48,13 +57,19 @@ function AddLotModal({ isOpen, onClose, onLotCreated }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     setError("");
     setSuccess("");
 
     const selectedCrop = crop === "Other" ? customCrop : crop;
     const selectedMandi = mandi === "Other" ? customMandi : mandi;
 
-    if (!selectedCrop || !quantity || !selectedMandi || expectedPrice === "") {
+    if (
+      !selectedCrop ||
+      !quantity ||
+      !selectedMandi ||
+      expectedPrice === ""
+    ) {
       setError(t("fillAllFields"));
       return;
     }
@@ -81,6 +96,7 @@ function AddLotModal({ isOpen, onClose, onLotCreated }) {
       };
 
       const response = await createLotApi(payload);
+
       setSuccess(t("lotSubmitted"));
 
       // Reset form
@@ -105,57 +121,104 @@ function AddLotModal({ isOpen, onClose, onLotCreated }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden border border-gray-100 animate-fadeIn max-h-[92vh] overflow-y-auto">
-        {/* Header */}
-        <div className="bg-green-700 text-white px-6 py-4 flex items-center justify-between sticky top-0">
-          <div className="flex items-center gap-2">
-            <span className="text-xl">🌾</span>
-            <h2 className="text-lg font-bold">{t("addLotTitle")}</h2>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#19343A]/60 backdrop-blur-sm p-4">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden border border-[#DCE3DB] animate-fadeIn max-h-[92vh] overflow-y-auto">
+
+        {/* =====================================================
+            HEADER
+        ===================================================== */}
+        <div className="bg-[#214D31] text-white px-5 sm:px-6 py-4 flex items-center justify-between sticky top-0 z-10">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-lg bg-white/10 border border-white/10 flex items-center justify-center">
+              <Wheat size={18} className="text-[#D8C58D]" />
+            </div>
+
+            <div>
+              <h2 className="text-base sm:text-lg font-bold">
+                {t("addLotTitle")}
+              </h2>
+
+              <p className="text-[10px] sm:text-[11px] text-[#D9E7DC] mt-0.5">
+                Submit your produce for mandi processing
+              </p>
+            </div>
           </div>
+
           <button
             onClick={onClose}
             aria-label={t("close")}
-            className="text-white/80 hover:text-white text-2xl font-bold leading-none px-2"
+            className="w-8 h-8 rounded-lg bg-white/10 hover:bg-white/15 text-white/80 hover:text-white flex items-center justify-center transition"
           >
-            &times;
+            <X size={18} />
           </button>
         </div>
 
-        {/* Form Body */}
-        <div className="p-6">
+        {/* =====================================================
+            FORM BODY
+        ===================================================== */}
+        <div className="p-5 sm:p-6">
+          {/* Error */}
           {error && (
-            <div role="alert" className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg">
-              {error}
+            <div
+              role="alert"
+              className="mb-4 p-3 rounded-lg bg-[#FAEEEE] border border-[#EBCACA] text-[#9B4444] text-sm flex items-start gap-2"
+            >
+              <AlertCircle
+                size={17}
+                className="shrink-0 mt-0.5"
+              />
+
+              <span>{error}</span>
             </div>
           )}
 
+          {/* Success */}
           {success && (
-            <div role="status" className="mb-4 p-3 bg-green-50 border border-green-200 text-green-700 text-sm rounded-lg">
-              {success}
+            <div
+              role="status"
+              className="mb-4 p-3 rounded-lg bg-[#EAF2E9] border border-[#D3E3D3] text-[#285C3A] text-sm flex items-start gap-2"
+            >
+              <CheckCircle2
+                size={17}
+                className="shrink-0 mt-0.5"
+              />
+
+              <span>{success}</span>
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {/* Crop Select */}
+          <form onSubmit={handleSubmit} className="space-y-5">
+
+            {/* =================================================
+                CROP
+            ================================================= */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-xs font-semibold text-[#19343A] mb-1.5">
                 {t("cropLabel")} *
               </label>
-              <select
-                required
-                value={crop}
-                onChange={(e) => setCrop(e.target.value)}
-                className="w-full px-3.5 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-600 focus:border-green-600 outline-none text-sm bg-white"
-              >
-                <option value="">{t("selectCrop")}</option>
-                {CROP_OPTIONS.map((c) => (
-                  <option key={c} value={c}>
-                    {c}
+
+              <div className="relative">
+                <select
+                  required
+                  value={crop}
+                  onChange={(e) => setCrop(e.target.value)}
+                  className="w-full px-3.5 py-2.5 border border-[#DCE3DB] rounded-lg focus:ring-2 focus:ring-[#EAF2E9] focus:border-[#285C3A] outline-none text-sm bg-white text-[#19343A] transition"
+                >
+                  <option value="">
+                    {t("selectCrop")}
                   </option>
-                ))}
-                <option value="Other">{t("otherSpecify")}</option>
-              </select>
+
+                  {CROP_OPTIONS.map((c) => (
+                    <option key={c} value={c}>
+                      {c}
+                    </option>
+                  ))}
+
+                  <option value="Other">
+                    {t("otherSpecify")}
+                  </option>
+                </select>
+              </div>
 
               {crop === "Other" && (
                 <input
@@ -163,64 +226,103 @@ function AddLotModal({ isOpen, onClose, onLotCreated }) {
                   required
                   placeholder={t("enterCropName")}
                   value={customCrop}
-                  onChange={(e) => setCustomCrop(e.target.value)}
-                  className="mt-2 w-full px-3.5 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-600 focus:border-green-600 outline-none text-sm"
+                  onChange={(e) =>
+                    setCustomCrop(e.target.value)
+                  }
+                  className="mt-2 w-full px-3.5 py-2.5 border border-[#DCE3DB] rounded-lg focus:ring-2 focus:ring-[#EAF2E9] focus:border-[#285C3A] outline-none text-sm text-[#19343A] placeholder-[#8A9695] transition"
                 />
               )}
             </div>
 
-            {/* Quantity and Unit */}
+            {/* =================================================
+                QUANTITY + UNIT
+            ================================================= */}
             <div className="grid grid-cols-3 gap-3">
               <div className="col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-xs font-semibold text-[#19343A] mb-1.5">
                   {t("quantityLabel")} *
                 </label>
-                <input
-                  type="number"
-                  min="1"
-                  required
-                  placeholder={t("quantityExample")}
-                  value={quantity}
-                  onChange={(e) => setQuantity(e.target.value)}
-                  className="w-full px-3.5 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-600 focus:border-green-600 outline-none text-sm"
-                />
+
+                <div className="relative">
+                  <Package
+                    size={15}
+                    className="absolute left-3 top-3 text-[#8A9695]"
+                  />
+
+                  <input
+                    type="number"
+                    min="1"
+                    required
+                    placeholder={t("quantityExample")}
+                    value={quantity}
+                    onChange={(e) =>
+                      setQuantity(e.target.value)
+                    }
+                    className="w-full pl-9 pr-3.5 py-2.5 border border-[#DCE3DB] rounded-lg focus:ring-2 focus:ring-[#EAF2E9] focus:border-[#285C3A] outline-none text-sm text-[#19343A] placeholder-[#8A9695] transition"
+                  />
+                </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-xs font-semibold text-[#19343A] mb-1.5">
                   {t("unitLabel")}
                 </label>
+
                 <select
                   value={unit}
                   onChange={(e) => setUnit(e.target.value)}
-                  className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-600 focus:border-green-600 outline-none text-sm bg-white font-medium text-gray-700"
+                  className="w-full px-3 py-2.5 border border-[#DCE3DB] rounded-lg focus:ring-2 focus:ring-[#EAF2E9] focus:border-[#285C3A] outline-none text-sm bg-white font-medium text-[#19343A] transition"
                 >
-                  <option value="quintal">{tUnit("quintal")}</option>
-                  <option value="kg">{tUnit("kg")}</option>
-                  <option value="ton">{tUnit("ton")}</option>
+                  <option value="quintal">
+                    {tUnit("quintal")}
+                  </option>
+
+                  <option value="kg">
+                    {tUnit("kg")}
+                  </option>
+
+                  <option value="ton">
+                    {tUnit("ton")}
+                  </option>
                 </select>
               </div>
             </div>
 
-            {/* Mandi Select */}
+            {/* =================================================
+                MANDI
+            ================================================= */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-xs font-semibold text-[#19343A] mb-1.5">
                 {t("targetMandi")} *
               </label>
-              <select
-                required
-                value={mandi}
-                onChange={(e) => setMandi(e.target.value)}
-                className="w-full px-3.5 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-600 focus:border-green-600 outline-none text-sm bg-white"
-              >
-                <option value="">{t("selectMandi")}</option>
-                {MANDI_OPTIONS.map((m) => (
-                  <option key={m} value={m}>
-                    {m}
+
+              <div className="relative">
+                <MapPin
+                  size={15}
+                  className="absolute left-3 top-3 text-[#8A9695]"
+                />
+
+                <select
+                  required
+                  value={mandi}
+                  onChange={(e) => setMandi(e.target.value)}
+                  className="w-full pl-9 pr-3.5 py-2.5 border border-[#DCE3DB] rounded-lg focus:ring-2 focus:ring-[#EAF2E9] focus:border-[#285C3A] outline-none text-sm bg-white text-[#19343A] transition"
+                >
+                  <option value="">
+                    {t("selectMandi")}
                   </option>
-                ))}
-                <option value="Other">{t("otherSpecify")}</option>
-              </select>
+
+                  {MANDI_OPTIONS.map((m) => (
+                    <option key={m} value={m}>
+                      {m}
+                    </option>
+                  ))}
+
+                  <option value="Other">
+                    {t("otherSpecify")}
+                  </option>
+                </select>
+              </div>
 
               {mandi === "Other" && (
                 <input
@@ -228,48 +330,63 @@ function AddLotModal({ isOpen, onClose, onLotCreated }) {
                   required
                   placeholder={t("enterMandiName")}
                   value={customMandi}
-                  onChange={(e) => setCustomMandi(e.target.value)}
-                  className="mt-2 w-full px-3.5 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-600 focus:border-green-600 outline-none text-sm"
+                  onChange={(e) =>
+                    setCustomMandi(e.target.value)
+                  }
+                  className="mt-2 w-full px-3.5 py-2.5 border border-[#DCE3DB] rounded-lg focus:ring-2 focus:ring-[#EAF2E9] focus:border-[#285C3A] outline-none text-sm text-[#19343A] placeholder-[#8A9695] transition"
                 />
               )}
             </div>
 
-            {/* Expected Price */}
+            {/* =================================================
+                EXPECTED PRICE
+            ================================================= */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                {t("expectedPriceLabel")} (₹ {t("perUnit")} {tUnit(unit)}) *
+              <label className="block text-xs font-semibold text-[#19343A] mb-1.5">
+                {t("expectedPriceLabel")} (₹ {t("perUnit")}{" "}
+                {tUnit(unit)}) *
               </label>
+
               <div className="relative">
-                <span className="absolute left-3 top-2.5 text-gray-500 font-bold">
-                  ₹
-                </span>
+                <IndianRupee
+                  size={15}
+                  className="absolute left-3 top-3 text-[#8A9695]"
+                />
+
                 <input
                   type="number"
                   min="0"
                   required
                   placeholder={t("priceExample")}
                   value={expectedPrice}
-                  onChange={(e) => setExpectedPrice(e.target.value)}
-                  className="w-full pl-8 pr-3.5 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-600 focus:border-green-600 outline-none text-sm"
+                  onChange={(e) =>
+                    setExpectedPrice(e.target.value)
+                  }
+                  className="w-full pl-9 pr-3.5 py-2.5 border border-[#DCE3DB] rounded-lg focus:ring-2 focus:ring-[#EAF2E9] focus:border-[#285C3A] outline-none text-sm text-[#19343A] placeholder-[#8A9695] transition"
                 />
               </div>
             </div>
 
-            {/* Actions */}
-            <div className="pt-3 flex gap-3">
+            {/* =================================================
+                ACTIONS
+            ================================================= */}
+            <div className="pt-2 flex gap-3">
               <button
                 type="button"
                 onClick={onClose}
-                className="flex-1 py-2.5 border border-gray-300 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors"
+                className="flex-1 py-2.5 border border-[#DCE3DB] text-[#687779] rounded-lg text-sm font-semibold hover:bg-[#F8F7F2] hover:text-[#19343A] transition"
               >
                 {t("cancel")}
               </button>
+
               <button
                 type="submit"
                 disabled={loading}
-                className="flex-1 py-2.5 bg-green-700 hover:bg-green-800 text-white rounded-lg text-sm font-medium shadow-xs transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                className="flex-1 py-2.5 bg-[#285C3A] hover:bg-[#214D31] text-white rounded-lg text-sm font-semibold shadow-sm transition disabled:opacity-60 disabled:cursor-not-allowed"
               >
-                {loading ? t("submitting") : t("submitLot")}
+                {loading
+                  ? t("submitting")
+                  : t("submitLot")}
               </button>
             </div>
           </form>
