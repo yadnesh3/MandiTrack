@@ -102,7 +102,7 @@ const lotSchema = new mongoose.Schema(
 
     unit: {
       type: String,
-      enum: ["kg", "quintal", "ton"],
+      enum: ["kg", "Quintal", "Ton"],
       default: "kg",
     },
 

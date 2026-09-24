@@ -45,7 +45,11 @@ export default function MasterShell({
   onOpenVoiceHelp,
   children,
 }) {
-  const { lang, setLang } = useLang();
+  // ============================================================
+  // LANGUAGE
+  // ============================================================
+
+  const { lang, setLang, t } = useLang();
 
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
@@ -77,22 +81,12 @@ export default function MasterShell({
         hour12: true,
       };
 
-      const formatted = now.toLocaleString("en-GB", options);
+      const formatted = now.toLocaleString(
+        lang === "mr" ? "mr-IN" : "en-IN",
+        options
+      );
 
-      const parts = formatted.split(", ");
-
-      if (parts.length >= 2) {
-        const datePart =
-          parts[0] + ", " + parts[1].replace(/,/g, "");
-
-        const timePart = parts[2] || "";
-
-        setCurrentTimeStr(
-          `${datePart} | ${timePart}`.replace("at ", "")
-        );
-      } else {
-        setCurrentTimeStr(formatted);
-      }
+      setCurrentTimeStr(formatted);
     };
 
     updateTime();
@@ -100,7 +94,7 @@ export default function MasterShell({
     const interval = setInterval(updateTime, 1000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [lang]);
 
   // ============================================================
   // UPDATE SELECTED MANDI
@@ -131,47 +125,47 @@ export default function MasterShell({
       return [
         {
           id: "dashboard",
-          label: "Dashboard",
+          label: t("home"),
           icon: Home,
         },
         {
           id: "manage-officers",
-          label: "Manage Officers",
+          label: t("adminTotalOfficers"),
           icon: ShieldCheck,
         },
         {
           id: "all-lots",
-          label: "All Lots",
+          label: t("allLots"),
           icon: Package,
         },
         {
           id: "mandi-prices",
-          label: "Mandi Prices",
+          label: t("mandiPricesTitle"),
           icon: BarChart3,
         },
         {
           id: "reports",
-          label: "Reports",
+          label: t("reports") || "Reports",
           icon: FileText,
         },
         {
           id: "announcements",
-          label: "Announcements",
+          label: t("announcements") || "Announcements",
           icon: Megaphone,
         },
         {
           id: "voice-assistant",
-          label: "Voice Assistant",
+          label: t("voiceHelpTitle"),
           icon: Mic,
         },
         {
           id: "profile",
-          label: "Profile",
+          label: t("profile") || "Profile",
           icon: User,
         },
         {
           id: "help",
-          label: "Help & Support",
+          label: t("helpSupport") || "Help & Support",
           icon: HelpCircle,
         },
       ];
@@ -185,52 +179,52 @@ export default function MasterShell({
       return [
         {
           id: "dashboard",
-          label: "Dashboard",
+          label: t("home"),
           icon: Home,
         },
         {
           id: "waiting-queue",
-          label: "Waiting Queue",
+          label: t("queueStatus"),
           icon: Clock,
         },
         {
           id: "process-lot",
-          label: "Process Lot",
+          label: t("processNextStageBtn"),
           icon: Settings,
         },
         {
           id: "all-lots",
-          label: "All Lots",
+          label: t("allLots"),
           icon: Package,
         },
         {
           id: "mandi-prices",
-          label: "Mandi Prices",
+          label: t("mandiPricesTitle"),
           icon: BarChart3,
         },
         {
           id: "reports",
-          label: "Reports",
+          label: t("reports") || "Reports",
           icon: FileText,
         },
         {
           id: "announcements",
-          label: "Announcements",
+          label: t("announcements") || "Announcements",
           icon: Megaphone,
         },
         {
           id: "voice-assistant",
-          label: "Voice Assistant",
+          label: t("voiceHelpTitle"),
           icon: Mic,
         },
         {
           id: "profile",
-          label: "Profile",
+          label: t("profile") || "Profile",
           icon: User,
         },
         {
           id: "help",
-          label: "Help & Support",
+          label: t("helpSupport") || "Help & Support",
           icon: HelpCircle,
         },
       ];
@@ -243,47 +237,47 @@ export default function MasterShell({
     return [
       {
         id: "dashboard",
-        label: "Dashboard",
+        label: t("home"),
         icon: Home,
       },
       {
         id: "add-produce",
-        label: "Add Produce",
+        label: t("addProduceBtn"),
         icon: PlusCircle,
       },
       {
         id: "my-lots",
-        label: "My Lots",
+        label: t("myProduceLots"),
         icon: Package,
       },
       {
         id: "lot-tracking",
-        label: "Lot Tracking",
+        label: t("stageTimeline"),
         icon: Clock,
       },
       {
         id: "mandi-prices",
-        label: "Mandi Prices",
+        label: t("mandiPricesTitle"),
         icon: BarChart3,
       },
       {
         id: "announcements",
-        label: "Announcements",
+        label: t("announcements") || "Announcements",
         icon: Megaphone,
       },
       {
         id: "voice-assistant",
-        label: "Voice Assistant",
+        label: t("voiceHelpTitle"),
         icon: Mic,
       },
       {
         id: "profile",
-        label: "Profile",
+        label: t("profile") || "Profile",
         icon: User,
       },
       {
         id: "help",
-        label: "Help & Support",
+        label: t("helpSupport") || "Help & Support",
         icon: HelpCircle,
       },
     ];
@@ -324,10 +318,10 @@ export default function MasterShell({
 
   const roleLabel =
     role === "officer"
-      ? `Officer (${selectedMandi})`
+      ? `${t("roleOfficer")} (${selectedMandi})`
       : role === "admin"
-      ? "System Administrator"
-      : `Farmer (${selectedMandi})`;
+      ? t("roleAdmin")
+      : `${t("roleFarmer")} (${selectedMandi})`;
 
   return (
     <div className="min-h-screen bg-[#F8F7F2] flex flex-col font-sans text-[#19343A] antialiased selection:bg-[#F5EFDE]">
@@ -354,7 +348,7 @@ export default function MasterShell({
           <nav className="flex-1 px-3.5 py-5 space-y-1.5 overflow-y-auto">
 
             <div className="px-3 pb-2 text-[10px] font-bold uppercase tracking-[0.12em] text-[#8A9695]">
-              Main Menu
+              {t("home")}
             </div>
 
             {navItems.map((item) => {
@@ -403,7 +397,10 @@ export default function MasterShell({
               <span className="w-2 h-2 rounded-full bg-[#6D9B76]" />
 
               <span>
-                MandiTrack &bull; Govt. of Maharashtra Initiative
+                MandiTrack &bull;{" "}
+                {lang === "mr"
+                  ? "महाराष्ट्र शासनाचा उपक्रम"
+                  : "Govt. of Maharashtra Initiative"}
               </span>
             </div>
           </div>
@@ -451,7 +448,7 @@ export default function MasterShell({
               <nav className="flex-1 px-3.5 py-5 space-y-1.5">
 
                 <div className="px-3 pb-2 text-[10px] font-bold uppercase tracking-[0.12em] text-[#8A9695]">
-                  Main Menu
+                  {t("home")}
                 </div>
 
                 {navItems.map((item) => {
@@ -501,7 +498,7 @@ export default function MasterShell({
                   className="w-full flex items-center justify-center gap-2 py-2.5 rounded-lg bg-[#FAEEEE] border border-[#E8CCCC] text-[#A64B4B] hover:bg-[#F7E4E4] text-xs font-semibold transition"
                 >
                   <LogOut size={16} />
-                  <span>Logout</span>
+                  <span>{t("logout")}</span>
                 </button>
               </div>
             </aside>
@@ -574,7 +571,9 @@ export default function MasterShell({
                     <div className="absolute left-0 mt-2 w-56 bg-white border border-[#DCE3DB] rounded-xl shadow-lg p-2 z-40 animate-fadeIn">
 
                       <div className="px-3 py-1.5 text-[10px] font-bold text-[#8A9695] uppercase tracking-wider">
-                        Select APMC Market
+                        {lang === "mr"
+                          ? "बाजार समिती निवडा"
+                          : "Select APMC Market"}
                       </div>
 
                       {MANDI_LIST.map((m) => (
@@ -607,8 +606,7 @@ export default function MasterShell({
                 {/* CLOCK */}
 
                 <div className="text-xs font-medium text-[#687779] pl-3 border-l border-[#DCE3DB]">
-                  {currentTimeStr ||
-                    "Tue, 12 Aug 2025 | 10:15 AM"}
+                  {currentTimeStr}
                 </div>
               </div>
 
@@ -654,7 +652,11 @@ export default function MasterShell({
                       )
                     }
                     className="w-9 h-9 rounded-lg bg-[#F8F7F2] border border-[#DCE3DB] hover:bg-[#EEF3EC] text-[#285C3A] flex items-center justify-center transition relative"
-                    aria-label="Notifications"
+                    aria-label={
+                      lang === "mr"
+                        ? "सूचना"
+                        : "Notifications"
+                    }
                   >
                     <Bell size={17} />
 
@@ -669,11 +671,15 @@ export default function MasterShell({
                       <div className="flex items-center justify-between border-b border-[#E7EBE5] pb-2 mb-3">
 
                         <span className="font-bold text-xs text-[#19343A]">
-                          Mandi Notifications
+                          {lang === "mr"
+                            ? "मंडी सूचना"
+                            : "Mandi Notifications"}
                         </span>
 
                         <span className="text-[10px] font-semibold bg-[#F5EFDE] text-[#80672C] px-2 py-1 rounded-full">
-                          3 New
+                          {lang === "mr"
+                            ? "३ नवीन"
+                            : "3 New"}
                         </span>
                       </div>
 
@@ -683,10 +689,14 @@ export default function MasterShell({
                           <span className="font-bold">
                             Lot F-2846
                           </span>{" "}
-                          moved to Weighing checkpoint.
+                          {lang === "mr"
+                            ? "वजन मापन टप्प्यावर गेला आहे."
+                            : "moved to Weighing checkpoint."}
 
                           <div className="text-[10px] text-[#5F8068] mt-1">
-                            10 min ago
+                            {lang === "mr"
+                              ? "१० मिनिटांपूर्वी"
+                              : "10 min ago"}
                           </div>
                         </div>
 
@@ -694,21 +704,31 @@ export default function MasterShell({
                           <span className="font-bold">
                             Gate No. 2
                           </span>{" "}
-                          under scheduled maintenance.
+                          {lang === "mr"
+                            ? "नियोजित देखभालीसाठी बंद आहे."
+                            : "under scheduled maintenance."}
 
                           <div className="text-[10px] text-[#80672C] mt-1">
-                            2 hours ago
+                            {lang === "mr"
+                              ? "२ तासांपूर्वी"
+                              : "2 hours ago"}
                           </div>
                         </div>
 
                         <div className="p-2.5 rounded-lg bg-[#F8F7F2] text-[#19343A]">
                           <span className="font-bold">
-                            Daily APMC Rates
+                            {lang === "mr"
+                              ? "दैनिक APMC भाव"
+                              : "Daily APMC Rates"}
                           </span>{" "}
-                          updated for 18 crops.
+                          {lang === "mr"
+                            ? "१८ पिकांसाठी अद्ययावत झाले आहेत."
+                            : "updated for 18 crops."}
 
                           <div className="text-[10px] text-[#687779] mt-1">
-                            Today morning
+                            {lang === "mr"
+                              ? "आज सकाळी"
+                              : "Today morning"}
                           </div>
                         </div>
 
@@ -787,7 +807,11 @@ export default function MasterShell({
                           className="text-[#285C3A]"
                         />
 
-                        <span>View Profile</span>
+                        <span>
+                          {lang === "mr"
+                            ? "प्रोफाइल पहा"
+                            : "View Profile"}
+                        </span>
                       </button>
 
                       {/* HELP */}
@@ -804,7 +828,11 @@ export default function MasterShell({
                           className="text-[#285C3A]"
                         />
 
-                        <span>Help & Support</span>
+                        <span>
+                          {lang === "mr"
+                            ? "मदत आणि समर्थन"
+                            : "Help & Support"}
+                        </span>
                       </button>
 
                       <div className="border-t border-[#E7EBE5] my-1" />
@@ -823,7 +851,7 @@ export default function MasterShell({
                       >
                         <LogOut size={14} />
 
-                        <span>Sign Out</span>
+                        <span>{t("logout")}</span>
                       </button>
                     </div>
                   )}
@@ -839,7 +867,6 @@ export default function MasterShell({
           <main className="flex-1 max-w-[1440px] w-full mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-6">
             {children}
 
-            {/* Bottom Banner */}
             <BottomBanner className="mt-8" />
           </main>
         </div>
