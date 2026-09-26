@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 
 export default function MandiPricesView() {
-  const { t, locale } = useLang();
+  const { t, locale, lang } = useLang();
 
   const [rates, setRates] = useState([]);
   const [sourceInfo, setSourceInfo] = useState("");
@@ -102,16 +102,15 @@ export default function MandiPricesView() {
                 size={13}
                 className="text-[#B58A35]"
               />
-              Official APMC Market Rates
+              {t("officialApmcRatesBadge")}
             </div>
 
             <h1 className="text-xl font-bold tracking-tight text-[#19343A] sm:text-2xl">
-              Today's Mandi Commodity Prices
+              {t("todaysCommodityPrices")}
             </h1>
 
             <p className="mt-1 max-w-3xl text-xs leading-5 text-[#687779] sm:text-sm">
-              Real-time wholesale modal, min & max rates sourced
-              directly from official Agmarknet APMC terminals.
+              {t("commodityPricesSub")}
             </p>
           </div>
 
@@ -124,7 +123,7 @@ export default function MandiPricesView() {
               size={13}
               className={loading ? "animate-spin" : ""}
             />
-            Refresh Rates
+            {lang === "mr" ? "दर अद्यतन करा" : "Refresh Rates"}
           </button>
         </div>
       </div>
@@ -145,7 +144,7 @@ export default function MandiPricesView() {
             type="text"
             value={searchCrop}
             onChange={(e) => setSearchCrop(e.target.value)}
-            placeholder="Search crop or variety (e.g. Onion, Wheat, Tomato)..."
+            placeholder={t("searchCropPlaceholder")}
             className="w-full rounded-lg border border-[#DCE3DB] bg-[#F8F7F2] py-2.5 pl-9 pr-4 text-xs font-medium text-[#19343A] outline-none transition placeholder:text-[#9AA5A3] focus:border-[#285C3A] focus:bg-white focus:ring-2 focus:ring-[#EAF2E9]"
           />
         </div>
@@ -161,7 +160,7 @@ export default function MandiPricesView() {
             type="text"
             value={searchMandi}
             onChange={(e) => setSearchMandi(e.target.value)}
-            placeholder="Search APMC market or district (e.g. Pune, Nashik)..."
+            placeholder={t("searchMandiPlaceholder")}
             className="w-full rounded-lg border border-[#DCE3DB] bg-[#F8F7F2] py-2.5 pl-9 pr-4 text-xs font-medium text-[#19343A] outline-none transition placeholder:text-[#9AA5A3] focus:border-[#285C3A] focus:bg-white focus:ring-2 focus:ring-[#EAF2E9]"
           />
         </div>
@@ -181,11 +180,11 @@ export default function MandiPricesView() {
           </div>
 
           <h2 className="mt-4 text-sm font-bold text-[#19343A]">
-            Loading live Agmarknet prices
+            {lang === "mr" ? "बाजारभाव लोड होत आहेत..." : "Loading live Agmarknet prices"}
           </h2>
 
           <p className="mt-1 text-xs font-medium text-[#687779]">
-            Fetching the latest available mandi rates...
+            {lang === "mr" ? "नवीनतम बाजार समिती दर आणले जात आहेत..." : "Fetching the latest available mandi rates..."}
           </p>
         </div>
       ) : unavailableError && rates.length === 0 ? (
@@ -199,7 +198,7 @@ export default function MandiPricesView() {
           </div>
 
           <h2 className="mt-4 text-sm font-bold text-[#19343A]">
-            Official Feed Sync in Progress
+            {t("officialFeedSync")}
           </h2>
 
           <p className="mx-auto mt-2 max-w-md text-xs font-medium leading-5 text-[#687779]">
@@ -212,7 +211,7 @@ export default function MandiPricesView() {
             className="mt-5 inline-flex items-center gap-2 rounded-lg bg-[#285C3A] px-5 py-2.5 text-xs font-semibold text-white shadow-sm transition hover:bg-[#214D31] active:scale-[0.98]"
           >
             <RefreshCw size={13} />
-            Retry Fetch
+            {t("retryFetchBtn")}
           </button>
         </div>
       ) : (
@@ -224,7 +223,7 @@ export default function MandiPricesView() {
           <div className="flex items-center justify-between border-b border-[#E5E9E3] px-4 py-3 sm:px-5">
             <div>
               <h2 className="text-sm font-bold text-[#19343A]">
-                Available Market Rates
+                {t("availableMarketRates")}
               </h2>
 
               <p className="mt-0.5 text-[10px] font-medium text-[#8A9695]">
@@ -235,7 +234,7 @@ export default function MandiPricesView() {
 
             <div className="hidden items-center gap-1.5 rounded-full border border-[#CFE2D4] bg-[#EAF2E9] px-2.5 py-1 text-[10px] font-semibold text-[#285C3A] sm:flex">
               <span className="h-1.5 w-1.5 rounded-full bg-[#285C3A]" />
-              Official Feed
+              {t("officialFeedBadge")}
             </div>
           </div>
 
@@ -244,35 +243,35 @@ export default function MandiPricesView() {
               <thead>
                 <tr className="border-b border-[#DCE3DB] bg-[#F8F7F2] text-[10px] font-bold uppercase tracking-[0.08em] text-[#687779]">
                   <th className="px-4 py-3.5">
-                    Crop
+                    {t("colCrop")}
                   </th>
 
                   <th className="px-4 py-3.5">
-                    Variety
+                    {t("colVariety")}
                   </th>
 
                   <th className="px-4 py-3.5">
-                    Market / Mandi
+                    {t("colMandiMarket")}
                   </th>
 
                   <th className="px-4 py-3.5">
-                    District
+                    {t("colDistrict")}
                   </th>
 
                   <th className="px-4 py-3.5 text-right">
-                    Min Price
+                    {t("colMinPrice")}
                   </th>
 
                   <th className="px-4 py-3.5 text-right">
-                    Max Price
+                    {t("colMaxPrice")}
                   </th>
 
                   <th className="px-4 py-3.5 text-right">
-                    Modal Price
+                    {t("colModalPrice")}
                   </th>
 
                   <th className="px-4 py-3.5 text-center">
-                    Trend
+                    {t("colTrend")}
                   </th>
                 </tr>
               </thead>
@@ -339,7 +338,7 @@ export default function MandiPricesView() {
                     <td className="px-4 py-3.5 text-center">
                       <span className="inline-flex items-center gap-1 rounded-full border border-[#D5DDE0] bg-[#EEF2F3] px-2.5 py-1 text-[10px] font-semibold text-[#477A7A]">
                         <TrendingUp size={10} />
-                        Stable
+                        {t("trendStable")}
                       </span>
                     </td>
                   </tr>
@@ -359,11 +358,11 @@ export default function MandiPricesView() {
               </div>
 
               <h3 className="mt-3 text-sm font-bold text-[#19343A]">
-                No matching market rates
+                {t("noMatchingMarketRates")}
               </h3>
 
               <p className="mt-1 text-xs font-medium text-[#687779]">
-                Try a different crop, variety, mandi, or district.
+                {t("tryDifferentSearch")}
               </p>
             </div>
           )}
@@ -374,7 +373,7 @@ export default function MandiPricesView() {
 
           <div className="flex flex-col gap-2 border-t border-[#E5E9E3] bg-[#F8F7F2] px-4 py-3.5 text-[10px] font-medium text-[#687779] sm:flex-row sm:items-center sm:justify-between sm:px-5">
             <span>
-              Source:{" "}
+              {t("sourceAgmarknet")}:{" "}
               <strong className="font-semibold text-[#19343A]">
                 {sourceInfo}
               </strong>
@@ -382,7 +381,7 @@ export default function MandiPricesView() {
 
             <span className="flex items-center gap-1.5">
               <Calendar size={11} />
-              Last Updated: {updatedAt}
+              {t("lastUpdated")}: {updatedAt}
             </span>
           </div>
         </div>

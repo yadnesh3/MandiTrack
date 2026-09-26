@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { getMyLotsApi, getMandiPricesApi } from "../services/api";
+import { useLang } from "../context/LanguageContext";
 import GreetingBanner from "./common/GreetingBanner";
 import StatCard from "./common/StatCard";
 import ProcessFlowCard from "./common/ProcessFlowCard";
@@ -20,7 +21,9 @@ export default function FarmerDashboard({
   onNavigateToTab,
   onOpenVoiceModal,
 }) {
+  const { lang, t } = useLang();
   const [lots, setLots] = useState([]);
+  const [mandiRates, setMandiRates] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -72,7 +75,11 @@ export default function FarmerDashboard({
       <GreetingBanner
         user={user}
         greeting="Namaskar"
-        subtitle="Welcome to your Apala Mandi Saathi portal."
+        subtitle={
+          lang === "mr"
+            ? "आपल्या मंडी साथी पोर्टलवर आपले स्वागत आहे."
+            : "Welcome to your Apala Mandi Saathi portal."
+        }
       />
 
       {/* 2. Stat Cards Row matching reference */}
@@ -81,32 +88,32 @@ export default function FarmerDashboard({
           icon={Package}
           color="green"
           value={totalLots}
-          label="My Registered Lots"
-          subtext="Total lots submitted"
+          label={t("registeredLotsStat")}
+          subtext={t("totalLotsSub")}
         />
 
         <StatCard
           icon={Clock}
           color="orange"
           value={inQueueCount}
-          label="Lots in Queue"
-          subtext="Waiting for gate/inspection"
+          label={t("lotsInQueueStat")}
+          subtext={t("waitingInspectionSub")}
         />
 
         <StatCard
           icon={Settings}
           color="blue"
           value={inProcessingCount}
-          label="In Processing"
-          subtext="Quality check & auction"
+          label={t("inProcessingStat")}
+          subtext={t("qualityAuctionSub")}
         />
 
         <StatCard
           icon={CheckCircle2}
           color="purple"
           value={completedCount}
-          label="Completed / Sold"
-          subtext="Cleared with payment"
+          label={t("completedSoldStat")}
+          subtext={t("clearedPaymentSub")}
         />
       </div>
 
@@ -120,16 +127,16 @@ export default function FarmerDashboard({
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#E7EBE5] pb-4">
                 <div>
                   <span className="px-3 py-1 rounded-full text-xs font-bold bg-[#F5EFDE] text-[#B58A35] border border-[#E8DDBF]">
-                    Current Active Token
+                    {t("currentActiveToken")}
                   </span>
                   <div className="text-2xl font-bold text-[#19343A] mt-2 flex items-center gap-2">
-                    <span>Token:</span>
+                    <span>{t("tokenNoLabel")}</span>
                     <span className="text-[#B58A35]">
                       {activeLot.tokenNumber || "TK-101"}
                     </span>
                   </div>
                   <div className="text-xs text-[#687779] font-semibold mt-0.5 font-mono">
-                    Lot ID: {activeLot.lotId}
+                    {t("lotId")}: {activeLot.lotId}
                   </div>
                 </div>
 
@@ -138,7 +145,7 @@ export default function FarmerDashboard({
                     onClick={() => onNavigateToTab("lot-tracking")}
                     className="px-4 py-2 rounded-xl bg-[#285C3A] hover:bg-[#214D31] text-white font-semibold text-xs shadow-sm transition flex items-center justify-center gap-1.5 active:scale-95 shrink-0"
                   >
-                    <span>Full Live Journey</span>
+                    <span>{t("fullLiveJourneyBtn")}</span>
                     <ArrowRight size={13} />
                   </button>
                 )}
@@ -147,23 +154,23 @@ export default function FarmerDashboard({
               {/* Crop & Mandi details */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-[#F8F7F2] p-4 rounded-xl border border-[#E1E4DE]">
                 <div>
-                  <div className="text-[10px] font-bold text-[#8A9695] uppercase">Crop</div>
+                  <div className="text-[10px] font-bold text-[#8A9695] uppercase">{t("cropName")}</div>
                   <div className="text-sm font-bold text-[#19343A] mt-0.5">{activeLot.crop}</div>
                 </div>
                 <div>
-                  <div className="text-[10px] font-bold text-[#8A9695] uppercase">Quantity</div>
+                  <div className="text-[10px] font-bold text-[#8A9695] uppercase">{t("quantity")}</div>
                   <div className="text-sm font-bold text-[#19343A] mt-0.5">
                     {activeLot.quantity} {activeLot.unit}
                   </div>
                 </div>
                 <div>
-                  <div className="text-[10px] font-bold text-[#8A9695] uppercase">Target Mandi</div>
+                  <div className="text-[10px] font-bold text-[#8A9695] uppercase">{t("targetMandi")}</div>
                   <div className="text-sm font-bold text-[#19343A] mt-0.5 truncate">
                     {activeLot.mandi}
                   </div>
                 </div>
                 <div>
-                  <div className="text-[10px] font-bold text-[#8A9695] uppercase">Est. Wait</div>
+                  <div className="text-[10px] font-bold text-[#8A9695] uppercase">{t("estWaitLabel")}</div>
                   <div className="text-sm font-bold text-[#A64B4B] mt-0.5">
                     ~{activeLot.estimatedWaitMinutes || 25} min
                   </div>
@@ -185,17 +192,17 @@ export default function FarmerDashboard({
                 <PlusCircle size={32} />
               </div>
               <h2 className="text-base font-bold text-[#19343A]">
-                No Active Lot in Queue
+                {t("noActiveLotInQueue")}
               </h2>
               <p className="text-xs text-[#687779] max-w-sm mx-auto font-medium">
-                Bringing produce to the mandi today? Register your harvest now to reserve your queue token.
+                {t("noActiveLotSub")}
               </p>
               {onNavigateToTab && (
                 <button
                   onClick={() => onNavigateToTab("add-produce")}
                   className="px-6 py-2.5 rounded-xl bg-[#285C3A] hover:bg-[#214D31] text-white font-semibold text-xs shadow-sm transition active:scale-95"
                 >
-                  Add Produce Now
+                  {t("addProduceNowBtn")}
                 </button>
               )}
             </div>
@@ -206,10 +213,10 @@ export default function FarmerDashboard({
             <div className="flex items-center justify-between border-b border-[#E7EBE5] pb-3">
               <div>
                 <h2 className="text-base font-semibold text-[#19343A] tracking-tight">
-                  Today's APMC Mandi Rates
+                  {t("todaysApmcRates")}
                 </h2>
                 <p className="text-[11px] font-semibold text-[#8A9695]">
-                  Live Agmarknet prices for top commodities
+                  {t("liveAgmarknetSub")}
                 </p>
               </div>
               {onNavigateToTab && (
@@ -217,17 +224,17 @@ export default function FarmerDashboard({
                   onClick={() => onNavigateToTab("mandi-prices")}
                   className="text-xs font-bold text-[#285C3A] hover:text-[#214D31]"
                 >
-                  View All Prices &rarr;
+                  {t("viewAllPricesBtn")}
                 </button>
               )}
             </div>
 
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               {[
-                { crop: "Onion (कांदा)", modal: "₹1,850", trend: "+5%", mandi: "Pune APMC" },
-                { crop: "Tomato (टोमॅटो)", modal: "₹1,400", trend: "+8%", mandi: "Pune APMC" },
-                { crop: "Soybean (सोयाबीन)", modal: "₹4,280", trend: "Stable", mandi: "Pune APMC" },
-                { crop: "Wheat (गहू)", modal: "₹2,650", trend: "+2%", mandi: "Pune APMC" },
+                { crop: lang === "mr" ? "कांदा" : "Onion", modal: "₹1,850", trend: "+5%", mandi: "Pune APMC" },
+                { crop: lang === "mr" ? "टोमॅटो" : "Tomato", modal: "₹1,400", trend: "+8%", mandi: "Pune APMC" },
+                { crop: lang === "mr" ? "सोयाबीन" : "Soybean", modal: "₹4,280", trend: "Stable", mandi: "Pune APMC" },
+                { crop: lang === "mr" ? "गहू" : "Wheat", modal: "₹2,650", trend: "+2%", mandi: "Pune APMC" },
               ].map((rate, i) => (
                 <div key={i} className="p-3 rounded-xl bg-[#F8F7F2] border border-[#E1E4DE]">
                   <div className="text-xs font-bold text-[#19343A] truncate">{rate.crop}</div>
@@ -253,23 +260,23 @@ export default function FarmerDashboard({
           <div className="bg-[#214D31] text-white rounded-xl p-6 shadow-sm border border-[#285C3A] space-y-4">
             <div className="flex items-center gap-2">
               <span className="text-xl">🚜</span>
-              <h3 className="text-sm font-semibold">Farmer Quick Services</h3>
+              <h3 className="text-sm font-semibold">{t("farmerQuickServices")}</h3>
             </div>
             <p className="text-xs text-[#D9E7DC] font-medium leading-relaxed">
-              Need to add harvest produce, view weighing certificates, or check your bank settlement status?
+              {t("farmerQuickServicesSub")}
             </p>
             <div className="grid grid-cols-2 gap-2 pt-1">
               <button
                 onClick={() => onNavigateToTab && onNavigateToTab("add-produce")}
                 className="p-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-bold text-white transition text-center"
               >
-                ➕ Add Produce
+                {t("addProduceBtn")}
               </button>
               <button
                 onClick={() => onNavigateToTab && onNavigateToTab("my-lots")}
                 className="p-2.5 rounded-xl bg-[#B58A35] hover:bg-[#9F782D] text-xs font-semibold text-white transition text-center shadow-sm"
               >
-                📦 View All Lots
+                {t("viewAllLotsAction")}
               </button>
             </div>
           </div>
@@ -278,3 +285,4 @@ export default function FarmerDashboard({
     </div>
   );
 }
+

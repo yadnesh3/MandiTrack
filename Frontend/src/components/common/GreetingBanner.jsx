@@ -51,26 +51,21 @@ export default function GreetingBanner({
           </div>
         </div>
 
-        {/* Right: Weather */}
+        {/* Right: APMC Yard Status */}
         <div className="z-10 shrink-0 flex items-center gap-3 bg-[#F8F7F2] rounded-xl px-4 py-3 border border-[#DCE3DB]">
-          
-          <div className="w-10 h-10 rounded-lg bg-[#F5EFDE] text-[#B58A35] flex items-center justify-center shrink-0">
-            <Sun size={21} strokeWidth={2} />
+          <div className="w-10 h-10 rounded-lg bg-[#EAF2E9] text-[#285C3A] flex items-center justify-center shrink-0">
+            <MapPin size={20} strokeWidth={2} />
           </div>
 
           <div className="text-left">
             <div className="text-xs font-semibold text-[#19343A] flex items-center gap-1">
-              <MapPin size={11} className="text-[#285C3A]" />
               {district}, Maharashtra
             </div>
 
             <div className="flex items-center gap-1.5 mt-1">
-              <span className="text-lg font-bold text-[#19343A] leading-none">
-                28°C
-              </span>
-
-              <span className="text-[11px] font-medium text-[#687779]">
-                Partly Cloudy
+              <span className="inline-block w-2 h-2 rounded-full bg-[#285C3A]" />
+              <span className="text-[11px] font-semibold text-[#285C3A]">
+                APMC Yard Operational
               </span>
             </div>
           </div>

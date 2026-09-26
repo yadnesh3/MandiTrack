@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { getMyLotsApi } from "../../services/api";
+import { useLang } from "../../context/LanguageContext";
 import {
   Package,
   ArrowRight,
@@ -15,6 +16,7 @@ export default function MyLotsView({
   onSelectLotToTrack,
   onNavigateToAddProduce,
 }) {
+  const { lang, t } = useLang();
   const [lots, setLots] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -136,16 +138,15 @@ export default function MyLotsView({
                 size={13}
                 className="text-[#B58A35]"
               />
-              Produce Lots Directory
+              {t("myLotsDirectoryBadge")}
             </div>
 
             <h1 className="text-xl font-bold tracking-tight text-[#19343A] sm:text-2xl">
-              My Submitted Lots
+              {t("myLotsHeader")}
             </h1>
 
             <p className="mt-1 max-w-2xl text-xs leading-5 text-[#687779] sm:text-sm">
-              Manage your harvest records, review mandi valuations,
-              and track live stages.
+              {t("myLotsHeaderSub")}
             </p>
           </div>
 
@@ -156,7 +157,7 @@ export default function MyLotsView({
               className="inline-flex shrink-0 items-center justify-center gap-2 rounded-lg bg-[#285C3A] px-4 py-2.5 text-xs font-semibold text-white shadow-sm transition hover:bg-[#214D31] active:scale-[0.98]"
             >
               <PlusCircle size={15} />
-              Add New Produce
+              {t("addNewProduceBtn")}
             </button>
           )}
         </div>
@@ -181,7 +182,7 @@ export default function MyLotsView({
               onChange={(e) =>
                 setSearchQuery(e.target.value)
               }
-              placeholder="Search crop, Token (F-2847), Mandi..."
+              placeholder={t("searchLotsPlaceholder")}
               className="w-full rounded-lg border border-[#DCE3DB] bg-[#F8F7F2] py-2.5 pl-9 pr-4 text-xs font-medium text-[#19343A] outline-none transition placeholder:text-[#9AA5A3] focus:border-[#285C3A] focus:bg-white focus:ring-2 focus:ring-[#EAF2E9]"
             />
           </div>
@@ -189,26 +190,26 @@ export default function MyLotsView({
           {/* Filters */}
           <div className="flex w-full items-center gap-2 overflow-x-auto pb-1 md:w-auto md:pb-0">
             {[
-              "all",
-              "queue",
-              "quality check",
-              "trading",
-              "completed",
+              { id: "all", label: t("filterTabAll") },
+              { id: "queue", label: t("filterTabQueue") },
+              { id: "quality check", label: t("filterTabQuality") },
+              { id: "trading", label: t("filterTabTrading") },
+              { id: "completed", label: t("filterTabCompleted") },
             ].map((tab) => {
-              const isActive = statusFilter === tab;
+              const isActive = statusFilter === tab.id;
 
               return (
                 <button
-                  key={tab}
+                  key={tab.id}
                   type="button"
-                  onClick={() => setStatusFilter(tab)}
+                  onClick={() => setStatusFilter(tab.id)}
                   className={`whitespace-nowrap rounded-lg border px-3 py-2 text-[11px] font-semibold capitalize transition ${
                     isActive
                       ? "border-[#285C3A] bg-[#285C3A] text-white shadow-sm"
                       : "border-[#DCE3DB] bg-[#F8F7F2] text-[#687779] hover:bg-white hover:text-[#19343A]"
                   }`}
                 >
-                  {tab === "all" ? "All Lots" : tab}
+                  {tab.label}
                 </button>
               );
             })}
@@ -230,15 +231,15 @@ export default function MyLotsView({
         {/* Result count */}
         {!loading && !error && (
           <div className="mt-3 border-t border-[#E5E9E3] pt-3 text-[10px] font-medium text-[#8A9695]">
-            Showing{" "}
+            {t("showingCountLots")}{" "}
             <span className="font-bold text-[#19343A]">
               {filteredLots.length}
             </span>{" "}
-            of{" "}
+            /{" "}
             <span className="font-bold text-[#19343A]">
               {lots.length}
             </span>{" "}
-            submitted lots
+            {t("ofSubmittedLots")}
           </div>
         )}
       </div>
@@ -257,11 +258,11 @@ export default function MyLotsView({
           </div>
 
           <h2 className="mt-4 text-sm font-bold text-[#19343A]">
-            Loading your lots
+            {lang === "mr" ? "शेतमाल नोंदी लोड होत आहेत..." : "Loading your lots"}
           </h2>
 
           <p className="mt-1 text-xs font-medium text-[#687779]">
-            Fetching your latest produce records...
+            {lang === "mr" ? "तुमची माहिती आणली जात आहे..." : "Fetching your latest produce records..."}
           </p>
         </div>
       ) : error ? (
@@ -276,7 +277,7 @@ export default function MyLotsView({
 
           <div>
             <p className="text-xs font-bold text-[#A64B4B]">
-              Unable to load your lots
+              {lang === "mr" ? "लॉट माहिती लोड करणे अशक्य" : "Unable to load your lots"}
             </p>
 
             <p className="mt-1 text-[11px] font-medium text-[#8F5B5B]">
@@ -289,7 +290,7 @@ export default function MyLotsView({
               className="mt-3 inline-flex items-center gap-1.5 rounded-md border border-[#E8CCCC] bg-white px-3 py-1.5 text-[10px] font-semibold text-[#A64B4B] transition hover:bg-[#FAEEEE]"
             >
               <RefreshCw size={11} />
-              Try Again
+              {t("retryFetchBtn")}
             </button>
           </div>
         </div>
@@ -304,12 +305,11 @@ export default function MyLotsView({
           </div>
 
           <h2 className="mt-4 text-sm font-bold text-[#19343A]">
-            No Produce Lots Found
+            {t("noLotsFound")}
           </h2>
 
           <p className="mx-auto mt-2 max-w-sm text-xs font-medium leading-5 text-[#687779]">
-            You have not registered any produce lots under this
-            filter yet. Add your crop to obtain a queue token.
+            {t("noLotsFoundSub")}
           </p>
 
           {onNavigateToAddProduce && (
@@ -319,7 +319,7 @@ export default function MyLotsView({
               className="mt-5 inline-flex items-center gap-2 rounded-lg bg-[#285C3A] px-5 py-2.5 text-xs font-semibold text-white shadow-sm transition hover:bg-[#214D31] active:scale-[0.98]"
             >
               <PlusCircle size={14} />
-              Register First Lot
+              {t("registerFirstLot")}
             </button>
           )}
         </div>
@@ -332,17 +332,17 @@ export default function MyLotsView({
           <div className="flex items-center justify-between border-b border-[#E5E9E3] px-4 py-3 sm:px-5">
             <div>
               <h2 className="text-sm font-bold text-[#19343A]">
-                Submitted Produce Lots
+                {t("myLotsHeader")}
               </h2>
 
               <p className="mt-0.5 text-[10px] font-medium text-[#8A9695]">
-                Select a lot to view its live mandi journey
+                {t("tapLotHint")}
               </p>
             </div>
 
             <div className="hidden items-center gap-1.5 rounded-full border border-[#CFE2D4] bg-[#EAF2E9] px-2.5 py-1 text-[10px] font-semibold text-[#285C3A] sm:flex">
               <span className="h-1.5 w-1.5 rounded-full bg-[#285C3A]" />
-              Live Tracking
+              {t("activeBadge")}
             </div>
           </div>
 
@@ -351,35 +351,35 @@ export default function MyLotsView({
               <thead>
                 <tr className="border-b border-[#DCE3DB] bg-[#F8F7F2] text-[10px] font-bold uppercase tracking-[0.08em] text-[#687779]">
                   <th className="px-4 py-3.5">
-                    # Token
+                    {t("colToken")}
                   </th>
 
                   <th className="px-4 py-3.5">
-                    Lot ID
+                    {t("colLotId")}
                   </th>
 
                   <th className="px-4 py-3.5">
-                    Crop
+                    {t("colCrop")}
                   </th>
 
                   <th className="px-4 py-3.5">
-                    Quantity
+                    {t("colQuantity")}
                   </th>
 
                   <th className="px-4 py-3.5">
-                    Mandi Market
+                    {t("colMandiMarket")}
                   </th>
 
                   <th className="px-4 py-3.5">
-                    Current Stage
+                    {t("colCurrentStage")}
                   </th>
 
                   <th className="px-4 py-3.5">
-                    Payment
+                    {t("colPayment")}
                   </th>
 
                   <th className="px-4 py-3.5 text-right">
-                    Action
+                    {t("colAction")}
                   </th>
                 </tr>
               </thead>
@@ -470,7 +470,7 @@ export default function MyLotsView({
                         }}
                         className="inline-flex items-center gap-1.5 rounded-lg border border-[#DCE3DB] bg-[#F8F7F2] px-3 py-1.5 text-[10px] font-semibold text-[#285C3A] transition hover:border-[#285C3A] hover:bg-[#285C3A] hover:text-white"
                       >
-                        Track
+                        {t("trackBtn")}
                         <ArrowRight size={12} />
                       </button>
                     </td>
@@ -482,8 +482,7 @@ export default function MyLotsView({
 
           {/* Mobile-friendly bottom note */}
           <div className="border-t border-[#E5E9E3] bg-[#F8F7F2] px-4 py-3 text-[10px] font-medium text-[#8A9695] sm:hidden">
-            Tap a lot or use the Track button to view its live
-            progress.
+            {t("tapLotHint")}
           </div>
         </div>
       )}

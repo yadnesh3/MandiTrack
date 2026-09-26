@@ -154,7 +154,7 @@ export default function App() {
         return <ReportsView user={user} />;
 
       case "announcements":
-        return <AnnouncementsView />;
+        return <AnnouncementsView user={user} />;
 
       case "profile":
         return <ProfileView user={user} onLogout={handleLogout} />;

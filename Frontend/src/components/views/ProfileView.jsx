@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 
 export default function ProfileView({ user, onLogout }) {
-  const { lang, setLang } = useLang();
+  const { lang, setLang, t } = useLang();
 
   const initials = user?.name
     ? user.name
@@ -25,10 +25,17 @@ export default function ProfileView({ user, onLogout }) {
 
   const roleTitle =
     user?.role === "officer"
-      ? "Licensed APMC Market Officer"
+      ? t("profileOfficerRoleTitle")
       : user?.role === "admin"
-      ? "System Administrator"
-      : "Verified Agricultural Producer (Farmer)";
+      ? t("profileAdminRoleTitle")
+      : t("profileFarmerRoleTitle");
+
+  const localizedRole =
+    user?.role === "officer"
+      ? t("roleOfficer")
+      : user?.role === "admin"
+      ? t("roleAdmin")
+      : t("roleFarmer");
 
   return (
     <div className="mx-auto max-w-4xl space-y-6 bg-[#F8F7F2] pb-8 animate-fadeIn">
@@ -50,7 +57,7 @@ export default function ProfileView({ user, onLogout }) {
               </h1>
 
               <span className="rounded-full border border-[#E8DDBF] bg-[#F5EFDE] px-3 py-1 text-[10px] font-bold capitalize text-[#80672C]">
-                {user?.role || "Farmer"}
+                {localizedRole}
               </span>
             </div>
 
@@ -112,11 +119,11 @@ export default function ProfileView({ user, onLogout }) {
 
             <div>
               <h2 className="text-xs font-bold uppercase tracking-[0.08em] text-[#19343A]">
-                Mandi Assignment & Access
+                {t("mandiAssignmentTitle")}
               </h2>
 
               <p className="mt-0.5 text-[10px] font-medium text-[#8A9695]">
-                Operational access details
+                {t("mandiAssignmentSub")}
               </p>
             </div>
           </div>
@@ -131,7 +138,7 @@ export default function ProfileView({ user, onLogout }) {
                 />
 
                 <div className="text-[9px] font-bold uppercase tracking-[0.08em] text-[#8A9695]">
-                  Designated APMC Mandi
+                  {t("designatedMandi")}
                 </div>
               </div>
 
@@ -141,20 +148,20 @@ export default function ProfileView({ user, onLogout }) {
 
               <p className="mt-1 text-[11px] font-medium leading-5 text-[#687779]">
                 {user?.role === "officer"
-                  ? "Your operational checkpoints and lot management are restricted to this mandi."
-                  : "Your produce lots default to this APMC location."}
+                  ? t("officerMandiNotice")
+                  : t("farmerMandiNotice")}
               </p>
             </div>
 
             {/* Account Status */}
             <div className="rounded-lg border border-[#CFE2D4] bg-[#EAF2E9] p-4">
               <div className="text-[9px] font-bold uppercase tracking-[0.08em] text-[#687779]">
-                Account Status
+                {t("accountStatusLabel")}
               </div>
 
               <div className="mt-2 flex items-center gap-2 text-xs font-semibold text-[#285C3A]">
                 <CheckCircle2 size={14} />
-                Active & Verified by Mandi Administration
+                {t("activeVerifiedStatus")}
               </div>
             </div>
           </div>
@@ -172,11 +179,11 @@ export default function ProfileView({ user, onLogout }) {
 
             <div>
               <h2 className="text-xs font-bold uppercase tracking-[0.08em] text-[#19343A]">
-                Language & Interface
+                {t("languageInterfaceTitle")}
               </h2>
 
               <p className="mt-0.5 text-[10px] font-medium text-[#8A9695]">
-                Choose your preferred language
+                {t("languageInterfaceSub")}
               </p>
             </div>
           </div>
@@ -184,7 +191,7 @@ export default function ProfileView({ user, onLogout }) {
           <div className="mt-4">
             <div className="rounded-lg border border-[#DCE3DB] bg-[#F8F7F2] p-4">
               <div className="mb-3 text-[9px] font-bold uppercase tracking-[0.08em] text-[#8A9695]">
-                Preferred Language
+                {t("preferredLanguageLabel")}
               </div>
 
               <div className="grid grid-cols-2 gap-2">
@@ -225,7 +232,7 @@ export default function ProfileView({ user, onLogout }) {
                   className="flex w-full items-center justify-center gap-2 rounded-lg border border-[#E8CCCC] bg-[#FAEEEE] py-2.5 text-xs font-semibold text-[#A64B4B] transition hover:bg-[#F7E4E4] active:scale-[0.98]"
                 >
                   <LogOut size={15} />
-                  Log Out of MandiTrack
+                  {t("logoutMandiTrackBtn")}
                 </button>
               </div>
             )}
@@ -245,20 +252,20 @@ export default function ProfileView({ user, onLogout }) {
 
           <div>
             <div className="text-xs font-bold text-[#19343A]">
-              MandiTrack Account
+              {t("accountStripTitle")}
             </div>
 
             <div className="mt-0.5 text-[10px] font-medium text-[#8A9695]">
-              Your profile and access information
+              {t("accountStripSub")}
             </div>
           </div>
         </div>
 
         <div className="text-left text-[10px] font-medium text-[#8A9695] sm:text-right">
-          <div>Account Role</div>
+          <div>{t("accountRoleLabel")}</div>
 
           <div className="mt-0.5 font-semibold capitalize text-[#285C3A]">
-            {user?.role || "farmer"}
+            {localizedRole}
           </div>
         </div>
       </div>

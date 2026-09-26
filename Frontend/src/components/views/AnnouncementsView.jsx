@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useLang } from "../../context/LanguageContext";
 import {
   Megaphone,
   Calendar,
@@ -6,9 +7,12 @@ import {
   AlertTriangle,
   CheckCircle2,
   Info,
+  Edit2,
+  X,
+  Save,
 } from "lucide-react";
 
-const ALL_ANNOUNCEMENTS = [
+const INITIAL_ANNOUNCEMENTS = [
   {
     id: 1,
     category: "maintenance",
@@ -55,10 +59,70 @@ const ALL_ANNOUNCEMENTS = [
   },
 ];
 
-export default function AnnouncementsView() {
+export default function AnnouncementsView({ user }) {
+  const { t } = useLang();
   const [filter, setFilter] = useState("all");
 
-  const filtered = ALL_ANNOUNCEMENTS.filter((item) => {
+  const [announcements, setAnnouncements] = useState(() => {
+    try {
+      const saved = localStorage.getItem("manditrack_announcements");
+      return saved ? JSON.parse(saved) : INITIAL_ANNOUNCEMENTS;
+    } catch {
+      return INITIAL_ANNOUNCEMENTS;
+    }
+  });
+
+  // Edit modal state
+  const [editingItem, setEditingItem] = useState(null);
+  const [editForm, setEditForm] = useState({
+    title: "",
+    description: "",
+    priority: "normal",
+    mandi: "",
+  });
+
+  const canEdit = user?.role === "officer" || user?.role === "admin";
+
+  const handleStartEdit = (item) => {
+    setEditingItem(item);
+    setEditForm({
+      title: item.title,
+      description: item.description,
+      priority: item.priority || "normal",
+      mandi: item.mandi || "Pune APMC",
+    });
+  };
+
+  const handleCancelEdit = () => {
+    setEditingItem(null);
+  };
+
+  const handleSaveEdit = (e) => {
+    e.preventDefault();
+    if (!editingItem) return;
+
+    const updated = announcements.map((a) =>
+      a.id === editingItem.id
+        ? {
+            ...a,
+            title: editForm.title.trim() || a.title,
+            description: editForm.description.trim() || a.description,
+            priority: editForm.priority,
+            mandi: editForm.mandi.trim() || a.mandi,
+          }
+        : a
+    );
+
+    setAnnouncements(updated);
+    try {
+      localStorage.setItem("manditrack_announcements", JSON.stringify(updated));
+    } catch {
+      // safe fallback
+    }
+    setEditingItem(null);
+  };
+
+  const filtered = announcements.filter((item) => {
     if (filter === "all") return true;
     return item.category === filter;
   });
@@ -69,7 +133,7 @@ export default function AnnouncementsView() {
         dot: "bg-[#A64B4B]",
         ring: "ring-[#FAEEEE]",
         badge: "border-[#E8CCCC] bg-[#FAEEEE] text-[#A64B4B]",
-        label: "High Priority",
+        label: t("highPriority"),
         icon: AlertTriangle,
       };
     }
@@ -79,7 +143,7 @@ export default function AnnouncementsView() {
         dot: "bg-[#B58A35]",
         ring: "ring-[#F5EFDE]",
         badge: "border-[#E8DDBF] bg-[#F5EFDE] text-[#80672C]",
-        label: "Attention",
+        label: t("attentionPriority"),
         icon: AlertTriangle,
       };
     }
@@ -88,7 +152,7 @@ export default function AnnouncementsView() {
       dot: "bg-[#285C3A]",
       ring: "ring-[#EAF2E9]",
       badge: "border-[#CFE2D4] bg-[#EAF2E9] text-[#285C3A]",
-      label: "Notice",
+      label: t("noticePriority"),
       icon: Info,
     };
   };
@@ -104,20 +168,16 @@ export default function AnnouncementsView() {
           {/* Heading */}
           <div>
             <div className="mb-2 inline-flex items-center gap-1.5 rounded-full border border-[#E8DDBF] bg-[#F5EFDE] px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-[#80672C]">
-              <Megaphone
-                size={13}
-                className="text-[#B58A35]"
-              />
-              Official APMC Bulletins & Notices
+              <Megaphone size={13} className="text-[#B58A35]" />
+              {t("announcementsBadge")}
             </div>
 
             <h1 className="text-xl font-bold tracking-tight text-[#19343A] sm:text-2xl">
-              Mandi Announcements & Circulars
+              {t("announcementsHeading")}
             </h1>
 
             <p className="mt-1 max-w-2xl text-xs leading-5 text-[#687779] sm:text-sm">
-              Important market notices, maintenance advisories,
-              and producer facilitation updates.
+              {t("announcementsSub")}
             </p>
           </div>
 
@@ -127,10 +187,10 @@ export default function AnnouncementsView() {
 
           <div className="flex items-center gap-2 overflow-x-auto border-t border-[#E5E9E3] pt-4 pb-1">
             {[
-              { id: "all", label: "All Notices" },
-              { id: "maintenance", label: "Maintenance" },
-              { id: "market", label: "Market Alerts" },
-              { id: "events", label: "Events & Camps" },
+              { id: "all", label: t("filterAll") },
+              { id: "maintenance", label: t("filterMaintenance") },
+              { id: "market", label: t("filterMarket") },
+              { id: "events", label: t("filterEvents") },
             ].map((cat) => {
               const isActive = filter === cat.id;
 
@@ -165,19 +225,16 @@ export default function AnnouncementsView() {
             </div>
 
             <h2 className="mt-4 text-sm font-bold text-[#19343A]">
-              No announcements found
+              {t("noAnnouncementsFound")}
             </h2>
 
             <p className="mt-1 text-xs text-[#687779]">
-              There are no notices in this category right now.
+              {t("noNoticesInCategory")}
             </p>
           </div>
         ) : (
           filtered.map((item) => {
-            const priority = getPriorityStyle(
-              item.priority
-            );
-
+            const priority = getPriorityStyle(item.priority);
             const PriorityIcon = priority.icon;
 
             return (
@@ -209,20 +266,35 @@ export default function AnnouncementsView() {
                       </span>
                     </div>
 
-                    <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] font-medium text-[#8A9695]">
-                      <span className="flex items-center gap-1.5">
-                        <Calendar size={12} />
-                        {item.date}
-                      </span>
+                    <div className="flex flex-wrap items-center gap-3">
+                      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] font-medium text-[#8A9695]">
+                        <span className="flex items-center gap-1.5">
+                          <Calendar size={12} />
+                          {item.date}
+                        </span>
 
-                      <span className="hidden text-[#C4CCCA] sm:inline">
-                        •
-                      </span>
+                        <span className="hidden text-[#C4CCCA] sm:inline">
+                          •
+                        </span>
 
-                      <span className="flex items-center gap-1.5">
-                        <Clock size={12} />
-                        {item.time}
-                      </span>
+                        <span className="flex items-center gap-1.5">
+                          <Clock size={12} />
+                          {item.time}
+                        </span>
+                      </div>
+
+                      {/* EDIT OPTION FOR OFFICER / ADMIN */}
+                      {canEdit && (
+                        <button
+                          type="button"
+                          onClick={() => handleStartEdit(item)}
+                          className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md border border-[#DCE3DB] bg-[#F8F7F2] hover:bg-[#EAF2E9] hover:border-[#CFE2D4] text-[#285C3A] text-xs font-semibold transition"
+                          title={t("editAnnouncementBtn")}
+                        >
+                          <Edit2 size={12} />
+                          <span>{t("editAnnouncementBtn")}</span>
+                        </button>
+                      )}
                     </div>
                   </div>
 
@@ -247,15 +319,9 @@ export default function AnnouncementsView() {
 
                   {/* Footer */}
                   <div className="mt-5 flex items-center gap-2 border-t border-[#E5E9E3] pt-4 text-[10px] font-medium text-[#8A9695]">
-                    <CheckCircle2
-                      size={13}
-                      className="text-[#285C3A]"
-                    />
+                    <CheckCircle2 size={13} className="text-[#285C3A]" />
 
-                    <span>
-                      Official notice published for the
-                      mandi network
-                    </span>
+                    <span>{t("officialNoticeFooter")}</span>
                   </div>
                 </div>
               </article>
@@ -263,6 +329,118 @@ export default function AnnouncementsView() {
           })
         )}
       </div>
+
+      {/* =====================================================
+          EDIT ANNOUNCEMENT MODAL
+      ====================================================== */}
+      {editingItem && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div
+            className="fixed inset-0 bg-[#19343A]/60 backdrop-blur-sm"
+            onClick={handleCancelEdit}
+          />
+
+          <div className="relative z-10 max-h-[92vh] w-full max-w-lg overflow-y-auto rounded-2xl border border-[#DCE3DB] bg-white shadow-2xl animate-scaleUp">
+            <div className="border-b border-[#E5E9E3] px-5 py-4 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-lg bg-[#EAF2E9] text-[#285C3A] flex items-center justify-center">
+                  <Edit2 size={16} />
+                </div>
+                <h3 className="text-base font-bold text-[#19343A]">
+                  {t("editAnnouncementTitle")}
+                </h3>
+              </div>
+              <button
+                type="button"
+                onClick={handleCancelEdit}
+                className="p-1 rounded-md text-[#687779] hover:bg-[#F8F7F2]"
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveEdit} className="p-5 space-y-4">
+              <div>
+                <label className="block text-xs font-semibold text-[#19343A] mb-1">
+                  {t("announcementTitleLabel")}
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={editForm.title}
+                  onChange={(e) =>
+                    setEditForm({ ...editForm, title: e.target.value })
+                  }
+                  className="w-full rounded-lg border border-[#DCE3DB] bg-white px-3.5 py-2.5 text-xs font-medium text-[#19343A] outline-none focus:border-[#285C3A] focus:ring-2 focus:ring-[#285C3A]/10"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-[#19343A] mb-1">
+                  {t("priorityLevelLabel")}
+                </label>
+                <select
+                  value={editForm.priority}
+                  onChange={(e) =>
+                    setEditForm({ ...editForm, priority: e.target.value })
+                  }
+                  className="w-full rounded-lg border border-[#DCE3DB] bg-white px-3.5 py-2.5 text-xs font-medium text-[#19343A] outline-none focus:border-[#285C3A]"
+                >
+                  <option value="normal">{t("noticePriority")}</option>
+                  <option value="alert">{t("attentionPriority")}</option>
+                  <option value="high">{t("highPriority")}</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-[#19343A] mb-1">
+                  {t("mandi")}
+                </label>
+                <input
+                  type="text"
+                  value={editForm.mandi}
+                  onChange={(e) =>
+                    setEditForm({ ...editForm, mandi: e.target.value })
+                  }
+                  className="w-full rounded-lg border border-[#DCE3DB] bg-white px-3.5 py-2.5 text-xs font-medium text-[#19343A] outline-none focus:border-[#285C3A]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-[#19343A] mb-1">
+                  {t("announcementDescLabel")}
+                </label>
+                <textarea
+                  rows={4}
+                  required
+                  value={editForm.description}
+                  onChange={(e) =>
+                    setEditForm({ ...editForm, description: e.target.value })
+                  }
+                  className="w-full rounded-lg border border-[#DCE3DB] bg-white px-3.5 py-2.5 text-xs font-medium text-[#19343A] outline-none focus:border-[#285C3A] focus:ring-2 focus:ring-[#285C3A]/10"
+                />
+              </div>
+
+              <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-[#E5E9E3]">
+                <button
+                  type="button"
+                  onClick={handleCancelEdit}
+                  className="px-4 py-2 rounded-lg border border-[#DCE3DB] bg-white text-xs font-semibold text-[#687779] hover:bg-[#F8F7F2]"
+                >
+                  {t("cancel")}
+                </button>
+                <button
+                  type="submit"
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[#285C3A] hover:bg-[#214D31] text-xs font-semibold text-white shadow-sm transition active:scale-95"
+                >
+                  <Save size={13} />
+                  <span>{t("saveChangesBtn")}</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

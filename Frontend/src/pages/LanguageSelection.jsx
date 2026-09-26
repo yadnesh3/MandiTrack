@@ -17,7 +17,7 @@ function LanguageSelection({ currentLang = "en" }) {
     console.log("MandiTrack language selected:", language);
 
     // Save selected language
-    localStorage.setItem("manditrack_language", language);
+    localStorage.setItem("manditrack_lang", language);
 
     // Reload application
     window.location.reload();

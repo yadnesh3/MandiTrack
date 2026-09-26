@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { createLotApi } from "../../services/api";
 import { MANDI_LIST } from "../layout/MasterShell";
+import { useLang } from "../../context/LanguageContext";
 import {
   PlusCircle,
   Package,
@@ -34,6 +35,7 @@ export default function AddProduceView({
   onLotCreated,
   onNavigateToTracking,
 }) {
+  const { lang, t } = useLang();
   const [crop, setCrop] = useState("Onion");
   const [quantity, setQuantity] = useState("");
   const [unit, setUnit] = useState("Quintal");
@@ -100,16 +102,15 @@ export default function AddProduceView({
           <div>
             <div className="mb-2 inline-flex items-center gap-1.5 rounded-full border border-[#CFE2D4] bg-[#EAF2E9] px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-[#285C3A]">
               <PlusCircle size={13} />
-              Produce Registration
+              {t("produceRegBadge")}
             </div>
 
             <h1 className="text-xl font-bold tracking-tight text-[#19343A] sm:text-2xl">
-              Add Produce to APMC Mandi
+              {t("addProduceHeading")}
             </h1>
 
             <p className="mt-1 max-w-2xl text-xs leading-5 text-[#687779] sm:text-sm">
-              Register your harvest lot before dispatching to
-              receive an instant queue token.
+              {t("addProduceSub")}
             </p>
           </div>
 
@@ -118,7 +119,7 @@ export default function AddProduceView({
               size={15}
               className="text-[#B58A35]"
             />
-            Real-time Token Generation
+            {t("realtimeTokenGen")}
           </div>
         </div>
       </div>
@@ -136,7 +137,7 @@ export default function AddProduceView({
 
           <div>
             <p className="font-semibold">
-              Unable to register produce
+              {lang === "mr" ? "शेतमाल नोंदणी अयशस्वी" : "Unable to register produce"}
             </p>
 
             <p className="mt-0.5 text-xs">
@@ -158,22 +159,22 @@ export default function AddProduceView({
 
           <div className="mt-6">
             <span className="inline-flex rounded-full border border-[#CFE2D4] bg-[#EAF2E9] px-3 py-1 text-[10px] font-bold uppercase tracking-[0.12em] text-[#285C3A]">
-              Produce Lot Registered Successfully
+              {t("lotRegSuccessBadge")}
             </span>
 
             <h2 className="mt-3 text-2xl font-bold text-[#19343A] sm:text-3xl">
-              Token No:{" "}
+              {t("tokenNoLabel")}{" "}
               <span className="text-[#B58A35]">
                 {createdLot.tokenNumber}
               </span>
             </h2>
 
             <p className="mt-2 text-xs font-medium text-[#687779]">
-              Lot ID: {createdLot.lotId}
+              {t("colLotId")}: {createdLot.lotId}
               <span className="mx-1.5 text-[#A3AEAC]">
                 •
               </span>
-              Assigned to {createdLot.mandi}
+              {t("assignedToLabel")} {createdLot.mandi}
             </p>
           </div>
 
@@ -181,7 +182,7 @@ export default function AddProduceView({
           <div className="mx-auto mt-7 grid max-w-md grid-cols-3 gap-3 rounded-lg border border-[#DCE3DB] bg-[#F8F7F2] p-4 text-left">
             <div>
               <span className="text-[10px] font-semibold uppercase tracking-wide text-[#687779]">
-                Crop
+                {t("colCrop")}
               </span>
 
               <div className="mt-1 text-sm font-bold text-[#19343A]">
@@ -191,7 +192,7 @@ export default function AddProduceView({
 
             <div>
               <span className="text-[10px] font-semibold uppercase tracking-wide text-[#687779]">
-                Quantity
+                {t("colQuantity")}
               </span>
 
               <div className="mt-1 text-sm font-bold text-[#19343A]">
@@ -201,7 +202,7 @@ export default function AddProduceView({
 
             <div>
               <span className="text-[10px] font-semibold uppercase tracking-wide text-[#687779]">
-                Queue Pos
+                {t("queuePosLabel")}
               </span>
 
               <div className="mt-1 text-sm font-bold text-[#B58A35]">
@@ -217,7 +218,7 @@ export default function AddProduceView({
               onClick={() => setCreatedLot(null)}
               className="rounded-lg border border-[#DCE3DB] bg-white px-5 py-2.5 text-xs font-semibold text-[#687779] transition hover:bg-[#F8F7F2] hover:text-[#19343A]"
             >
-              Add Another Produce Lot
+              {t("addAnotherLotBtn")}
             </button>
 
             {onNavigateToTracking && (
@@ -228,7 +229,7 @@ export default function AddProduceView({
                 }
                 className="inline-flex items-center justify-center gap-2 rounded-lg bg-[#285C3A] px-6 py-2.5 text-xs font-semibold text-white shadow-sm transition hover:bg-[#214D31] active:scale-[0.98]"
               >
-                Track Live Progress
+                {t("trackLiveProgressBtn")}
                 <ArrowRight size={14} />
               </button>
             )}
@@ -250,11 +251,11 @@ export default function AddProduceView({
           <div>
             <div className="mb-3 flex items-center justify-between gap-3">
               <label className="text-xs font-bold uppercase tracking-[0.08em] text-[#19343A]">
-                Select Crop (पीक निवडा) *
+                {t("selectCropTitle")}
               </label>
 
               <span className="text-[10px] font-medium text-[#687779]">
-                Choose a crop or enter your own
+                {t("chooseCropHint")}
               </span>
             </div>
 
@@ -307,7 +308,7 @@ export default function AddProduceView({
               type="text"
               value={crop}
               onChange={(e) => setCrop(e.target.value)}
-              placeholder="Or type another crop name (e.g. Garlic, Mango, Grapes)"
+              placeholder={t("cropTypePlaceholder")}
               className="w-full rounded-lg border border-[#DCE3DB] bg-white px-4 py-2.5 text-xs font-medium text-[#19343A] outline-none transition placeholder:text-[#9AA5A3] focus:border-[#285C3A] focus:ring-2 focus:ring-[#285C3A]/10"
               required
             />
@@ -327,7 +328,7 @@ export default function AddProduceView({
                   size={14}
                   className="text-[#285C3A]"
                 />
-                Quantity (प्रमाण) *
+                {t("quantity")} *
               </label>
 
               <div className="flex gap-2">
@@ -352,16 +353,13 @@ export default function AddProduceView({
                   className="rounded-lg border border-[#DCE3DB] bg-[#F8F7F2] px-3 py-2.5 text-xs font-semibold text-[#19343A] outline-none focus:border-[#285C3A]"
                 >
                   <option value="Quintal">
-                    Quintal (क्विंटल)
+                    {lang === "mr" ? "क्विंटल (Quintal)" : "Quintal"}
                   </option>
                   <option value="kg">
-                    kg (किलो)
+                    {lang === "mr" ? "किलो (kg)" : "kg"}
                   </option>
-                  <option value="Crate">
-                    Crate (क्रेट)
-                  </option>
-                  <option value="Bag">
-                    Bag (पोती)
+                  <option value="Ton">
+                    {lang === "mr" ? "टन (Ton)" : "Ton"}
                   </option>
                 </select>
               </div>
@@ -374,7 +372,7 @@ export default function AddProduceView({
                   size={14}
                   className="text-[#B58A35]"
                 />
-                Expected Minimum Price (अपेक्षित दर) *
+                {t("expectedPriceLabel")}
               </label>
 
               <div className="relative">
@@ -412,7 +410,7 @@ export default function AddProduceView({
                 size={14}
                 className="text-[#285C3A]"
               />
-              Target APMC Mandi (बाजार समिती) *
+              {t("targetMandiLabel")}
             </label>
 
             <select
@@ -429,8 +427,7 @@ export default function AddProduceView({
             </select>
 
             <p className="mt-1.5 text-[11px] font-medium text-[#687779]">
-              Select the APMC market where you will bring
-              your harvest for auction.
+              {t("targetMandiHint")}
             </p>
           </div>
 
@@ -445,8 +442,7 @@ export default function AddProduceView({
               </span>
 
               <span>
-                Generated Token will be verified at APMC
-                Gate Entry
+                {t("tokenVerifiedGateNotice")}
               </span>
             </div>
 
@@ -458,11 +454,11 @@ export default function AddProduceView({
               {loading ? (
                 <>
                   <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-white/40 border-t-white" />
-                  Generating Token...
+                  {lang === "mr" ? "टोकन तयार होत आहे..." : "Generating Token..."}
                 </>
               ) : (
                 <>
-                  Generate Mandi Token
+                  {t("generateMandiTokenBtn")}
                   <ArrowRight size={15} />
                 </>
               )}

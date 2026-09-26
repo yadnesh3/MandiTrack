@@ -20,6 +20,12 @@ export const MANDI_STAGES_CONFIG = [
     desc: "Vehicle entry & token verification",
   },
   {
+    id: "Token / Lot ID",
+    label: "Token / Lot ID",
+    icon: Users,
+    desc: "Lot registration and digital token allocation",
+  },
+  {
     id: "Queue",
     label: "Queue",
     icon: Clock,
@@ -32,8 +38,8 @@ export const MANDI_STAGES_CONFIG = [
     desc: "Assaying and quality grade certification (Grade A/B/C)",
   },
   {
-    id: "Trading",
-    label: "Trading",
+    id: "Trading / Sale",
+    label: "Trading / Sale",
     icon: Gavel,
     desc: "Open auction & dynamic bidding among licensed buyers",
   },
@@ -66,22 +72,23 @@ export const MANDI_STAGES_CONFIG = [
 
 export default function ProcessFlowCard({
   currentStage = "Queue",
-  currentStageIndex = 1,
+  currentStageIndex = 2,
   onViewAll,
   onAdvanceClick,
   isOfficer = false,
   className = "",
 }) {
   // Normalize index
+  const normalizedCurrent = currentStage.toLowerCase() === "trading" ? "trading / sale" : currentStage.toLowerCase();
   const activeIndex = MANDI_STAGES_CONFIG.findIndex(
-    (s) => s.id.toLowerCase() === currentStage.toLowerCase()
+    (s) => s.id.toLowerCase() === normalizedCurrent
   );
 
   const resolvedIndex =
     activeIndex !== -1 ? activeIndex : currentStageIndex;
 
   const currentStageObj =
-    MANDI_STAGES_CONFIG[resolvedIndex] || MANDI_STAGES_CONFIG[1];
+    MANDI_STAGES_CONFIG[resolvedIndex] || MANDI_STAGES_CONFIG[2];
 
   return (
     <div
@@ -95,7 +102,7 @@ export default function ProcessFlowCard({
           </h2>
 
           <span className="text-[10px] font-semibold text-[#285C3A] bg-[#EAF2E9] border border-[#D5E4D5] px-2 py-1 rounded-full">
-            8 Checkpoints
+            9 Checkpoints
           </span>
         </div>
 

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { getAllLotsApi, advanceCheckpointApi } from "../services/api";
+import { useLang } from "../context/LanguageContext";
 import GreetingBanner from "./common/GreetingBanner";
 import StatCard from "./common/StatCard";
 import DualMetricCard from "./common/DualMetricCard";
@@ -21,15 +22,29 @@ import {
   IndianRupee,
 } from "lucide-react";
 
+const MANDI_STAGES = [
+  "Gate Entry",
+  "Token / Lot ID",
+  "Queue",
+  "Quality Check",
+  "Trading / Sale",
+  "Weighing",
+  "Settlement",
+  "Payment",
+  "Exit",
+];
+
 export default function OfficerDashboard({
   user,
   onNavigateToTab,
   onOpenVoiceModal,
 }) {
+  const { lang, t } = useLang();
   const [lots, setLots] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
+  const [advancingLotId, setAdvancingLotId] = useState(null);
 
   // Checkpoint Modal
   const [selectedLotForProcess, setSelectedLotForProcess] = useState(null);
@@ -99,14 +114,85 @@ export default function OfficerDashboard({
   );
 
   // --------------------------------------------------
+  // METRICS: REAL AVERAGE WAITING & PROCESSING TIME
+  // --------------------------------------------------
+  const validWaitTimes = [];
+  const validProcessTimes = [];
+
+  lots.forEach((lot) => {
+    if (!lot.checkpoints || lot.checkpoints.length === 0) return;
+
+    // Waiting Time: from lot creation / gate entry until operational processing begins (Quality Check)
+    const gateCp = lot.checkpoints.find((c) => c.stageIndex === 0 && c.timestamp);
+    const qcCp = lot.checkpoints.find((c) => c.stageIndex === 3 && c.timestamp);
+    const entryTime = gateCp?.timestamp
+      ? new Date(gateCp.timestamp)
+      : lot.createdAt
+      ? new Date(lot.createdAt)
+      : null;
+
+    if (qcCp?.timestamp && entryTime) {
+      const waitMinutes = (new Date(qcCp.timestamp) - entryTime) / (1000 * 60);
+      if (waitMinutes >= 0 && Number.isFinite(waitMinutes)) {
+        validWaitTimes.push(waitMinutes);
+      }
+    }
+
+    // Processing Time: from operational start (Quality Check) until completion (Payment / Exit)
+    const exitCp = lot.checkpoints.find(
+      (c) => (c.stageIndex === 7 || c.stageIndex === 8) && c.timestamp && c.status === "completed"
+    );
+    if (qcCp?.timestamp && exitCp?.timestamp) {
+      const procMinutes = (new Date(exitCp.timestamp) - new Date(qcCp.timestamp)) / (1000 * 60);
+      if (procMinutes >= 0 && Number.isFinite(procMinutes)) {
+        validProcessTimes.push(procMinutes);
+      }
+    }
+  });
+
+  const avgWaitingTime = validWaitTimes.length > 0
+    ? `${Math.round(validWaitTimes.reduce((a, b) => a + b, 0) / validWaitTimes.length)} min`
+    : "—";
+
+  const avgProcessingTime = validProcessTimes.length > 0
+    ? `${Math.round(validProcessTimes.reduce((a, b) => a + b, 0) / validProcessTimes.length)} min`
+    : "—";
+
+  // --------------------------------------------------
+  // QUICK ADVANCE TO NEXT STAGE
+  // --------------------------------------------------
+  const handleQuickAdvanceStage = async (lot) => {
+    if (!lot?._id) return;
+    const currentIdx = lot.currentStageIndex !== undefined ? lot.currentStageIndex : 2;
+    const nextIdx = currentIdx + 1;
+    if (nextIdx >= MANDI_STAGES.length) return;
+    const nextStage = MANDI_STAGES[nextIdx];
+
+    setAdvancingLotId(lot._id);
+    try {
+      await advanceCheckpointApi(lot._id, { nextStage });
+      setSuccessMsg(`Lot ${lot.tokenNumber || lot.lotId} advanced to "${nextStage}".`);
+      await fetchLots();
+      setTimeout(() => setSuccessMsg(""), 4000);
+    } catch (err) {
+      alert(err.message || "Failed to advance checkpoint.");
+    } finally {
+      setAdvancingLotId(null);
+    }
+  };
+
+  // --------------------------------------------------
   // CHECKPOINT MODAL
   // --------------------------------------------------
 
   const handleOpenProcessModal = (lot) => {
     setSelectedLotForProcess(lot);
 
+    const curIdx = lot.currentStageIndex !== undefined ? lot.currentStageIndex : 2;
+    const defaultNextStage = MANDI_STAGES[curIdx + 1] || MANDI_STAGES[MANDI_STAGES.length - 1];
+
     setCheckpointForm({
-      targetStage: "Quality Check",
+      targetStage: defaultNextStage,
       qualityGrade: lot.qualityGrade || "Grade A (Premium)",
       actualWeight: lot.actualWeight || lot.quantity || "",
       finalPrice: lot.finalPrice || lot.expectedPrice || "",
@@ -330,10 +416,8 @@ export default function OfficerDashboard({
         />
 
         <DualMetricCard
-          processingTime="54 min"
-          processingTrend="12%"
-          waitingTime="31 min"
-          waitingTrend="20%"
+          processingTime={avgProcessingTime}
+          waitingTime={avgWaitingTime}
         />
       </div>
 
@@ -360,14 +444,14 @@ export default function OfficerDashboard({
                   </div>
 
                   <h2 className="text-base font-bold text-[#19343A]">
-                    Live Queue
+                    {t("liveQueueTitle")}
                   </h2>
                 </div>
 
                 <p className="mt-1 pl-10 text-xs text-[#687779]">
-                  Vehicles and token holders awaiting inspection at{" "}
+                  {t("liveQueueSub")}{" "}
                   <span className="font-semibold text-[#285C3A]">
-                    {officerMandi}
+                    ({officerMandi})
                   </span>
                 </p>
               </div>
@@ -380,7 +464,7 @@ export default function OfficerDashboard({
                   }
                   className="inline-flex items-center gap-1 self-start text-xs font-semibold text-[#285C3A] transition hover:text-[#214D31] hover:underline sm:self-auto"
                 >
-                  View All
+                  {lang === "mr" ? "सर्व पहा" : "View All"}
                   <ArrowRight size={13} />
                 </button>
               )}
@@ -393,7 +477,7 @@ export default function OfficerDashboard({
                     size={16}
                     className="animate-spin text-[#285C3A]"
                   />
-                  Loading live queue...
+                  {lang === "mr" ? "थेट रांग लोड होत आहे..." : "Loading live queue..."}
                 </div>
               </div>
             ) : (
@@ -401,14 +485,17 @@ export default function OfficerDashboard({
                 <table className="w-full min-w-[760px] text-left">
                   <thead>
                     <tr className="border-b border-[#E5E9E3] bg-[#FAFAF7] text-[10px] font-bold uppercase tracking-[0.08em] text-[#687779]">
-                      <th className="px-4 py-3">#</th>
-                      <th className="px-4 py-3">Token No.</th>
-                      <th className="px-4 py-3">Farmer</th>
-                      <th className="px-4 py-3">Crop</th>
-                      <th className="px-4 py-3">Quantity</th>
-                      <th className="px-4 py-3">Stage</th>
+                      <th className="px-4 py-3">{t("colQueueNum")}</th>
+                      <th className="px-4 py-3">{t("colTokenId")}</th>
+                      <th className="px-4 py-3">{t("colFarmerName")}</th>
+                      <th className="px-4 py-3">{t("colCrop")}</th>
+                      <th className="px-4 py-3">{t("colQuantity")}</th>
+                      <th className="px-4 py-3">{t("colCurrentStage")}</th>
                       <th className="px-4 py-3 text-right">
-                        Waiting
+                        {t("colEstWaiting")}
+                      </th>
+                      <th className="px-4 py-3 text-right">
+                        {t("colAction")}
                       </th>
                     </tr>
                   </thead>
@@ -431,7 +518,7 @@ export default function OfficerDashboard({
                               handleOpenProcessModal(lot)
                             }
                             className="cursor-pointer transition hover:bg-[#F8F7F2]"
-                            title="Click to process checkpoint"
+                            title="Click to process checkpoint details"
                           >
                             <td className="px-4 py-3.5 font-semibold text-[#8A9695]">
                               {idx + 1}
@@ -494,7 +581,7 @@ export default function OfficerDashboard({
                                     : idx === 2
                                     ? "Queue"
                                     : idx === 3
-                                    ? "Trading"
+                                    ? "Trading / Sale"
                                     : "Weighing")
                               )}
                             </td>
@@ -502,6 +589,33 @@ export default function OfficerDashboard({
                             <td className="px-4 py-3.5 text-right font-semibold text-[#A64B4B]">
                               {lot.waitingTime ||
                                 fallbackWait}
+                            </td>
+
+                            <td className="px-4 py-3.5 text-right">
+                              {lot.currentStageIndex >= 8 ? (
+                                <span className="inline-flex items-center gap-1 rounded-full border border-[#CFE2D4] bg-[#EAF2E9] px-2.5 py-1 text-[11px] font-semibold text-[#285C3A]">
+                                  <CheckCircle2 size={11} />
+                                  {lang === "mr" ? "पूर्ण" : "Completed"}
+                                </span>
+                              ) : (
+                                <button
+                                  type="button"
+                                  disabled={advancingLotId === lot._id}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleQuickAdvanceStage(lot);
+                                  }}
+                                  className="inline-flex items-center gap-1.5 rounded-lg bg-[#285C3A] px-2.5 py-1.5 text-[11px] font-semibold text-white shadow-sm transition hover:bg-[#214D31] active:scale-95 disabled:opacity-50"
+                                  title="Advance to next mandi stage"
+                                >
+                                  {advancingLotId === lot._id ? (
+                                    <RefreshCw size={12} className="animate-spin" />
+                                  ) : (
+                                    <ArrowRight size={12} />
+                                  )}
+                                  {t("advanceCheckpointBtn")}
+                                </button>
+                              )}
                             </td>
                           </tr>
                         );
@@ -538,7 +652,7 @@ export default function OfficerDashboard({
                 <button
                   type="button"
                   onClick={() =>
-                    onNavigateToTab("all-lots")
+                    onNavigateToTab("process-lot")
                   }
                   className="inline-flex items-center gap-1 self-start text-xs font-semibold text-[#285C3A] transition hover:text-[#214D31] hover:underline sm:self-auto"
                 >
@@ -649,22 +763,24 @@ export default function OfficerDashboard({
           -------------------------------------------------- */}
 
           <ProcessFlowCard
-            currentStage="Queue"
-            currentStageIndex={1}
+            currentStage={
+              (inQueueLots[0] || lots[0])?.currentStage || "Queue"
+            }
+            currentStageIndex={
+              (inQueueLots[0] || lots[0])?.currentStageIndex !== undefined
+                ? (inQueueLots[0] || lots[0]).currentStageIndex
+                : 2
+            }
             isOfficer={true}
             onViewAll={() =>
               onNavigateToTab &&
               onNavigateToTab("process-lot")
             }
             onAdvanceClick={() => {
-              const target = lots[0] || {
-                _id: "demo",
-                tokenNumber: "F-2847",
-                crop: "Onion",
-                quantity: 50,
-              };
-
-              handleOpenProcessModal(target);
+              const target = inQueueLots[0] || lots[0];
+              if (target) {
+                handleOpenProcessModal(target);
+              }
             }}
           />
 
@@ -820,29 +936,11 @@ export default function OfficerDashboard({
                   }
                   className="w-full rounded-lg border border-[#DCE3DB] bg-[#F8F7F2] px-3.5 py-2.5 text-xs font-semibold text-[#19343A] outline-none transition focus:border-[#285C3A] focus:bg-white focus:ring-2 focus:ring-[#285C3A]/10"
                 >
-                  <option value="Quality Check">
-                    Quality Check (गुणवत्ता तपासणी)
-                  </option>
-
-                  <option value="Trading">
-                    Trading / Auction (लिलाव व विक्री)
-                  </option>
-
-                  <option value="Weighing">
-                    Weighing (वजन मापन)
-                  </option>
-
-                  <option value="Settlement">
-                    Settlement (हिशोब व पावती)
-                  </option>
-
-                  <option value="Payment">
-                    Payment (पेमेंट जमा)
-                  </option>
-
-                  <option value="Exit">
-                    Exit Gate Pass (निर्गमन)
-                  </option>
+                  {MANDI_STAGES.map((stg, i) => (
+                    <option key={stg} value={stg}>
+                      {i + 1}. {stg}
+                    </option>
+                  ))}
                 </select>
               </div>
 

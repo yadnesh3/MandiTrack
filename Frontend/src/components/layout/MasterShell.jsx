@@ -189,13 +189,8 @@ export default function MasterShell({
         },
         {
           id: "process-lot",
-          label: t("processNextStageBtn"),
+          label: t("reviewProcessLots") || "Review / Process Lots",
           icon: Settings,
-        },
-        {
-          id: "all-lots",
-          label: t("allLots"),
-          icon: Package,
         },
         {
           id: "mandi-prices",

@@ -77,7 +77,7 @@ const createLot = async (req, res) => {
       queueNumber,
       crop: crop.trim(),
       quantity: Number(quantity),
-      unit: unit || "kg",
+      unit: unit ? (unit.toLowerCase() === "quintal" ? "Quintal" : unit.toLowerCase() === "ton" ? "Ton" : "kg") : "kg",
       mandi: mandi.trim(),
       expectedPrice: Number(expectedPrice),
       status: "pending",
@@ -309,7 +309,7 @@ const updateLotStatus = async (req, res) => {
 const advanceCheckpoint = async (req, res) => {
   try {
     const { id } = req.params;
-    const {
+    let {
       nextStage,
       qualityGrade,
       actualWeight,
@@ -333,10 +333,39 @@ const advanceCheckpoint = async (req, res) => {
       });
     }
 
-    // Determine current and target stage index
+    // Ensure checkpoints are fully initialized if missing or incomplete
+    if (!lot.checkpoints || lot.checkpoints.length < MANDI_STAGES.length) {
+      const existing = lot.checkpoints || [];
+      lot.checkpoints = MANDI_STAGES.map((stage, idx) => {
+        const found = existing.find((c) => c.stageIndex === idx || c.stage === stage);
+        if (found) return found;
+        return {
+          stage,
+          stageIndex: idx,
+          status: idx < lot.currentStageIndex ? "completed" : idx === lot.currentStageIndex ? "current" : "pending",
+          timestamp: idx <= lot.currentStageIndex ? new Date() : null,
+          officerName: req.user.name || "APMC Officer",
+          officerId: req.user.id || null,
+          notes: "",
+        };
+      });
+    }
+
+    // Normalize nextStage alias
+    if (nextStage) {
+      if (nextStage.toLowerCase() === "trading") {
+        nextStage = "Trading / Sale";
+      } else if (nextStage.toLowerCase().includes("token")) {
+        nextStage = "Token / Lot ID";
+      }
+    }
+
+    // Determine target stage index
     let targetIndex = lot.currentStageIndex + 1;
     if (nextStage) {
-      const idx = MANDI_STAGES.indexOf(nextStage);
+      const idx = MANDI_STAGES.findIndex(
+        (s) => s.toLowerCase() === nextStage.toLowerCase()
+      );
       if (idx !== -1) targetIndex = idx;
     }
 
@@ -346,35 +375,36 @@ const advanceCheckpoint = async (req, res) => {
 
     const stageName = MANDI_STAGES[targetIndex];
 
-    // Mark current checkpoint as completed
-    if (lot.checkpoints && lot.checkpoints.length > 0) {
-      const currentCp = lot.checkpoints.find((c) => c.stageIndex === lot.currentStageIndex);
-      if (currentCp) {
-        currentCp.status = "completed";
-        currentCp.timestamp = new Date();
-        currentCp.officerName = req.user.name;
-        currentCp.officerId = req.user.id;
-        if (notes) currentCp.notes = notes;
+    // Mark all prior checkpoints as completed
+    lot.checkpoints.forEach((cp) => {
+      if (cp.stageIndex < targetIndex) {
+        cp.status = "completed";
+        if (!cp.timestamp) cp.timestamp = new Date();
+        if (!cp.officerName) cp.officerName = req.user.name;
+        if (!cp.officerId) cp.officerId = req.user.id;
+      } else if (cp.stageIndex === targetIndex) {
+        cp.status =
+          targetIndex === MANDI_STAGES.length - 1 && exitStatus === "Exited"
+            ? "completed"
+            : "current";
+        cp.timestamp = new Date();
+        cp.officerName = req.user.name;
+        cp.officerId = req.user.id;
+        if (notes) cp.notes = notes;
+      } else {
+        cp.status = "pending";
       }
-
-      // Mark target checkpoint as current
-      const nextCp = lot.checkpoints.find((c) => c.stageIndex === targetIndex);
-      if (nextCp) {
-        nextCp.status = targetIndex === MANDI_STAGES.length - 1 && exitStatus === "Exited" ? "completed" : "current";
-        nextCp.timestamp = new Date();
-        nextCp.officerName = req.user.name;
-        nextCp.officerId = req.user.id;
-        if (notes) nextCp.notes = notes;
-      }
-    }
+    });
 
     lot.currentStageIndex = targetIndex;
     lot.currentStage = stageName;
 
     // Apply stage outcome data
     if (qualityGrade) lot.qualityGrade = qualityGrade;
-    if (actualWeight !== undefined && actualWeight !== null) lot.actualWeight = Number(actualWeight);
-    if (finalPrice !== undefined && finalPrice !== null) {
+    if (actualWeight !== undefined && actualWeight !== null && actualWeight !== "") {
+      lot.actualWeight = Number(actualWeight);
+    }
+    if (finalPrice !== undefined && finalPrice !== null && finalPrice !== "") {
       lot.finalPrice = Number(finalPrice);
       const wt = lot.actualWeight || lot.quantity;
       lot.totalAmount = wt * Number(finalPrice);
@@ -387,11 +417,11 @@ const advanceCheckpoint = async (req, res) => {
       if (exitStatus === "Exited") lot.exitTime = new Date();
     }
 
-    // Status sync
+    // Status sync with workflow
     if (targetIndex >= 3 && lot.status === "pending") {
       lot.status = "approved";
     }
-    if (targetIndex >= 4) {
+    if (targetIndex >= 4 && lot.status !== "completed") {
       lot.status = "sold";
     }
     if (targetIndex === MANDI_STAGES.length - 1 && lot.exitStatus === "Exited") {

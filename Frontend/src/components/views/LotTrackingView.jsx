@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { getMyLotsApi, getLotByIdApi } from "../../services/api";
 import { MANDI_STAGES_CONFIG } from "../common/ProcessFlowCard";
+import { useLang } from "../../context/LanguageContext";
 import {
   Clock,
   CheckCircle2,
@@ -18,6 +19,7 @@ export default function LotTrackingView({
   onBackToLots,
   user,
 }) {
+  const { lang, t } = useLang();
   const [allLots, setAllLots] = useState([]);
   const [activeLot, setActiveLot] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -127,14 +129,15 @@ export default function LotTrackingView({
      CURRENT STAGE
   ========================================================= */
 
+  const normalizedStage = (activeLot.currentStage || "Queue").toLowerCase() === "trading" ? "trading / sale" : (activeLot.currentStage || "Queue").toLowerCase();
   const currentStageIndex = MANDI_STAGES_CONFIG.findIndex(
-    (s) =>
-      s.id.toLowerCase() ===
-      (activeLot.currentStage || "Queue").toLowerCase()
+    (s) => s.id.toLowerCase() === normalizedStage
   );
 
   const resolvedStageIndex =
-    currentStageIndex !== -1 ? currentStageIndex : 1;
+    currentStageIndex !== -1
+      ? currentStageIndex
+      : (activeLot.currentStageIndex !== undefined ? activeLot.currentStageIndex : 2);
 
   return (
     <div className="mx-auto max-w-5xl space-y-6 bg-[#F8F7F2] pb-8 animate-fadeIn">
@@ -152,13 +155,13 @@ export default function LotTrackingView({
                 className="mb-2 inline-flex items-center gap-1.5 text-xs font-semibold text-[#687779] transition hover:text-[#285C3A]"
               >
                 <ArrowLeft size={13} />
-                <span>Back to All Lots</span>
+                <span>{t("backToAllLots")}</span>
               </button>
             )}
 
             <div className="flex flex-wrap items-center gap-2">
               <h1 className="text-xl font-bold tracking-tight text-[#19343A] sm:text-2xl">
-                Live Produce Tracking
+                {t("liveTrackingTitle")}
               </h1>
 
               <span className="rounded-full border border-[#E8DDBF] bg-[#F5EFDE] px-2.5 py-1 text-[10px] font-bold text-[#80672C]">
@@ -168,7 +171,7 @@ export default function LotTrackingView({
 
             <p className="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs font-medium text-[#687779]">
               <span>
-                Lot ID:
+                {t("colLotId")}:
                 <span className="ml-1 font-mono font-semibold text-[#19343A]">
                   {activeLot.lotId}
                 </span>
@@ -187,7 +190,7 @@ export default function LotTrackingView({
           {allLots.length > 1 && (
             <div className="flex items-center gap-2 rounded-lg border border-[#DCE3DB] bg-[#F8F7F2] p-2">
               <span className="whitespace-nowrap text-[10px] font-bold uppercase tracking-wide text-[#687779]">
-                Switch Lot
+                {t("switchLotLabel")}
               </span>
 
               <select
@@ -227,7 +230,7 @@ export default function LotTrackingView({
 
           <div>
             <p className="text-xs font-bold text-[#A64B4B]">
-              Unable to load tracking information
+              {lang === "mr" ? "ट्रॅकिंग माहिती आणणे अयशस्वी" : "Unable to load tracking information"}
             </p>
 
             <p className="mt-1 text-[11px] font-medium text-[#8F5B5B]">
@@ -250,7 +253,7 @@ export default function LotTrackingView({
             </div>
 
             <span className="text-[10px] font-bold uppercase tracking-wide text-[#8A9695]">
-              Crop & Quantity
+              {t("cropAndQtyLabel")}
             </span>
           </div>
 
@@ -271,7 +274,7 @@ export default function LotTrackingView({
             </div>
 
             <span className="text-[10px] font-bold uppercase tracking-wide text-[#8A9695]">
-              Current Stage
+              {t("colCurrentStage")}
             </span>
           </div>
 
@@ -280,7 +283,7 @@ export default function LotTrackingView({
           </div>
 
           <div className="mt-0.5 text-xs font-semibold text-[#687779]">
-            Step {resolvedStageIndex + 1} of 8
+            {t("stepOfNine")} {resolvedStageIndex + 1} {t("ofNine")}
           </div>
         </div>
 
@@ -292,7 +295,7 @@ export default function LotTrackingView({
             </div>
 
             <span className="text-[10px] font-bold uppercase tracking-wide text-[#8A9695]">
-              Queue Position
+              {t("queuePosLabel")}
             </span>
           </div>
 
@@ -301,7 +304,7 @@ export default function LotTrackingView({
           </div>
 
           <div className="mt-0.5 text-xs font-semibold text-[#80672C]">
-            Est. wait: ~
+            {t("estWaitLabel")}: ~
             {activeLot.estimatedWaitMinutes || 25} min
           </div>
         </div>
@@ -320,7 +323,7 @@ export default function LotTrackingView({
             </div>
 
             <span className="text-[10px] font-bold uppercase tracking-wide text-[#8A9695]">
-              Payment Status
+              {t("colPayment")}
             </span>
           </div>
 
@@ -350,18 +353,17 @@ export default function LotTrackingView({
         <div className="flex flex-col gap-3 border-b border-[#E5E9E3] pb-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h2 className="text-base font-bold tracking-tight text-[#19343A] sm:text-lg">
-              Mandi Journey Checkpoints
+              {t("mandiJourneyCheckpoints")}
             </h2>
 
             <p className="mt-1 text-xs font-medium leading-5 text-[#687779]">
-              Transparent step-by-step progress verified by APMC
-              market officers.
+              {t("mandiJourneySub")}
             </p>
           </div>
 
           <span className="inline-flex w-fit items-center gap-1.5 rounded-full border border-[#E8DDBF] bg-[#F5EFDE] px-3 py-1.5 text-[10px] font-bold text-[#80672C]">
             <span className="h-1.5 w-1.5 rounded-full bg-[#B58A35]" />
-            Active: {activeLot.currentStage || "Queue"}
+            {t("activeBadge")}: {activeLot.currentStage || "Queue"}
           </span>
         </div>
 
@@ -430,10 +432,10 @@ export default function LotTrackingView({
                     }`}
                   >
                     {isCompleted
-                      ? "Completed"
+                      ? (lang === "mr" ? "पूर्ण" : "Completed")
                       : isCurrent
-                      ? "In Progress"
-                      : "Pending"}
+                      ? (lang === "mr" ? "सुरू आहे" : "In Progress")
+                      : (lang === "mr" ? "प्रलंबित" : "Pending")}
                   </span>
                 </div>
               );
@@ -450,7 +452,7 @@ export default function LotTrackingView({
           <div className="rounded-lg border border-[#DCE3DB] bg-[#F8F7F2] p-4">
             <div className="flex items-center justify-between">
               <div className="text-[9px] font-bold uppercase tracking-wide text-[#8A9695]">
-                1. Gate Entry
+                1. {lang === "mr" ? "गेट प्रवेश" : "Gate Entry"}
               </div>
 
               <CheckCircle2
@@ -460,11 +462,11 @@ export default function LotTrackingView({
             </div>
 
             <div className="mt-2 text-xs font-bold text-[#19343A]">
-              Passed Entry Gate
+              {t("passedEntryGate")}
             </div>
 
             <div className="mt-1 text-[10px] font-medium leading-4 text-[#687779]">
-              Verified by APMC Gate Security
+              {t("gateSecurityVerified")}
             </div>
           </div>
 
@@ -472,7 +474,7 @@ export default function LotTrackingView({
           <div className="rounded-lg border border-[#DCE3DB] bg-[#F8F7F2] p-4">
             <div className="flex items-center justify-between">
               <div className="text-[9px] font-bold uppercase tracking-wide text-[#8A9695]">
-                2. Quality Check
+                2. {lang === "mr" ? "गुणवत्ता तपासणी" : "Quality Check"}
               </div>
 
               <CheckCircle2
@@ -489,11 +491,11 @@ export default function LotTrackingView({
               {activeLot.qualityGrade ||
                 (resolvedStageIndex > 2
                   ? "Grade A"
-                  : "Pending Assaying")}
+                  : t("pendingAssaying"))}
             </div>
 
             <div className="mt-1 text-[10px] font-medium leading-4 text-[#687779]">
-              Standard moisture & size certified
+              {t("certifiedStandard")}
             </div>
           </div>
 
@@ -501,7 +503,7 @@ export default function LotTrackingView({
           <div className="rounded-lg border border-[#DCE3DB] bg-[#F8F7F2] p-4">
             <div className="flex items-center justify-between">
               <div className="text-[9px] font-bold uppercase tracking-wide text-[#8A9695]">
-                3. Auction & Weighing
+                3. {lang === "mr" ? "लिलाव व वजन" : "Auction & Weighing"}
               </div>
 
               <span className="text-[9px] font-bold text-[#80672C]">
@@ -514,7 +516,7 @@ export default function LotTrackingView({
                 ? `₹${activeLot.finalPrice}/q • ${
                     activeLot.buyerName || "Mandi Trader"
                   }`
-                : "Awaiting Auction Call"}
+                : t("awaitingAuction")}
             </div>
 
             <div className="mt-1 text-[10px] font-medium leading-4 text-[#687779]">
@@ -527,7 +529,7 @@ export default function LotTrackingView({
           <div className="rounded-lg border border-[#DCE3DB] bg-[#F8F7F2] p-4">
             <div className="flex items-center justify-between">
               <div className="text-[9px] font-bold uppercase tracking-wide text-[#8A9695]">
-                4. Settlement & Exit
+                4. {lang === "mr" ? "खातेवाटप व बाहेर पडणे" : "Settlement & Exit"}
               </div>
 
               <CreditCard
@@ -541,11 +543,11 @@ export default function LotTrackingView({
             </div>
 
             <div className="mt-2 text-xs font-bold text-[#19343A]">
-              {activeLot.exitStatus || "In Mandi Premises"}
+              {activeLot.exitStatus || t("inMandiPremises")}
             </div>
 
             <div className="mt-1 text-[10px] font-medium leading-4 text-[#687779]">
-              Ref: {activeLot.paymentRef || "Pending Bank Transfer"}
+              Ref: {activeLot.paymentRef || t("pendingBankTransfer")}
             </div>
           </div>
         </div>

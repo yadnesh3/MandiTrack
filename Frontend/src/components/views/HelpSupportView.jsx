@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import AskMandiTrackCard from "../common/AskMandiTrackCard";
+import { useLang } from "../../context/LanguageContext";
 import {
   HelpCircle,
   Phone,
@@ -13,18 +14,18 @@ import {
   ArrowRight,
 } from "lucide-react";
 
-const FAQ_LIST = [
+const FAQ_LIST_EN = [
   {
     q: "How do I register and add my produce lot?",
     a: "Click on 'Add Produce' from the sidebar menu, select your crop (Onion, Tomato, Soybean, etc.), enter the quantity and your expected rate, select your APMC market, and generate your Mandi Token. Show this token upon arrival at the Gate Entry.",
   },
   {
     q: "How do I track my lot progress in real-time?",
-    a: "Navigate to 'Lot Tracking' or 'My Lots' and click 'Track' on your lot. The 8-stage interactive stepper shows completed checkpoints, real-time weighing results, auction outcomes, and payment receipt status.",
+    a: "Navigate to 'Lot Tracking' or 'My Lots' and click 'Track' on your lot. The 9-stage interactive stepper shows completed checkpoints, real-time weighing results, auction outcomes, and payment receipt status.",
   },
   {
     q: "What are the stages of the Mandi Process?",
-    a: "The standard APMC workflow consists of 8 verified checkpoints: Gate Entry -> Queue -> Quality Check -> Trading/Auction -> Weighing -> Settlement -> Payment -> Exit Gate Pass.",
+    a: "The standard APMC workflow consists of 9 verified checkpoints: Gate Entry -> Token / Lot ID -> Queue -> Quality Check -> Trading / Sale -> Weighing -> Settlement -> Payment -> Exit Gate Pass.",
   },
   {
     q: "How is my payment processed?",
@@ -36,8 +37,105 @@ const FAQ_LIST = [
   },
 ];
 
+const FAQ_LIST_MR = [
+  {
+    q: "मी शेतमाल कसा नोंदवावा आणि लॉट कसा तयार करावा?",
+    a: "'शेतमाल नोंदवा' वर क्लिक करा, आपले पीक (कांदा, टोमॅटो, सोयाबीन इ.) निवडा, प्रमाण आणि अपेक्षित दर टाका, बाजार समिती निवडा आणि टोकन तयार करा. गेटवर पोहोचल्यावर हे टोकन दाखवा.",
+  },
+  {
+    q: "मी माझ्या लॉटची प्रगती थेट कशी पाहू शकतो?",
+    a: "'लॉट ट्रॅकिंग' किंवा 'माझे शेतमाल लॉट' वर जाऊन 'ट्रॅक' वर क्लिक करा. ९-टप्प्यांचा इंटरॅक्टिव्ह स्टेपर पूर्ण झालेले चेकपॉईंट, प्रमाणित वजन, लिलाव आणि पेमेंट पावती दर्शवतो.",
+  },
+  {
+    q: "मंडी प्रक्रियेचे मुख्य टप्पे कोणते आहेत?",
+    a: "मानक बाजार समिती कार्यप्रवाहात ९ सत्यापित चेकपॉईंट आहेत: गेट प्रवेश -> टोकन / लॉट आयडी -> प्रतीक्षा रांग -> गुणवत्ता तपासणी -> लिलाव व विक्री -> वजन मापन -> हिशोब व पावती -> पेमेंट -> निर्गमन गेट पास.",
+  },
+  {
+    q: "माझे पेमेंट कसे जमा होते?",
+    a: "लिलाव आणि इलेक्ट्रॉनिक वजन पूर्ण झाल्यावर हिशोब पावती तयार केली जाते. परवानाधारक खरेदीदार किंवा बाजार समिती थेट आपल्या बँक खात्यात किंवा UPI द्वारे रक्कम हस्तांतरित करते.",
+  },
+  {
+    q: "मी मराठीत व्हॉईस कमांड वापरू शकतो का?",
+    a: "होय! मंडीट्रॅक व्हॉईस असिस्टंट मराठी आणि इंग्रजी दोन्ही भाषांना समर्थन देतो. माइक आयकॉनवर क्लिक करा आणि 'आजचा कांद्याचा दर' किंवा 'माझा लॉट कुठे आहे' असे विचारू शकता.",
+  },
+];
+
+const WORKFLOW_STAGES_EN = [
+  {
+    step: "01",
+    title: "1. Gate Entry & Token",
+    desc: "Arrive at APMC, scan your digital lot token, and enter the assigned unloading lane.",
+    bg: "bg-[#EAF2E9]",
+    border: "border-[#CFE2D4]",
+    text: "text-[#285C3A]",
+  },
+  {
+    step: "02",
+    title: "2. Quality Check & Assaying",
+    desc: "Mandi quality inspectors inspect size, moisture, and assign official Grade A/B/C.",
+    bg: "bg-[#EEF2F3]",
+    border: "border-[#D5DDE0]",
+    text: "text-[#477A7A]",
+  },
+  {
+    step: "03",
+    title: "3. Auction & Weighing",
+    desc: "Licensed commission agents and traders bid competitively. Exact weight recorded electronically.",
+    bg: "bg-[#F1EEF5]",
+    border: "border-[#DDD6E7]",
+    text: "text-[#75658F]",
+  },
+  {
+    step: "04",
+    title: "4. Direct Settlement & Exit",
+    desc: "Amount credited via UPI/NEFT within hours, and an electronic Gate Pass is issued for clearance.",
+    bg: "bg-[#F5EFDE]",
+    border: "border-[#E8DDBF]",
+    text: "text-[#80672C]",
+  },
+];
+
+const WORKFLOW_STAGES_MR = [
+  {
+    step: "01",
+    title: "१. गेट प्रवेश व टोकन",
+    desc: "बाजार समितीत या, डिजिटल लॉट टोकन दाखवा आणि नियुक्त अनलोडिंग रांगेत प्रवेश करा.",
+    bg: "bg-[#EAF2E9]",
+    border: "border-[#CFE2D4]",
+    text: "text-[#285C3A]",
+  },
+  {
+    step: "02",
+    title: "२. गुणवत्ता तपासणी",
+    desc: "गुणवत्ता निरीक्षक मालाचा आकार, ओलावा तपासून अधिकृत A/B/C प्रतवारी निश्चित करतात.",
+    bg: "bg-[#EEF2F3]",
+    border: "border-[#D5DDE0]",
+    text: "text-[#477A7A]",
+  },
+  {
+    step: "03",
+    title: "३. लिलाव आणि वजन मापन",
+    desc: "परवानाधारक अडते आणि खरेदीदार स्पर्धात्मक बोली लावतात. इलेक्ट्रॉनिक काट्यावर अचूक वजन नोंदवले जाते.",
+    bg: "bg-[#F1EEF5]",
+    border: "border-[#DDD6E7]",
+    text: "text-[#75658F]",
+  },
+  {
+    step: "04",
+    title: "४. थेट हिशोब व गेट पास",
+    desc: "रक्कम काही तासांत थेट बँक खात्यात/UPI द्वारे जमा होते आणि निर्गमनासाठी इलेक्ट्रॉनिक गेट पास मिळतो.",
+    bg: "bg-[#F5EFDE]",
+    border: "border-[#E8DDBF]",
+    text: "text-[#80672C]",
+  },
+];
+
 export default function HelpSupportView({ onOpenVoiceHelp }) {
+  const { lang, t } = useLang();
   const [openFaq, setOpenFaq] = useState(0);
+
+  const faqList = lang === "mr" ? FAQ_LIST_MR : FAQ_LIST_EN;
+  const workflowStages = lang === "mr" ? WORKFLOW_STAGES_MR : WORKFLOW_STAGES_EN;
 
   return (
     <div className="mx-auto max-w-5xl space-y-6 bg-[#F8F7F2] pb-8 animate-fadeIn">
@@ -50,16 +148,15 @@ export default function HelpSupportView({ onOpenVoiceHelp }) {
           <div>
             <div className="mb-2 inline-flex items-center gap-1.5 rounded-full border border-[#CFE2D4] bg-[#EAF2E9] px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-[#285C3A]">
               <HelpCircle size={13} />
-              Farmer & Officer Assistance Portal
+              {t("helpBadge")}
             </div>
 
             <h1 className="text-xl font-bold tracking-tight text-[#19343A] sm:text-2xl">
-              MandiTrack Help & Support
+              {t("helpHeading")}
             </h1>
 
             <p className="mt-1 max-w-2xl text-xs leading-5 text-[#687779] sm:text-sm">
-              Official guidelines, workflow walkthroughs, and direct APMC
-              assistance channels.
+              {t("helpSubtext")}
             </p>
           </div>
 
@@ -70,7 +167,7 @@ export default function HelpSupportView({ onOpenVoiceHelp }) {
               className="inline-flex shrink-0 items-center justify-center gap-2 rounded-lg bg-[#285C3A] px-4 py-2.5 text-xs font-semibold text-white shadow-sm transition hover:bg-[#214D31] active:scale-[0.98]"
             >
               <Mic size={15} />
-              Open Voice Assistant
+              {t("openVoiceBtn")}
             </button>
           )}
         </div>
@@ -95,17 +192,17 @@ export default function HelpSupportView({ onOpenVoiceHelp }) {
 
               <div>
                 <h2 className="text-sm font-bold text-[#19343A]">
-                  Frequently Asked Questions
+                  {t("faqHeading")}
                 </h2>
 
                 <p className="mt-0.5 text-[10px] font-medium text-[#8A9695]">
-                  वारंवार विचारले जाणारे प्रश्न
+                  {t("faqMarathiSub")}
                 </p>
               </div>
             </div>
 
             <div className="mt-4 space-y-2.5">
-              {FAQ_LIST.map((faq, idx) => {
+              {faqList.map((faq, idx) => {
                 const isOpen = openFaq === idx;
 
                 return (
@@ -166,87 +263,33 @@ export default function HelpSupportView({ onOpenVoiceHelp }) {
 
               <div>
                 <h2 className="text-sm font-bold text-[#19343A]">
-                  Mandi Stages Step-by-Step Explanation
+                  {t("workflowHeading")}
                 </h2>
 
                 <p className="mt-0.5 text-[10px] font-medium text-[#8A9695]">
-                  Understand the journey of your produce
+                  {t("workflowSub")}
                 </p>
               </div>
             </div>
 
             <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
-              {/* Stage 1 */}
-              <div className="rounded-lg border border-[#CFE2D4] bg-[#EAF2E9] p-4">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-[#285C3A]">
-                    1. Gate Entry & Queue
-                  </span>
+              {workflowStages.map((stage, sIdx) => (
+                <div key={sIdx} className={`rounded-lg border ${stage.border} ${stage.bg} p-4`}>
+                  <div className="flex items-center justify-between">
+                    <span className={`text-xs font-bold ${stage.text}`}>
+                      {stage.title}
+                    </span>
 
-                  <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white text-[10px] font-bold text-[#285C3A]">
-                    01
-                  </span>
+                    <span className={`flex h-6 w-6 items-center justify-center rounded-full bg-white text-[10px] font-bold ${stage.text}`}>
+                      {stage.step}
+                    </span>
+                  </div>
+
+                  <p className="mt-2 text-[11px] font-medium leading-5 text-[#687779]">
+                    {stage.desc}
+                  </p>
                 </div>
-
-                <p className="mt-2 text-[11px] font-medium leading-5 text-[#477A7A]">
-                  Arrive at APMC, scan your digital lot token, and enter the
-                  assigned unloading lane.
-                </p>
-              </div>
-
-              {/* Stage 2 */}
-              <div className="rounded-lg border border-[#D5DDE0] bg-[#EEF2F3] p-4">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-[#477A7A]">
-                    2. Quality Check & Assaying
-                  </span>
-
-                  <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white text-[10px] font-bold text-[#477A7A]">
-                    02
-                  </span>
-                </div>
-
-                <p className="mt-2 text-[11px] font-medium leading-5 text-[#687779]">
-                  Mandi quality inspectors inspect size, moisture, and assign
-                  official Grade A/B/C.
-                </p>
-              </div>
-
-              {/* Stage 3 */}
-              <div className="rounded-lg border border-[#DDD6E7] bg-[#F1EEF5] p-4">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-[#75658F]">
-                    3. Auction & Weighing
-                  </span>
-
-                  <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white text-[10px] font-bold text-[#75658F]">
-                    03
-                  </span>
-                </div>
-
-                <p className="mt-2 text-[11px] font-medium leading-5 text-[#75658F]">
-                  Licensed commission agents and traders bid competitively.
-                  Exact weight recorded electronically.
-                </p>
-              </div>
-
-              {/* Stage 4 */}
-              <div className="rounded-lg border border-[#E8DDBF] bg-[#F5EFDE] p-4">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-[#80672C]">
-                    4. Direct Settlement & Exit
-                  </span>
-
-                  <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white text-[10px] font-bold text-[#80672C]">
-                    04
-                  </span>
-                </div>
-
-                <p className="mt-2 text-[11px] font-medium leading-5 text-[#80672C]">
-                  Amount credited via UPI/NEFT within hours, and an electronic
-                  Gate Pass is issued for clearance.
-                </p>
-              </div>
+              ))}
             </div>
           </div>
         </div>
@@ -270,18 +313,19 @@ export default function HelpSupportView({ onOpenVoiceHelp }) {
 
               <div>
                 <h3 className="text-xs font-bold uppercase tracking-[0.08em] text-[#19343A]">
-                  Direct APMC Helpline
+                  {t("directHelplineTitle")}
                 </h3>
 
                 <p className="mt-0.5 text-[10px] font-medium text-[#8A9695]">
-                  Get assistance from the facilitation desk
+                  {t("directHelplineSub")}
                 </p>
               </div>
             </div>
 
             <p className="mt-4 text-xs font-medium leading-5 text-[#687779]">
-              Have questions regarding lot tokens, weighing, or payments?
-              Contact our dedicated mandi facilitation desk.
+              {lang === "mr"
+                ? "टोकन, वजन किंवा पेमेंटबाबत काही प्रश्न आहेत का? आमच्या समर्पित बाजार समिती मदत कक्षाशी संपर्क साधा."
+                : "Have questions regarding lot tokens, weighing, or payments? Contact our dedicated mandi facilitation desk."}
             </p>
 
             <div className="mt-4 space-y-2.5">
@@ -296,7 +340,7 @@ export default function HelpSupportView({ onOpenVoiceHelp }) {
 
                 <div className="min-w-0">
                   <div className="text-[9px] font-semibold uppercase tracking-wider text-[#8A9695]">
-                    Toll-Free Helpline
+                    {t("tollFreeLabel")}
                   </div>
 
                   <div className="mt-0.5 text-xs font-bold text-[#19343A]">
@@ -321,7 +365,7 @@ export default function HelpSupportView({ onOpenVoiceHelp }) {
 
                 <div className="min-w-0">
                   <div className="text-[9px] font-semibold uppercase tracking-wider text-[#8A9695]">
-                    APMC Desk Mobile
+                    {t("apmcMobileLabel")}
                   </div>
 
                   <div className="mt-0.5 text-xs font-bold text-[#19343A]">
@@ -346,7 +390,7 @@ export default function HelpSupportView({ onOpenVoiceHelp }) {
 
                 <div className="min-w-0">
                   <div className="text-[9px] font-semibold uppercase tracking-wider text-[#8A9695]">
-                    Official Email
+                    {t("officialEmailLabel")}
                   </div>
 
                   <div className="mt-0.5 break-all text-xs font-bold text-[#19343A]">
@@ -364,7 +408,7 @@ export default function HelpSupportView({ onOpenVoiceHelp }) {
             {/* Footer */}
             <div className="mt-5 flex items-center justify-center gap-1.5 border-t border-[#E5E9E3] pt-4 text-center text-[10px] font-medium text-[#8A9695]">
               <ShieldCheck size={12} className="text-[#285C3A]" />
-              Government of Maharashtra • MSAMB APMC Support
+              {t("govtSupportFooter")}
             </div>
           </div>
         </div>

@@ -1,4 +1,5 @@
 import React from "react";
+import { useLang } from "../../context/LanguageContext";
 import {
   FileText,
   BarChart3,
@@ -11,6 +12,7 @@ import {
 } from "lucide-react";
 
 export default function ReportsView({ user }) {
+  const { t } = useLang();
   const mandiName = user?.mandi || "Pune APMC";
 
   return (
@@ -24,16 +26,15 @@ export default function ReportsView({ user }) {
           <div>
             <div className="mb-2 inline-flex items-center gap-1.5 rounded-full border border-[#CFE2D4] bg-[#EAF2E9] px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-[#285C3A]">
               <FileText size={13} />
-              Mandi Analytics & Records
+              {t("reportsBadge")}
             </div>
 
             <h1 className="text-xl font-bold tracking-tight text-[#19343A] sm:text-2xl">
-              Operational Reports & Summaries
+              {t("reportsTitle")}
             </h1>
 
             <p className="mt-1 max-w-3xl text-xs leading-5 text-[#687779] sm:text-sm">
-              Produce arrival volumes, auction settlement stats, and
-              daily realization metrics for{" "}
+              {t("reportsSubtext")}{" "}
               <span className="font-semibold text-[#285C3A]">
                 {mandiName}
               </span>
@@ -47,7 +48,7 @@ export default function ReportsView({ user }) {
             className="inline-flex shrink-0 items-center justify-center gap-2 rounded-lg bg-[#285C3A] px-4 py-2.5 text-xs font-semibold text-white shadow-sm transition hover:bg-[#214D31] active:scale-[0.98]"
           >
             <Download size={14} />
-            <span>Export Summary (PDF)</span>
+            <span>{t("exportSummaryPdf")}</span>
           </button>
         </div>
       </div>
@@ -61,7 +62,7 @@ export default function ReportsView({ user }) {
         <div className="rounded-xl border border-[#DCE3DB] bg-white p-4 shadow-sm sm:p-5">
           <div className="flex items-center justify-between gap-2">
             <div className="text-[9px] font-bold uppercase tracking-[0.08em] text-[#8A9695]">
-              Monthly Arrival Volume
+              {t("monthlyArrivalVol")}
             </div>
 
             <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#EAF2E9] text-[#285C3A]">
@@ -83,7 +84,7 @@ export default function ReportsView({ user }) {
         <div className="rounded-xl border border-[#DCE3DB] bg-white p-4 shadow-sm sm:p-5">
           <div className="flex items-center justify-between gap-2">
             <div className="text-[9px] font-bold uppercase tracking-[0.08em] text-[#8A9695]">
-              Auction Clearance Rate
+              {t("auctionClearanceRate")}
             </div>
 
             <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#EAF2E9] text-[#285C3A]">
@@ -96,7 +97,7 @@ export default function ReportsView({ user }) {
           </div>
 
           <div className="mt-1 text-[10px] font-medium text-[#687779]">
-            Same-day settlement
+            {t("sameDaySettlement")}
           </div>
         </div>
 
@@ -104,7 +105,7 @@ export default function ReportsView({ user }) {
         <div className="rounded-xl border border-[#DCE3DB] bg-white p-4 shadow-sm sm:p-5">
           <div className="flex items-center justify-between gap-2">
             <div className="text-[9px] font-bold uppercase tracking-[0.08em] text-[#8A9695]">
-              Average Realization
+              {t("avgRealization")}
             </div>
 
             <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#F5EFDE] text-[#B58A35]">
@@ -117,7 +118,7 @@ export default function ReportsView({ user }) {
           </div>
 
           <div className="mt-1 text-[10px] font-medium text-[#687779]">
-            Across all top 10 crops
+            {t("top10Crops")}
           </div>
         </div>
 
@@ -125,7 +126,7 @@ export default function ReportsView({ user }) {
         <div className="rounded-xl border border-[#DCE3DB] bg-white p-4 shadow-sm sm:p-5">
           <div className="flex items-center justify-between gap-2">
             <div className="text-[9px] font-bold uppercase tracking-[0.08em] text-[#8A9695]">
-              Active Registered Traders
+              {t("activeTraders")}
             </div>
 
             <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#EEF2F3] text-[#477A7A]">
@@ -138,7 +139,7 @@ export default function ReportsView({ user }) {
           </div>
 
           <div className="mt-1 text-[10px] font-semibold text-[#285C3A]">
-            Active licensed buyers
+            {t("activeBuyers")}
           </div>
         </div>
       </div>
@@ -157,18 +158,18 @@ export default function ReportsView({ user }) {
 
             <div>
               <h2 className="text-sm font-bold text-[#19343A]">
-                Commodity Turnover Breakdown
+                {t("commodityTurnover")}
               </h2>
 
               <p className="mt-0.5 text-[10px] font-medium text-[#8A9695]">
-                This month's mandi activity
+                {t("thisMonthActivity")}
               </p>
             </div>
           </div>
 
           <span className="inline-flex w-fit items-center gap-1.5 rounded-full border border-[#CFE2D4] bg-[#EAF2E9] px-2.5 py-1 text-[10px] font-semibold text-[#285C3A]">
             <span className="h-1.5 w-1.5 rounded-full bg-[#285C3A]" />
-            Live APMC Aggregates
+            {t("liveApmcAggregates")}
           </span>
         </div>
 
@@ -178,23 +179,23 @@ export default function ReportsView({ user }) {
             <thead>
               <tr className="border-b border-[#DCE3DB] bg-[#F8F7F2] text-[10px] font-bold uppercase tracking-[0.08em] text-[#687779]">
                 <th className="px-4 py-3.5">
-                  Commodity
+                  {t("colCommodityName")}
                 </th>
 
                 <th className="px-4 py-3.5">
-                  Total Lots
+                  {t("colTotalLots")}
                 </th>
 
                 <th className="px-4 py-3.5">
-                  Volume (Quintals)
+                  {t("colVolumeQ")}
                 </th>
 
                 <th className="px-4 py-3.5 text-right">
-                  Avg Rate (₹/Q)
+                  {t("colAvgRate")}
                 </th>
 
                 <th className="px-4 py-3.5 text-right">
-                  Gross Turnover
+                  {t("colGrossTurnover")}
                 </th>
               </tr>
             </thead>
@@ -278,11 +279,11 @@ export default function ReportsView({ user }) {
         <div className="flex flex-col gap-2 border-t border-[#E5E9E3] bg-[#F8F7F2] px-5 py-3.5 text-[10px] font-medium text-[#8A9695] sm:flex-row sm:items-center sm:justify-between">
           <span className="flex items-center gap-1.5">
             <Calendar size={11} />
-            Current reporting period
+            {t("currentPeriod")}
           </span>
 
           <span>
-            Mandi:{" "}
+            {t("mandi")}:{" "}
             <strong className="font-semibold text-[#285C3A]">
               {mandiName}
             </strong>

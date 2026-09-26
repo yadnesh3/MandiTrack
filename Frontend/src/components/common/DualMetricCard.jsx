@@ -2,10 +2,10 @@ import React from "react";
 import { Clock, Users, ArrowDownRight } from "lucide-react";
 
 export default function DualMetricCard({
-  processingTime = "54 min",
-  processingTrend = "12%",
-  waitingTime = "31 min",
-  waitingTrend = "20%",
+  processingTime = "—",
+  processingTrend = null,
+  waitingTime = "—",
+  waitingTrend = null,
   className = "",
 }) {
   return (
@@ -27,6 +27,12 @@ export default function DualMetricCard({
             <div className="text-base font-bold text-[#19343A] leading-tight mt-0.5">
               {processingTime}
             </div>
+
+            {processingTime === "—" && (
+              <div className="text-[9px] text-[#8A9695] mt-0.5">
+                Based on completed checkpoints
+              </div>
+            )}
           </div>
         </div>
 
@@ -56,6 +62,12 @@ export default function DualMetricCard({
             <div className="text-base font-bold text-[#19343A] leading-tight mt-0.5">
               {waitingTime}
             </div>
+
+            {waitingTime === "—" && (
+              <div className="text-[9px] text-[#8A9695] mt-0.5">
+                Based on completed checkpoints
+              </div>
+            )}
           </div>
         </div>
 
