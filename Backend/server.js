@@ -24,26 +24,48 @@ if (process.env.JWT_SECRET.length < 32) {
 
 const app = express();
 
+// Allowed frontend origins
 const allowedOrigins = [
-  ...new Set(
-    [
-      "http://localhost:5173",
-      "http://127.0.0.1:5173",
-      "https://mandi-track-yadnesh-gharat.vercel.app",
-      ...(process.env.CORS_ORIGINS || "")
-        .split(",")
-        .map((origin) => origin.trim())
-        .filter(Boolean),
-    ]
-  ),
+  ...new Set([
+    // Local development
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    "http://localhost:5174",
+    "http://127.0.0.1:5174",
+
+    // Production Vercel frontend
+    "https://mandi-track.vercel.app",
+
+    // Additional origins from Render environment variable
+    ...(process.env.CORS_ORIGINS || "")
+      .split(",")
+      .map((origin) => origin.trim())
+      .filter(Boolean),
+  ]),
 ];
 
 app.use(
   cors({
-    origin: allowedOrigins,
+    origin: (origin, callback) => {
+      // Allow requests without an Origin header
+      // (for example, Postman/Thunder Client/server-to-server requests)
+      if (!origin) {
+        return callback(null, true);
+      }
+
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+
+      console.warn(`CORS blocked origin: ${origin}`);
+      return callback(new Error("Not allowed by CORS"));
+    },
     credentials: true,
   })
 );
+
+// Handle CORS preflight requests
+app.options("*", cors());
 
 app.use(express.json({ limit: "100kb" }));
 
