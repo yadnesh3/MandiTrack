@@ -24,12 +24,19 @@ if (process.env.JWT_SECRET.length < 32) {
 
 const app = express();
 
-const allowedOrigins = (
-  process.env.CORS_ORIGINS || "http://localhost:5173,http://127.0.0.1:5173"
-)
-  .split(",")
-  .map((origin) => origin.trim())
-  .filter(Boolean);
+const allowedOrigins = [
+  ...new Set(
+    [
+      "http://localhost:5173",
+      "http://127.0.0.1:5173",
+      "https://mandi-track-yadnesh-gharat.vercel.app",
+      ...(process.env.CORS_ORIGINS || "")
+        .split(",")
+        .map((origin) => origin.trim())
+        .filter(Boolean),
+    ]
+  ),
+];
 
 app.use(
   cors({
