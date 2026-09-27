@@ -41,7 +41,7 @@ export default function AddProduceView({
   const [unit, setUnit] = useState("Quintal");
   const [expectedPrice, setExpectedPrice] = useState("");
   const [mandi, setMandi] = useState(
-    user?.mandi || "Pune APMC"
+    user?.mandi || "Navi Mumbai APMC"
   );
 
   const [loading, setLoading] = useState(false);

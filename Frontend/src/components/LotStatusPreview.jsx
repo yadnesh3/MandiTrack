@@ -199,7 +199,7 @@ export default function LotStatusPreview({ onViewLots }) {
               Mandi
             </p>
             <p className="mt-1 text-sm font-semibold text-[#19343A]">
-              Pune APMC
+              Navi Mumbai APMC
             </p>
           </div>
         </div>

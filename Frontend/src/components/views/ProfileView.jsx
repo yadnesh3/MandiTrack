@@ -94,7 +94,7 @@ export default function ProfileView({ user, onLogout }) {
                   className="text-[#B58A35]"
                 />
                 <span>
-                  {user?.mandi || "Pune APMC"}
+                  {user?.mandi || "Navi Mumbai APMC"}
                 </span>
               </div>
             </div>
@@ -143,7 +143,7 @@ export default function ProfileView({ user, onLogout }) {
               </div>
 
               <div className="mt-2 text-sm font-bold text-[#19343A]">
-                {user?.mandi || "Pune APMC"}
+                {user?.mandi || "Navi Mumbai APMC"}
               </div>
 
               <p className="mt-1 text-[11px] font-medium leading-5 text-[#687779]">

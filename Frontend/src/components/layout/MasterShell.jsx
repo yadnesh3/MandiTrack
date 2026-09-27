@@ -31,9 +31,7 @@ export const MANDI_LIST = [
   "Thane APMC",
   "Nashik APMC",
   "Nagpur APMC",
-  "Kolhapur APMC",
   "Latur APMC",
-  "Solapur APMC",
   "Kalyan APMC",
 ];
 
@@ -54,7 +52,7 @@ export default function MasterShell({
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
   const [selectedMandi, setSelectedMandi] = useState(
-    user?.mandi || "Pune APMC"
+    user?.mandi || "Navi Mumbai APMC"
   );
 
   const [mandiDropdownOpen, setMandiDropdownOpen] = useState(false);

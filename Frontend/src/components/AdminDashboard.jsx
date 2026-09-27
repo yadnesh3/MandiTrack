@@ -30,7 +30,7 @@ export default function AdminDashboard({ user }) {
     name: "",
     mobile: "",
     password: "",
-    mandi: "Pune APMC",
+    mandi: "Navi Mumbai APMC",
   });
   const [creatingOfficer, setCreatingOfficer] = useState(false);
   const [officerFormError, setOfficerFormError] = useState("");

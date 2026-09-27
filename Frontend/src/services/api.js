@@ -1,5 +1,12 @@
-const API_BASE_URL =
-  import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+const resolveApiBaseUrl = () => {
+  const raw = (import.meta.env.VITE_API_URL || "http://localhost:5000").replace(
+    /\/+$/,
+    ""
+  );
+  return raw.endsWith("/api") ? raw : `${raw}/api`;
+};
+
+const API_BASE_URL = resolveApiBaseUrl();
 
 // Helper to make HTTP requests
 const request = async (endpoint, options = {}) => {

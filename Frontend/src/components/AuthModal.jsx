@@ -806,13 +806,14 @@ export default function AuthModal({
                       }
                       className="w-full appearance-none rounded-lg border border-[#D6DED7] bg-[#FAFBF9] py-3 pl-10 pr-10 text-sm font-medium text-[#19343A] outline-none transition focus:border-[#285C3A] focus:bg-white focus:ring-2 focus:ring-[#285C3A]/10"
                     >
+                      <option value="Navi Mumbai APMC">
+                        Navi Mumbai APMC (नवी मुंबई)
+                      </option>
+
                       <option value="Pune APMC">
                         Pune APMC (पुणे)
                       </option>
 
-                      <option value="Navi Mumbai APMC">
-                        Navi Mumbai APMC (नवी मुंबई)
-                      </option>
 
                       <option value="Nashik APMC">
                         Nashik APMC (नाशिक)
@@ -824,10 +825,6 @@ export default function AuthModal({
 
                       <option value="Nagpur APMC">
                         Nagpur APMC (नागपूर)
-                      </option>
-
-                      <option value="Kolhapur APMC">
-                        Kolhapur APMC (कोल्हापूर)
                       </option>
 
                       <option value="Latur APMC">
