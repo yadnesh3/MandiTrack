@@ -64,9 +64,6 @@ app.use(
   })
 );
 
-// Handle CORS preflight requests
-app.options("*", cors());
-
 app.use(express.json({ limit: "100kb" }));
 
 connectDB();
