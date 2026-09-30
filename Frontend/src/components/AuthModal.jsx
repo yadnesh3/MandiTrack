@@ -249,15 +249,9 @@ export default function AuthModal({
 
         <div className="hidden w-[38%] flex-col justify-between bg-[#285C3A] p-8 text-white md:flex">
           <div>
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10">
-              <Sprout size={20} />
-            </div>
+            <MandiTrackLogo variant="light" size="lg" />
 
-            <p className="mt-7 text-[10px] font-semibold uppercase tracking-[2px] text-[#D9E8D9]">
-              MandiTrack
-            </p>
-
-            <h2 className="mt-3 text-2xl font-semibold leading-tight tracking-[-0.6px]">
+            <h2 className="mt-6 text-2xl font-semibold leading-tight tracking-[-0.6px]">
               {mode === "register"
                 ? isMarathi
                   ? "मंडी प्रवासाची सुरुवात करा."
@@ -313,29 +307,7 @@ export default function AuthModal({
           {/* Top bar */}
 
           <div className="flex items-center justify-between border-b border-[#E1E4DE] bg-[#F8F7F2] px-5 py-4 sm:px-7">
-            <div className="flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#285C3A] md:hidden">
-                <Sprout
-                  size={17}
-                  className="text-white"
-                />
-              </div>
-
-              <div>
-                <p className="text-sm font-semibold text-[#19343A]">
-                  <span className="text-[#285C3A]">
-                    Mandi
-                  </span>
-                  <span className="text-[#B58A35]">
-                    Track
-                  </span>
-                </p>
-
-                <p className="text-[9px] text-[#758181]">
-                  Apala Mandi Saathi
-                </p>
-              </div>
-            </div>
+            <MandiTrackLogo variant="dark" size="sm" />
 
             <div className="flex items-center gap-2">
               {/* Language */}

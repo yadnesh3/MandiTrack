@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import MandiTrackLogo from "../MandiTrackLogo";
 import BottomBanner from "../common/BottomBanner";
+import AnimatedPage from "../AnimatedPage";
 import { useLang } from "../../context/LanguageContext";
 
 import {
@@ -34,6 +35,20 @@ export const MANDI_LIST = [
   "Latur APMC",
   "Kalyan APMC",
 ];
+
+export const getMandiDisplay = (mandiName, lang) => {
+  if (lang !== "mr") return mandiName;
+  const map = {
+    "Pune APMC": "पुणे बाजार समिती",
+    "Navi Mumbai APMC": "नवी मुंबई बाजार समिती",
+    "Thane APMC": "ठाणे बाजार समिती",
+    "Nashik APMC": "नाशिक बाजार समिती",
+    "Nagpur APMC": "नागपूर बाजार समिती",
+    "Latur APMC": "लातूर बाजार समिती",
+    "Kalyan APMC": "कल्याण बाजार समिती",
+  };
+  return map[mandiName] || mandiName;
+};
 
 export default function MasterShell({
   user,
@@ -143,27 +158,27 @@ export default function MasterShell({
         },
         {
           id: "reports",
-          label: t("reports") || "Reports",
+          label: t("reports"),
           icon: FileText,
         },
         {
           id: "announcements",
-          label: t("announcements") || "Announcements",
+          label: t("announcements"),
           icon: Megaphone,
         },
         {
           id: "voice-assistant",
-          label: t("voiceHelpTitle"),
+          label: t("voiceAssistant"),
           icon: Mic,
         },
         {
           id: "profile",
-          label: t("profile") || "Profile",
+          label: t("profile"),
           icon: User,
         },
         {
           id: "help",
-          label: t("helpSupport") || "Help & Support",
+          label: t("helpSupport"),
           icon: HelpCircle,
         },
       ];
@@ -187,7 +202,7 @@ export default function MasterShell({
         },
         {
           id: "process-lot",
-          label: t("reviewProcessLots") || "Review / Process Lots",
+          label: t("reviewProcessLots"),
           icon: Settings,
         },
         {
@@ -197,27 +212,27 @@ export default function MasterShell({
         },
         {
           id: "reports",
-          label: t("reports") || "Reports",
+          label: t("reports"),
           icon: FileText,
         },
         {
           id: "announcements",
-          label: t("announcements") || "Announcements",
+          label: t("announcements"),
           icon: Megaphone,
         },
         {
           id: "voice-assistant",
-          label: t("voiceHelpTitle"),
+          label: t("voiceAssistant"),
           icon: Mic,
         },
         {
           id: "profile",
-          label: t("profile") || "Profile",
+          label: t("profile"),
           icon: User,
         },
         {
           id: "help",
-          label: t("helpSupport") || "Help & Support",
+          label: t("helpSupport"),
           icon: HelpCircle,
         },
       ];
@@ -245,7 +260,7 @@ export default function MasterShell({
       },
       {
         id: "lot-tracking",
-        label: t("stageTimeline"),
+        label: t("lotTracking"),
         icon: Clock,
       },
       {
@@ -255,22 +270,22 @@ export default function MasterShell({
       },
       {
         id: "announcements",
-        label: t("announcements") || "Announcements",
+        label: t("announcements"),
         icon: Megaphone,
       },
       {
         id: "voice-assistant",
-        label: t("voiceHelpTitle"),
+        label: t("voiceAssistant"),
         icon: Mic,
       },
       {
         id: "profile",
-        label: t("profile") || "Profile",
+        label: t("profile"),
         icon: User,
       },
       {
         id: "help",
-        label: t("helpSupport") || "Help & Support",
+        label: t("helpSupport"),
         icon: HelpCircle,
       },
     ];
@@ -311,10 +326,10 @@ export default function MasterShell({
 
   const roleLabel =
     role === "officer"
-      ? `${t("roleOfficer")} (${selectedMandi})`
+      ? `${t("roleOfficer")} (${getMandiDisplay(selectedMandi, lang)})`
       : role === "admin"
       ? t("roleAdmin")
-      : `${t("roleFarmer")} (${selectedMandi})`;
+      : `${t("roleFarmer")} (${getMandiDisplay(selectedMandi, lang)})`;
 
   return (
     <div className="min-h-screen bg-[#F8F7F2] flex flex-col font-sans text-[#19343A] antialiased selection:bg-[#F5EFDE]">
@@ -324,27 +339,24 @@ export default function MasterShell({
             DESKTOP SIDEBAR
         ====================================================== */}
 
-        <aside className="hidden lg:flex w-64 xl:w-70 bg-white text-[#19343A] flex-col shrink-0 shadow-[2px_0_12px_rgba(25,52,58,0.05)] border-r border-[#DCE3DB] sticky top-0 h-screen z-30 overflow-y-auto">
+        <aside className="hidden lg:flex w-64 xl:w-72 bg-[#285C3A] text-white flex-col shrink-0 shadow-[2px_0_16px_rgba(0,0,0,0.15)] sticky top-0 h-screen z-30 overflow-y-auto">
 
           {/* BRAND */}
-
-          <div className="px-6 pt-6 pb-5 border-b border-[#E7EBE5]">
+          <div className="px-5 py-4 bg-[#285C3A] border-b border-white/10 flex items-center min-h-[72px]">
             <MandiTrackLogo
-              variant="dark"
-              subtitle=""
-              size="md"
+              variant="light"
+              size="lg"
             />
           </div>
 
           {/* NAVIGATION */}
+          <nav className="flex-1 px-3.5 py-5 space-y-1 overflow-y-auto">
 
-          <nav className="flex-1 px-3.5 py-5 space-y-1.5 overflow-y-auto">
-
-            <div className="px-3 pb-2 text-[10px] font-bold uppercase tracking-[0.12em] text-[#8A9695]">
-              {t("home")}
+            <div className="px-3 pb-2 text-[10px] font-bold uppercase tracking-[0.12em] text-white/40">
+              {t("mainMenu")}
             </div>
 
-            {navItems.map((item) => {
+            {navItems.map((item, idx) => {
               const isActive = activeTab === item.id;
               const Icon = item.icon;
 
@@ -352,43 +364,37 @@ export default function MasterShell({
                 <button
                   key={item.id}
                   onClick={() => handleNavClick(item.id)}
-                  className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-lg font-semibold text-xs sm:text-[13px] transition-all text-left group border ${
+                  style={{ animationDelay: `${idx * 40}ms` }}
+                  className={`animate-fadeIn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-lg font-semibold text-[13px] transition-all text-left group border ${
                     isActive
-                      ? "bg-[#F5EFDE] border-[#E8DDBF] text-[#214D31] shadow-sm"
-                      : "border-transparent text-[#526765] hover:bg-[#F8F7F2] hover:text-[#285C3A]"
+                      ? "bg-white/15 border-white/20 text-white shadow-sm"
+                      : "border-transparent text-white/70 hover:bg-white/10 hover:text-white"
                   }`}
                 >
                   <span
                     className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-all ${
                       isActive
-                        ? "bg-[#B58A35] text-white"
-                        : "bg-[#EEF3EC] text-[#477A7A] group-hover:bg-[#EAF2E9] group-hover:text-[#285C3A]"
+                        ? "bg-[#E8A835] text-white"
+                        : "bg-white/10 text-white/70 group-hover:bg-white/20 group-hover:text-white"
                     }`}
                   >
-                    <Icon
-                      size={17}
-                      strokeWidth={isActive ? 2.4 : 2}
-                    />
+                    <Icon size={17} strokeWidth={isActive ? 2.4 : 2} />
                   </span>
 
-                  <span className="truncate flex-1">
-                    {item.label}
-                  </span>
+                  <span className="truncate flex-1">{item.label}</span>
 
                   {isActive && (
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#B58A35] shrink-0" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-white shrink-0" />
                   )}
                 </button>
               );
             })}
           </nav>
 
-          {/* CLEAN SIDEBAR FOOTER */}
-
-          <div className="border-t border-[#E7EBE5] px-5 py-4">
-            <div className="flex items-center gap-2 text-[10px] text-[#7B8987]">
-              <span className="w-2 h-2 rounded-full bg-[#6D9B76]" />
-
+          {/* SIDEBAR FOOTER */}
+          <div className="border-t border-white/10 px-5 py-4">
+            <div className="flex items-center gap-2 text-[10px] text-white/50">
+              <span className="w-2 h-2 rounded-full bg-green-400" />
               <span>
                 MandiTrack &bull;{" "}
                 {lang === "mr"
@@ -407,29 +413,21 @@ export default function MasterShell({
           <div className="fixed inset-0 z-50 lg:hidden flex">
 
             {/* BACKDROP */}
-
             <div
-              className="fixed inset-0 bg-[#19343A]/55 backdrop-blur-sm transition-opacity"
+              className="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity"
               onClick={() => setMobileSidebarOpen(false)}
             />
 
             {/* DRAWER */}
-
-            <aside className="relative w-72 bg-white text-[#19343A] flex flex-col h-full shadow-2xl z-10 overflow-y-auto">
+            <aside className="relative w-72 bg-[#285C3A] text-white flex flex-col h-full shadow-2xl z-10 overflow-y-auto animate-slideInLeft">
 
               {/* MOBILE HEADER */}
-
-              <div className="px-5 py-5 flex items-center justify-between border-b border-[#E7EBE5]">
-
-                <MandiTrackLogo
-                  variant="dark"
-                  subtitle=""
-                  size="sm"
-                />
+              <div className="px-5 py-4 flex items-center justify-between bg-[#285C3A] border-b border-white/10 min-h-[72px]">
+                <MandiTrackLogo variant="light" size="md" />
 
                 <button
                   onClick={() => setMobileSidebarOpen(false)}
-                  className="w-8 h-8 rounded-lg bg-[#F8F7F2] border border-[#DCE3DB] text-[#526765] hover:bg-[#EEF3EC] hover:text-[#285C3A] flex items-center justify-center transition"
+                  className="w-8 h-8 rounded-lg bg-white/10 text-white hover:bg-white/20 flex items-center justify-center transition"
                   aria-label="Close Menu"
                 >
                   <X size={18} />
@@ -437,14 +435,13 @@ export default function MasterShell({
               </div>
 
               {/* MOBILE NAVIGATION */}
+              <nav className="flex-1 px-3.5 py-5 space-y-1">
 
-              <nav className="flex-1 px-3.5 py-5 space-y-1.5">
-
-                <div className="px-3 pb-2 text-[10px] font-bold uppercase tracking-[0.12em] text-[#8A9695]">
-                  {t("home")}
+                <div className="px-3 pb-2 text-[10px] font-bold uppercase tracking-[0.12em] text-white/40">
+                  {t("mainMenu")}
                 </div>
 
-                {navItems.map((item) => {
+                {navItems.map((item, idx) => {
                   const isActive = activeTab === item.id;
                   const Icon = item.icon;
 
@@ -452,31 +449,27 @@ export default function MasterShell({
                     <button
                       key={item.id}
                       onClick={() => handleNavClick(item.id)}
-                      className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-lg font-semibold text-xs transition-all text-left border ${
+                      style={{ animationDelay: `${idx * 35}ms` }}
+                      className={`animate-fadeIn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-lg font-semibold text-xs transition-all text-left border ${
                         isActive
-                          ? "bg-[#F5EFDE] border-[#E8DDBF] text-[#214D31]"
-                          : "border-transparent text-[#526765] hover:bg-[#F8F7F2] hover:text-[#285C3A]"
+                          ? "bg-white/15 border-white/20 text-white"
+                          : "border-transparent text-white/70 hover:bg-white/10 hover:text-white"
                       }`}
                     >
                       <span
                         className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${
                           isActive
-                            ? "bg-[#B58A35] text-white"
-                            : "bg-[#EEF3EC] text-[#477A7A]"
+                            ? "bg-[#E8A835] text-white"
+                            : "bg-white/10 text-white/70"
                         }`}
                       >
-                        <Icon
-                          size={17}
-                          strokeWidth={isActive ? 2.4 : 2}
-                        />
+                        <Icon size={17} strokeWidth={isActive ? 2.4 : 2} />
                       </span>
 
-                      <span className="flex-1">
-                        {item.label}
-                      </span>
+                      <span className="flex-1">{item.label}</span>
 
                       {isActive && (
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#B58A35]" />
+                        <span className="w-1.5 h-1.5 rounded-full bg-white" />
                       )}
                     </button>
                   );
@@ -484,11 +477,10 @@ export default function MasterShell({
               </nav>
 
               {/* MOBILE LOGOUT */}
-
-              <div className="p-4 border-t border-[#E7EBE5]">
+              <div className="p-4 border-t border-white/10">
                 <button
                   onClick={onLogout}
-                  className="w-full flex items-center justify-center gap-2 py-2.5 rounded-lg bg-[#FAEEEE] border border-[#E8CCCC] text-[#A64B4B] hover:bg-[#F7E4E4] text-xs font-semibold transition"
+                  className="w-full flex items-center justify-center gap-2 py-2.5 rounded-lg bg-white/10 border border-white/20 text-white hover:bg-white/20 text-xs font-semibold transition"
                 >
                   <LogOut size={16} />
                   <span>{t("logout")}</span>
@@ -505,15 +497,14 @@ export default function MasterShell({
         <div className="flex-1 flex flex-col min-w-0">
 
           {/* ====================================================
-              TOP BAR
+              TOP BAR (Harmonious with page background)
           ==================================================== */}
 
-          <header className="bg-white border-b border-[#DCE3DB] px-4 sm:px-6 py-3 sticky top-0 z-20 shadow-sm">
+          <header className="bg-[#F8F7F2]/95 backdrop-blur-sm border-b border-[#E1E4DE] shadow-sm px-4 sm:px-6 py-0 sticky top-0 z-20">
 
-            <div className="max-w-[1440px] mx-auto flex items-center justify-between gap-3">
+            <div className="max-w-[1440px] mx-auto flex items-center justify-between gap-3 h-[64px]">
 
               {/* MOBILE BRAND */}
-
               <div className="flex items-center gap-2 lg:hidden">
 
                 <button
@@ -524,38 +515,21 @@ export default function MasterShell({
                   <Menu size={20} />
                 </button>
 
-                <MandiTrackLogo
-                  variant="dark"
-                  subtitle=""
-                  size="sm"
-                />
+                <MandiTrackLogo variant="dark" size="md" />
               </div>
 
               {/* MANDI SELECTOR + CLOCK */}
-
               <div className="hidden sm:flex items-center gap-3">
 
                 <div className="relative">
 
                   <button
-                    onClick={() =>
-                      setMandiDropdownOpen(
-                        !mandiDropdownOpen
-                      )
-                    }
+                    onClick={() => setMandiDropdownOpen(!mandiDropdownOpen)}
                     className="flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-[#F5EFDE] border border-[#E8DDBF] text-[#19343A] text-xs font-semibold hover:bg-[#F1E8D2] transition"
                   >
-                    <MapPin
-                      size={14}
-                      className="text-[#B58A35]"
-                    />
-
-                    <span>{selectedMandi}</span>
-
-                    <ChevronDown
-                      size={14}
-                      className="text-[#687779]"
-                    />
+                    <MapPin size={14} className="text-[#B58A35]" />
+                    <span>{getMandiDisplay(selectedMandi, lang)}</span>
+                    <ChevronDown size={14} className="text-[#687779]" />
                   </button>
 
                   {/* MANDI DROPDOWN */}
@@ -582,7 +556,7 @@ export default function MasterShell({
                               : "text-[#19343A] hover:bg-[#F8F7F2]"
                           }`}
                         >
-                          <span>{m}</span>
+                          <span>{getMandiDisplay(m, lang)}</span>
 
                           {selectedMandi === m && (
                             <CheckCircle2
@@ -597,18 +571,15 @@ export default function MasterShell({
                 </div>
 
                 {/* CLOCK */}
-
                 <div className="text-xs font-medium text-[#687779] pl-3 border-l border-[#DCE3DB]">
                   {currentTimeStr}
                 </div>
               </div>
 
               {/* RIGHT CONTROLS */}
-
               <div className="flex items-center gap-2 sm:gap-3">
 
                 {/* LANGUAGE */}
-
                 <div className="bg-[#F8F7F2] p-0.5 rounded-lg flex items-center border border-[#DCE3DB] text-xs font-semibold select-none">
 
                   <button
@@ -635,24 +606,14 @@ export default function MasterShell({
                 </div>
 
                 {/* NOTIFICATIONS */}
-
                 <div className="relative">
 
                   <button
-                    onClick={() =>
-                      setNotificationsOpen(
-                        !notificationsOpen
-                      )
-                    }
+                    onClick={() => setNotificationsOpen(!notificationsOpen)}
                     className="w-9 h-9 rounded-lg bg-[#F8F7F2] border border-[#DCE3DB] hover:bg-[#EEF3EC] text-[#285C3A] flex items-center justify-center transition relative"
-                    aria-label={
-                      lang === "mr"
-                        ? "सूचना"
-                        : "Notifications"
-                    }
+                    aria-label={lang === "mr" ? "सूचना" : "Notifications"}
                   >
                     <Bell size={17} />
-
                     <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 rounded-full bg-[#B94A48] ring-2 ring-white" />
                   </button>
 
@@ -735,38 +696,25 @@ export default function MasterShell({
                 <div className="relative">
 
                   <button
-                    onClick={() =>
-                      setProfileDropdownOpen(
-                        !profileDropdownOpen
-                      )
-                    }
-                    className="flex items-center gap-2.5 pl-1 pr-2 py-1 rounded-full hover:bg-[#F8F7F2] transition border border-transparent hover:border-[#DCE3DB]"
+                    onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
+                    className="flex items-center gap-2.5 pl-1 pr-2 py-1 rounded-full hover:bg-[#EEF3EC] transition border border-transparent hover:border-[#DCE3DB]"
                   >
-
                     {/* AVATAR */}
-
                     <div className="w-8 h-8 rounded-full bg-[#285C3A] text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-sm ring-2 ring-[#EAF2E9]">
                       {initials}
                     </div>
 
                     {/* USER INFO */}
-
                     <div className="hidden md:flex flex-col text-left leading-tight">
-
                       <span className="text-xs font-bold text-[#19343A] truncate max-w-[120px]">
                         {user?.name || "User"}
                       </span>
-
                       <span className="text-[10px] font-semibold text-[#687779] truncate max-w-[130px]">
                         {roleLabel}
                       </span>
-
                     </div>
 
-                    <ChevronDown
-                      size={14}
-                      className="text-[#8A9695] hidden md:block"
-                    />
+                    <ChevronDown size={14} className="text-[#8A9695] hidden md:block" />
                   </button>
 
                   {/* PROFILE DROPDOWN */}
@@ -802,7 +750,7 @@ export default function MasterShell({
 
                         <span>
                           {lang === "mr"
-                            ? "प्रोफाइल पहा"
+                            ? "माझे प्रोफाइल"
                             : "View Profile"}
                         </span>
                       </button>
@@ -823,7 +771,7 @@ export default function MasterShell({
 
                         <span>
                           {lang === "mr"
-                            ? "मदत आणि समर्थन"
+                            ? "मदत व समर्थन"
                             : "Help & Support"}
                         </span>
                       </button>
@@ -857,10 +805,15 @@ export default function MasterShell({
               DYNAMIC CONTENT
           ==================================================== */}
 
-          <main className="flex-1 max-w-[1440px] w-full mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-6">
-            {children}
+          {/* AMBIENT BACKGROUND ORBS */}
+          <div className="bg-orb w-[500px] h-[500px] bg-[#285C3A]/8 top-[-100px] right-[-100px]" style={{animationDelay:'0s'}} />
+          <div className="bg-orb w-[400px] h-[400px] bg-[#B58A35]/5 bottom-[10%] left-[5%]" style={{animationDelay:'9s'}} />
 
-            <BottomBanner className="mt-8" />
+          <main className="relative z-10 flex-1 max-w-[1440px] w-full mx-auto px-4 sm:px-6 py-6 sm:py-8">
+            <AnimatedPage key={activeTab} className="space-y-6">
+              {children}
+              <BottomBanner className="mt-8" />
+            </AnimatedPage>
           </main>
         </div>
       </div>

@@ -97,7 +97,7 @@ export default function AddProduceView({
           PAGE HEADER
       ====================================================== */}
 
-      <div className="rounded-xl border border-[#DCE3DB] bg-white p-5 shadow-sm sm:p-6">
+      <div className="anim-sheen reveal rounded-xl border border-[#DCE3DB] bg-white p-5 shadow-sm sm:p-6">
         <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <div className="mb-2 inline-flex items-center gap-1.5 rounded-full border border-[#CFE2D4] bg-[#EAF2E9] px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-[#285C3A]">
@@ -129,7 +129,7 @@ export default function AddProduceView({
       ====================================================== */}
 
       {error && (
-        <div className="flex items-start gap-3 rounded-xl border border-[#E8CCCC] bg-[#FAEEEE] px-4 py-3.5 text-sm text-[#A64B4B]">
+        <div className="animate-wiggle flex items-start gap-3 rounded-xl border border-[#E8CCCC] bg-[#FAEEEE] px-4 py-3.5 text-sm text-[#A64B4B]">
           <AlertCircle
             size={17}
             className="mt-0.5 shrink-0"
@@ -152,8 +152,8 @@ export default function AddProduceView({
       ====================================================== */}
 
       {createdLot ? (
-        <div className="rounded-xl border border-[#CFE2D4] bg-white p-6 text-center shadow-sm sm:p-8">
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-[#EAF2E9] text-[#285C3A] ring-8 ring-[#F4F8F3]">
+        <div className="anim-form-card rounded-xl border border-[#CFE2D4] bg-white p-6 text-center shadow-sm sm:p-8">
+          <div className="animate-bounceIn mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-[#EAF2E9] text-[#285C3A] ring-8 ring-[#F4F8F3]">
             <CheckCircle2 size={34} />
           </div>
 

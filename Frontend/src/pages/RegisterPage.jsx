@@ -16,6 +16,7 @@ import {
   CheckCircle2,
   ChevronDown,
 } from "lucide-react";
+import MandiTrackLogo from "../components/MandiTrackLogo";
 
 const MOBILE_PATTERN = /^[6-9]\d{9}$/;
 const MIN_PASSWORD_LENGTH = 6;
@@ -120,26 +121,10 @@ export default function RegisterPage({
           <button
             type="button"
             onClick={onNavigateToHome}
-            className="flex items-center gap-2.5"
+            className="flex items-center gap-2.5 transition hover:opacity-90"
+            aria-label="MandiTrack Home"
           >
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#285C3A]">
-              <Sprout
-                size={20}
-                strokeWidth={1.8}
-                className="text-white"
-              />
-            </div>
-
-            <div className="text-left leading-tight">
-              <div className="text-[22px] font-bold tracking-[-0.6px]">
-                <span className="text-[#285C3A]">Mandi</span>
-                <span className="text-[#B58A35]">Track</span>
-              </div>
-
-              <div className="text-[9px] font-medium text-[#8A9695]">
-                Apala Mandi Saathi
-              </div>
-            </div>
+            <MandiTrackLogo variant="dark" size="md" />
           </button>
 
           {/* Language */}

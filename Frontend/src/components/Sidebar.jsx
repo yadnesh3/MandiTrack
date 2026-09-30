@@ -1,4 +1,5 @@
 import React from "react";
+import MandiTrackLogo from "./MandiTrackLogo";
 
 function Sidebar({ activeTab, onSelectTab, onLogout, user }) {
   const navItems = [
@@ -15,21 +16,7 @@ function Sidebar({ activeTab, onSelectTab, onLogout, user }) {
           BRAND
       ====================================================== */}
       <div className="border-b border-white/10 px-5 py-5">
-        <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 text-xl shadow-sm">
-            🌱
-          </div>
-
-          <div className="leading-tight">
-            <div className="text-xl font-bold tracking-tight text-white">
-              Mandi<span className="text-[#B8CFAE]">Track</span>
-            </div>
-
-            <div className="mt-0.5 text-[10px] font-medium tracking-wide text-[#C9DCC2]">
-              Apala Mandi Saathi
-            </div>
-          </div>
-        </div>
+        <MandiTrackLogo variant="light" size="md" />
       </div>
 
       {/* =====================================================

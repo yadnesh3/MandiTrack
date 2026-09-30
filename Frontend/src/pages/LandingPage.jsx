@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useLang } from "../context/LanguageContext";
+import MandiTrackLogo from "../components/MandiTrackLogo";
 
 import {
   Menu,
@@ -19,6 +20,8 @@ import {
   UserRound,
   MessageCircle,
   MapPin,
+  Phone,
+  Mail,
 } from "lucide-react";
 
 export default function LandingPage({
@@ -28,8 +31,50 @@ export default function LandingPage({
 }) {
   const { lang, setLang } = useLang();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [activeNav, setActiveNav] = useState("home");
 
   const isMarathi = lang === "mr";
+
+  // Track scroll position to update active navbar item dynamically
+  useEffect(() => {
+    const handleScroll = () => {
+      const sections = ["support", "prices", "features", "workflow", "home"];
+      const scrollY = window.scrollY + 160;
+
+      for (const id of sections) {
+        const el = document.getElementById(id);
+        if (el && el.offsetTop <= scrollY) {
+          setActiveNav(id);
+          break;
+        }
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // ── Scroll-reveal via IntersectionObserver ──────────────────
+  useEffect(() => {
+    const classes = [".reveal", ".reveal-left", ".reveal-right", ".reveal-zoom"];
+    const targets = document.querySelectorAll(classes.join(","));
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("revealed");
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.12, rootMargin: "0px 0px -48px 0px" }
+    );
+
+    targets.forEach((el) => observer.observe(el));
+    return () => observer.disconnect();
+  }, []);
 
   const handleLogin = (role = "farmer") => {
     if (onNavigateToLogin) {
@@ -50,6 +95,7 @@ export default function LandingPage({
   };
 
   const scrollTo = (id) => {
+    setActiveNav(id);
     const element = document.getElementById(id);
 
     if (element) {
@@ -255,75 +301,42 @@ export default function LandingPage({
           HEADER
       ====================================================== */}
 
-      <header className="sticky top-0 z-50 border-b border-[#E1E4DE] bg-[#F8F7F2]/95 backdrop-blur">
-        <div className="mx-auto flex h-[76px] max-w-[1280px] items-center justify-between px-5 sm:px-8">
+      <header className="sticky top-0 z-50 bg-[#285C3A] border-b border-[#214D31] shadow-[0_2px_12px_rgba(0,0,0,0.18)]">
+        <div className="mx-auto flex h-[72px] max-w-[1280px] items-center justify-between px-5 sm:px-8">
           {/* Logo */}
-
           <button
             type="button"
             onClick={() => scrollTo("home")}
-            className="flex items-center gap-2"
+            className="flex items-center shrink-0"
+            aria-label="MandiTrack Home"
           >
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#285C3A]">
-              <Sprout
-                size={21}
-                strokeWidth={1.8}
-                className="text-white"
-              />
-            </div>
-
-            <span className="text-[25px] font-semibold tracking-[-0.7px]">
-              <span className="text-[#285C3A]">Mandi</span>
-              <span className="text-[#B58A35]">Track</span>
-            </span>
+            <MandiTrackLogo variant="light" size={62} />
           </button>
 
           {/* Desktop Navigation */}
-
           <nav className="hidden items-center gap-8 lg:flex">
-            <NavButton
-              active
-              onClick={() => scrollTo("home")}
-            >
-              {t.home}
-            </NavButton>
-
-            <NavButton onClick={() => scrollTo("workflow")}>
-              {t.workflow}
-            </NavButton>
-
-            <NavButton onClick={() => scrollTo("features")}>
-              {t.features}
-            </NavButton>
-
-            <NavButton onClick={() => scrollTo("prices")}>
-              {t.prices}
-            </NavButton>
-
-            <NavButton onClick={() => scrollTo("support")}>
-              {t.support}
-            </NavButton>
+            <NavButton active={activeNav === "home"} onClick={() => scrollTo("home")}>{t.home}</NavButton>
+            <NavButton active={activeNav === "workflow"} onClick={() => scrollTo("workflow")}>{t.workflow}</NavButton>
+            <NavButton active={activeNav === "features"} onClick={() => scrollTo("features")}>{t.features}</NavButton>
+            <NavButton active={activeNav === "prices"} onClick={() => scrollTo("prices")}>{t.prices}</NavButton>
+            <NavButton active={activeNav === "support"} onClick={() => scrollTo("support")}>{t.support}</NavButton>
           </nav>
 
           {/* Desktop Actions */}
-
           <div className="hidden items-center gap-3 lg:flex">
             <button
               type="button"
-              onClick={() =>
-                setLang(lang === "en" ? "mr" : "en")
-              }
-              className="mr-2 flex items-center gap-1 border-r border-[#D2D7D1] px-4 text-[14px] font-medium text-[#596769]"
+              onClick={() => setLang(lang === "en" ? "mr" : "en")}
+              className="mr-1 flex items-center gap-1.5 border-r border-white/20 px-4 text-[13px] font-medium text-white/80 hover:text-white transition"
             >
-              <Globe2 size={16} />
-
+              <Globe2 size={15} />
               {lang === "en" ? "English" : "मराठी"}
             </button>
 
             <button
               type="button"
               onClick={() => handleLogin("officer")}
-              className="text-[13px] font-medium text-[#596769] transition hover:text-[#285C3A]"
+              className="text-[13px] font-medium text-white/80 transition hover:text-white"
             >
               {t.officerPortal}
             </button>
@@ -331,7 +344,7 @@ export default function LandingPage({
             <button
               type="button"
               onClick={() => handleLogin("farmer")}
-              className="rounded-lg border border-[#285C3A] px-5 py-2.5 text-[14px] font-semibold text-[#285C3A] transition hover:bg-[#EDF2EB]"
+              className="rounded-lg border border-white/60 px-5 py-2.5 text-[13px] font-semibold text-white transition hover:bg-white/10 hover:border-white"
             >
               {t.login}
             </button>
@@ -339,74 +352,45 @@ export default function LandingPage({
             <button
               type="button"
               onClick={handleRegister}
-              className="rounded-lg bg-[#285C3A] px-5 py-2.5 text-[14px] font-semibold text-white transition hover:bg-[#214D31]"
+              className="rounded-lg bg-white px-5 py-2.5 text-[13px] font-semibold text-[#285C3A] transition hover:bg-[#F0F7F0] shadow-sm"
             >
               {t.register}
             </button>
           </div>
 
           {/* Mobile Menu */}
-
           <button
             type="button"
-            onClick={() =>
-              setMobileMenuOpen((value) => !value)
-            }
-            className="rounded-lg border border-[#D5DAD4] p-2 lg:hidden"
+            onClick={() => setMobileMenuOpen((v) => !v)}
+            className="rounded-lg border border-white/30 p-2 lg:hidden hover:bg-white/10 transition text-white"
             aria-label="Toggle menu"
           >
-            {mobileMenuOpen ? (
-              <X size={21} />
-            ) : (
-              <Menu size={21} />
-            )}
+            {mobileMenuOpen ? <X size={21} /> : <Menu size={21} />}
           </button>
         </div>
 
         {/* Mobile Navigation */}
-
         {mobileMenuOpen && (
-          <div className="border-t border-[#E1E4DE] bg-[#F8F7F2] px-5 py-5 lg:hidden">
+          <div className="border-t border-white/15 bg-[#214D31] px-5 py-5 lg:hidden">
             <div className="mx-auto flex max-w-[1280px] flex-col gap-1">
-              <MobileNavButton onClick={() => scrollTo("home")}>
-                {t.home}
-              </MobileNavButton>
+              <MobileNavButton active={activeNav === "home"} onClick={() => scrollTo("home")}>{t.home}</MobileNavButton>
+              <MobileNavButton active={activeNav === "workflow"} onClick={() => scrollTo("workflow")}>{t.workflow}</MobileNavButton>
+              <MobileNavButton active={activeNav === "features"} onClick={() => scrollTo("features")}>{t.features}</MobileNavButton>
+              <MobileNavButton active={activeNav === "prices"} onClick={() => scrollTo("prices")}>{t.prices}</MobileNavButton>
+              <MobileNavButton active={activeNav === "support"} onClick={() => scrollTo("support")}>{t.support}</MobileNavButton>
 
-              <MobileNavButton onClick={() => scrollTo("workflow")}>
-                {t.workflow}
-              </MobileNavButton>
-
-              <MobileNavButton onClick={() => scrollTo("features")}>
-                {t.features}
-              </MobileNavButton>
-
-              <MobileNavButton onClick={() => scrollTo("prices")}>
-                {t.prices}
-              </MobileNavButton>
-
-              <MobileNavButton onClick={() => scrollTo("support")}>
-                {t.support}
-              </MobileNavButton>
-
-              <div className="mt-3 flex gap-3 border-t border-[#E1E4DE] pt-4">
+              <div className="mt-3 flex gap-3 border-t border-white/15 pt-4">
                 <button
                   type="button"
-                  onClick={() => {
-                    setMobileMenuOpen(false);
-                    handleLogin("farmer");
-                  }}
-                  className="flex-1 rounded-lg border border-[#285C3A] py-2.5 text-sm font-semibold text-[#285C3A]"
+                  onClick={() => { setMobileMenuOpen(false); handleLogin("farmer"); }}
+                  className="flex-1 rounded-lg border border-white/50 py-2.5 text-sm font-semibold text-white hover:bg-white/10"
                 >
                   {t.login}
                 </button>
-
                 <button
                   type="button"
-                  onClick={() => {
-                    setMobileMenuOpen(false);
-                    handleRegister();
-                  }}
-                  className="flex-1 rounded-lg bg-[#285C3A] py-2.5 text-sm font-semibold text-white"
+                  onClick={() => { setMobileMenuOpen(false); handleRegister(); }}
+                  className="flex-1 rounded-lg bg-white py-2.5 text-sm font-semibold text-[#285C3A]"
                 >
                   {t.register}
                 </button>
@@ -414,11 +398,8 @@ export default function LandingPage({
 
               <button
                 type="button"
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  handleLogin("officer");
-                }}
-                className="mt-2 rounded-lg px-3 py-3 text-left text-sm font-medium text-[#596769] hover:bg-[#EDF2EB]"
+                onClick={() => { setMobileMenuOpen(false); handleLogin("officer"); }}
+                className="mt-2 rounded-lg px-3 py-3 text-left text-sm font-medium text-white/70 hover:bg-white/10"
               >
                 {t.officerPortal}
               </button>
@@ -434,54 +415,88 @@ export default function LandingPage({
 
         <section
           id="home"
-          className="border-b border-[#E3E5DF]"
+          className="border-b border-[#E3E5DF] overflow-hidden"
         >
+          {/* Ambient background particles */}
+          <div aria-hidden="true" className="pointer-events-none select-none">
+            <div
+              className="hero-particle animate-driftA"
+              style={{
+                width: 340, height: 340,
+                background: "radial-gradient(circle, rgba(40,92,58,0.07) 0%, transparent 70%)",
+                top: -80, right: "5%",
+              }}
+            />
+            <div
+              className="hero-particle animate-driftB"
+              style={{
+                width: 220, height: 220,
+                background: "radial-gradient(circle, rgba(138,112,43,0.06) 0%, transparent 70%)",
+                top: 120, right: "22%",
+              }}
+            />
+            <div
+              className="hero-particle animate-driftA"
+              style={{
+                width: 160, height: 160,
+                background: "radial-gradient(circle, rgba(76,134,88,0.08) 0%, transparent 70%)",
+                bottom: 20, left: "8%",
+                animationDelay: "3s",
+              }}
+            />
+          </div>
+
           <div className="mx-auto grid max-w-[1280px] items-center gap-12 px-5 py-20 sm:px-8 lg:grid-cols-[1.05fr_0.95fr] lg:py-24">
             <div className="max-w-[650px]">
-              <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-[#D8E1D8] bg-[#EEF3EC] px-4 py-2 text-[13px] font-medium text-[#386044]">
-                <span className="h-2 w-2 rounded-full bg-[#4C8658]" />
+              <div className="reveal mb-6 inline-flex items-center gap-2 rounded-full border border-[#D8E1D8] bg-[#EEF3EC] px-4 py-2 text-[13px] font-medium text-[#386044] shadow-sm transition hover:bg-[#E3EBE1] cursor-default">
+                <span className="relative flex h-2 w-2">
+                  <span className="ripple-dot"></span>
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#4C8658] opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-[#4C8658]"></span>
+                </span>
 
                 {t.heroBadge}
               </div>
 
-              <h1 className="text-[48px] font-semibold leading-[1.08] tracking-[-2px] text-[#19343A] sm:text-[58px] lg:text-[64px]">
+              <h1 className="reveal delay-100 text-[48px] font-semibold leading-[1.08] tracking-[-2px] text-[#19343A] sm:text-[58px] lg:text-[64px]">
                 {t.heroTitle1}
 
                 <br />
 
-                <span className="text-[#285C3A]">
+                <span className="animate-gradient-text">
                   {t.heroTitle2}
                 </span>
               </h1>
 
-              <p className="mt-6 max-w-[590px] text-[18px] leading-8 text-[#657477]">
+              <p className="reveal delay-200 mt-6 max-w-[590px] text-[18px] leading-8 text-[#657477]">
                 {t.heroDescription}
               </p>
 
-              <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+              <div className="reveal delay-300 mt-8 flex flex-col gap-3 sm:flex-row">
                 <button
                   type="button"
                   onClick={() => handleLogin("farmer")}
-                  className="group flex items-center justify-center gap-3 rounded-lg bg-[#285C3A] px-7 py-3.5 text-[15px] font-semibold text-white transition hover:bg-[#214D31]"
+                  className="group relative overflow-hidden flex items-center justify-center gap-3 rounded-lg bg-[#285C3A] px-7 py-3.5 text-[15px] font-semibold text-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg hover:bg-[#214D31] active:translate-y-0"
                 >
+                  <span className="shimmer-btn absolute inset-0 pointer-events-none" />
                   {t.farmerLogin}
 
                   <ArrowRight
                     size={17}
-                    className="transition-transform group-hover:translate-x-1"
+                    className="transition-transform duration-200 group-hover:translate-x-1"
                   />
                 </button>
 
                 <button
                   type="button"
                   onClick={handleRegister}
-                  className="rounded-lg border border-[#BFCBC0] bg-white px-7 py-3.5 text-[15px] font-semibold text-[#285C3A] transition hover:border-[#285C3A] hover:bg-[#F1F5F0]"
+                  className="rounded-lg border border-[#BFCBC0] bg-white px-7 py-3.5 text-[15px] font-semibold text-[#285C3A] transition-all duration-200 hover:-translate-y-0.5 hover:border-[#285C3A] hover:shadow-md hover:bg-[#F1F5F0] active:translate-y-0"
                 >
                   {t.registerFarmer}
                 </button>
               </div>
 
-              <div className="mt-8 flex items-center gap-3 text-sm text-[#687678]">
+              <div className="reveal delay-400 mt-8 flex items-center gap-3 text-sm text-[#687678]">
                 <CheckCircle2
                   size={18}
                   className="text-[#4C8658]"
@@ -493,8 +508,21 @@ export default function LandingPage({
 
             {/* Hero Dashboard Preview */}
 
-            <div className="relative">
-              <div className="relative overflow-hidden rounded-2xl border border-[#DCE3DB] bg-white p-6 shadow-[0_12px_35px_rgba(39,72,52,0.08)]">
+            <div className="reveal-zoom delay-300 relative animate-floatSlow">
+              {/* Glow orbs behind the card */}
+              <div aria-hidden="true" className="pointer-events-none">
+                <div style={{
+                  position: "absolute", width: 180, height: 180,
+                  background: "radial-gradient(circle, rgba(40,92,58,0.12) 0%, transparent 70%)",
+                  top: -40, right: -40, borderRadius: "50%",
+                }} />
+                <div style={{
+                  position: "absolute", width: 120, height: 120,
+                  background: "radial-gradient(circle, rgba(138,112,43,0.10) 0%, transparent 70%)",
+                  bottom: -30, left: -30, borderRadius: "50%",
+                }} />
+              </div>
+              <div className="relative overflow-hidden rounded-2xl border border-[#DCE3DB] bg-white p-6 shadow-[0_16px_40px_rgba(39,72,52,0.08)] transition-all duration-500 hover:shadow-[0_28px_64px_rgba(39,72,52,0.15)]">
                 <div className="flex items-center justify-between border-b border-[#E7EAE5] pb-5">
                   <div>
                     <p className="text-xs font-medium uppercase tracking-[1.5px] text-[#7A8585]">
@@ -582,7 +610,7 @@ export default function LandingPage({
           className="border-b border-[#E3E5DF] bg-white"
         >
           <div className="mx-auto max-w-[1100px] px-5 py-16 sm:px-8">
-            <div className="text-center">
+            <div className="text-center reveal">
               <p className="text-xs font-semibold uppercase tracking-[2px] text-[#8A702B]">
                 {t.workflowLabel}
               </p>
@@ -597,28 +625,34 @@ export default function LandingPage({
             </div>
 
             <div className="mt-12 grid gap-8 md:grid-cols-3">
-              <WorkflowStep
-                number="01"
-                icon={<Sprout size={23} strokeWidth={1.8} />}
-                title={t.submitProduce}
-                text={t.submitDescription}
-              />
+              <div className="reveal delay-100">
+                <WorkflowStep
+                  number="01"
+                  icon={<Sprout size={23} strokeWidth={1.8} />}
+                  title={t.submitProduce}
+                  text={t.submitDescription}
+                />
+              </div>
 
-              <WorkflowStep
-                number="02"
-                icon={<ClipboardList size={23} strokeWidth={1.8} />}
-                title={t.officerReview}
-                text={t.officerDescription}
-                gold
-              />
+              <div className="reveal delay-300">
+                <WorkflowStep
+                  number="02"
+                  icon={<ClipboardList size={23} strokeWidth={1.8} />}
+                  title={t.officerReview}
+                  text={t.officerDescription}
+                  gold
+                />
+              </div>
 
-              <WorkflowStep
-                number="03"
-                icon={<BarChart3 size={23} strokeWidth={1.8} />}
-                title={t.trackStatus}
-                text={t.trackDescription}
-                blue
-              />
+              <div className="reveal delay-500">
+                <WorkflowStep
+                  number="03"
+                  icon={<BarChart3 size={23} strokeWidth={1.8} />}
+                  title={t.trackStatus}
+                  text={t.trackDescription}
+                  blue
+                />
+              </div>
             </div>
           </div>
         </section>
@@ -632,7 +666,7 @@ export default function LandingPage({
           className="border-b border-[#E3E5DF] bg-[#F8F7F2]"
         >
           <div className="mx-auto max-w-[1100px] px-5 py-16 sm:px-8">
-            <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+            <div className="reveal flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-[2px] text-[#8A702B]">
                   {t.platformFeatures}
@@ -649,53 +683,65 @@ export default function LandingPage({
             </div>
 
             <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              <FeatureCard
-                icon={<Sprout size={21} />}
-                title={t.addProduce}
-                text={t.addProduceText}
-                green
-                onClick={() => handleLogin("farmer")}
-              />
+              <div className="reveal delay-100">
+                <FeatureCard
+                  icon={<Sprout size={21} />}
+                  title={t.addProduce}
+                  text={t.addProduceText}
+                  green
+                  onClick={() => handleLogin("farmer")}
+                />
+              </div>
 
-              <FeatureCard
-                icon={<ClipboardList size={21} />}
-                title={t.lotTracking}
-                text={t.lotTrackingText}
-                gold
-                onClick={() => handleLogin("farmer")}
-              />
+              <div className="reveal delay-200">
+                <FeatureCard
+                  icon={<ClipboardList size={21} />}
+                  title={t.lotTracking}
+                  text={t.lotTrackingText}
+                  gold
+                  onClick={() => handleLogin("farmer")}
+                />
+              </div>
 
-              <FeatureCard
-                icon={<BarChart3 size={21} />}
-                title={t.mandiPrices}
-                text={t.mandiPricesText}
-                blue
-                onClick={() => scrollTo("prices")}
-              />
+              <div className="reveal delay-300">
+                <FeatureCard
+                  icon={<BarChart3 size={21} />}
+                  title={t.mandiPrices}
+                  text={t.mandiPricesText}
+                  blue
+                  onClick={() => scrollTo("prices")}
+                />
+              </div>
 
-              <FeatureCard
-                icon={<Globe2 size={21} />}
-                title={t.languages}
-                text={t.languagesText}
-                green
-                onClick={() => setLang(lang === "en" ? "mr" : "en")}
-              />
+              <div className="reveal delay-400">
+                <FeatureCard
+                  icon={<Globe2 size={21} />}
+                  title={t.languages}
+                  text={t.languagesText}
+                  green
+                  onClick={() => setLang(lang === "en" ? "mr" : "en")}
+                />
+              </div>
 
-              <FeatureCard
-                icon={<ShieldCheck size={21} />}
-                title={t.officerPortal}
-                text={t.officerPortalText}
-                gold
-                onClick={() => handleLogin("officer")}
-              />
+              <div className="reveal delay-500">
+                <FeatureCard
+                  icon={<ShieldCheck size={21} />}
+                  title={t.officerPortal}
+                  text={t.officerPortalText}
+                  gold
+                  onClick={() => handleLogin("officer")}
+                />
+              </div>
 
-              <FeatureCard
-                icon={<Mic size={21} />}
-                title={t.voiceAssistant}
-                text={t.voiceAssistantText}
-                blue
-                onClick={handleVoice}
-              />
+              <div className="reveal delay-600">
+                <FeatureCard
+                  icon={<Mic size={21} />}
+                  title={t.voiceAssistant}
+                  text={t.voiceAssistantText}
+                  blue
+                  onClick={handleVoice}
+                />
+              </div>
             </div>
           </div>
         </section>
@@ -710,7 +756,7 @@ export default function LandingPage({
         >
           <div className="mx-auto max-w-[1100px] px-5 py-16 sm:px-8">
             <div className="grid items-center gap-12 lg:grid-cols-[0.9fr_1.1fr]">
-              <div>
+              <div className="reveal-left">
                 <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[1.5px] text-[#8A702B]">
                   <BarChart3 size={15} />
 
@@ -728,15 +774,16 @@ export default function LandingPage({
                 <button
                   type="button"
                   onClick={() => handleLogin("farmer")}
-                  className="mt-6 flex items-center gap-2 rounded-lg bg-[#285C3A] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#214D31]"
+                  className="mt-6 group relative overflow-hidden flex items-center gap-2 rounded-lg bg-[#285C3A] px-5 py-3 text-sm font-semibold text-white transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg hover:bg-[#214D31]"
                 >
+                  <span className="shimmer-btn absolute inset-0 pointer-events-none" />
                   {t.viewPrices}
 
-                  <ArrowRight size={15} />
+                  <ArrowRight size={15} className="transition-transform duration-200 group-hover:translate-x-1" />
                 </button>
               </div>
 
-              <div className="overflow-hidden rounded-xl border border-[#DCE3DB] bg-[#FAFBF9]">
+              <div className="reveal-right overflow-hidden rounded-xl border border-[#DCE3DB] bg-[#FAFBF9]">
                 <div className="grid grid-cols-[1.2fr_1fr_auto] border-b border-[#DDE3DE] px-5 py-3 text-[10px] font-semibold uppercase tracking-wider text-[#7A8580]">
                   <span>{t.commodity}</span>
                   <span>{t.mandi}</span>
@@ -775,7 +822,7 @@ export default function LandingPage({
           className="border-b border-[#214D31] bg-[#285C3A]"
         >
           <div className="mx-auto max-w-[1100px] px-5 py-14 sm:px-8">
-            <div className="grid items-center gap-10 lg:grid-cols-[1fr_0.9fr]">
+            <div className="grid items-center gap-10 lg:grid-cols-[1fr_0.9fr] reveal">
               <div>
                 <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[1.5px] text-[#D9E8D9]">
                   <Mic size={15} />
@@ -814,9 +861,9 @@ export default function LandingPage({
                 <button
                   type="button"
                   onClick={handleVoice}
-                  className="mt-7 flex items-center gap-2 rounded-lg bg-white px-5 py-3 text-sm font-semibold text-[#285C3A] transition hover:bg-[#F3F5F0]"
+                  className="mt-7 flex items-center gap-2 rounded-lg bg-white px-5 py-3 text-sm font-semibold text-[#285C3A] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg hover:bg-[#F3F5F0] active:translate-y-0"
                 >
-                  <Mic size={16} />
+                  <Mic size={16} className="animate-pulse" />
 
                   {t.voiceOpen}
                 </button>
@@ -915,7 +962,7 @@ export default function LandingPage({
           className="border-b border-[#DDE3DD] bg-[#F8F7F2]"
         >
           <div className="mx-auto max-w-[1100px] px-5 py-16 sm:px-8">
-            <div className="text-center">
+            <div className="reveal text-center">
               <p className="text-xs font-semibold uppercase tracking-[2px] text-[#8A702B]">
                 {t.support}
               </p>
@@ -930,29 +977,97 @@ export default function LandingPage({
             </div>
 
             <div className="mx-auto mt-10 grid max-w-[800px] gap-4 sm:grid-cols-2">
-              <SupportCard
-                icon={<UserRound size={20} />}
-                title={t.farmerSupport}
-                text={
-                  isMarathi
-                    ? "लॉट, उत्पादन आणि शेतकरी पोर्टलसाठी मदत."
-                    : "Help with lots, produce and the farmer portal."
-                }
-                button={t.farmerLogin}
-                onClick={() => handleLogin("farmer")}
-              />
+              <div className="reveal-left delay-100">
+                <SupportCard
+                  icon={<UserRound size={20} />}
+                  title={t.farmerSupport}
+                  text={
+                    isMarathi
+                      ? "लॉट, उत्पादन आणि शेतकरी पोर्टलसाठी मदत."
+                      : "Help with lots, produce and the farmer portal."
+                  }
+                  button={t.farmerLogin}
+                  onClick={() => handleLogin("farmer")}
+                />
+              </div>
 
-              <SupportCard
-                icon={<ShieldCheck size={20} />}
-                title={t.officerSupport}
-                text={
-                  isMarathi
-                    ? "लॉट तपासणी आणि अधिकारी पोर्टलसाठी मदत."
-                    : "Help with lot review and the officer portal."
-                }
-                button={t.officerPortal}
-                onClick={() => handleLogin("officer")}
-              />
+              <div className="reveal-right delay-200">
+                <SupportCard
+                  icon={<ShieldCheck size={20} />}
+                  title={t.officerSupport}
+                  text={
+                    isMarathi
+                      ? "लॉट तपासणी आणि अधिकारी पोर्टलसाठी मदत."
+                      : "Help with lot review and the officer portal."
+                  }
+                  button={t.officerPortal}
+                  onClick={() => handleLogin("officer")}
+                />
+              </div>
+            </div>
+
+            {/* Direct Helpline & Contact */}
+            <div className="reveal delay-300 mx-auto mt-8 max-w-[800px] rounded-2xl border border-[#DCE3DB] bg-white p-6 shadow-sm sm:p-7">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-[#E7EBE5] pb-4">
+                <div>
+                  <h3 className="text-base font-bold text-[#19343A]">
+                    {isMarathi ? "थेट संपर्क व मदत केंद्र" : "Direct Helpline & Contact"}
+                  </h3>
+                  <p className="mt-0.5 text-xs text-[#687779]">
+                    {isMarathi
+                      ? "कोणत्याही प्रश्न किंवा मदतीसाठी आमच्याशी थेट संपर्क साधा."
+                      : "For any assistance, lot inquiries, or support, reach us directly."}
+                  </p>
+                </div>
+                <div className="inline-flex items-center gap-1.5 self-start sm:self-auto rounded-full bg-[#EAF2E9] px-3 py-1 text-xs font-semibold text-[#285C3A]">
+                  <span className="h-2 w-2 rounded-full bg-[#285C3A] animate-pulse" />
+                  {isMarathi ? "सक्रिय सहाय्य" : "24x7 Support"}
+                </div>
+              </div>
+
+              <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <a
+                  href="tel:8010558094"
+                  className="group flex items-center gap-3.5 rounded-xl border border-[#DCE3DB] bg-[#F8F7F2] p-4 transition-all hover:border-[#285C3A] hover:bg-[#EAF2E9]"
+                >
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-[#EAF2E9] text-[#285C3A] transition group-hover:bg-[#285C3A] group-hover:text-white">
+                    <Phone size={19} />
+                  </div>
+                  <div className="min-w-0">
+                    <div className="text-[10px] font-semibold uppercase tracking-wider text-[#8A9695]">
+                      {isMarathi ? "हेल्पलाइन नंबर" : "Helpline Number"}
+                    </div>
+                    <div className="mt-0.5 text-sm font-bold text-[#19343A]">
+                      +91 80105 58094
+                    </div>
+                  </div>
+                  <ArrowRight
+                    size={15}
+                    className="ml-auto shrink-0 text-[#A7B1AF] transition group-hover:translate-x-1 group-hover:text-[#285C3A]"
+                  />
+                </a>
+
+                <a
+                  href="mailto:yadneshgharat23@gmail.com"
+                  className="group flex items-center gap-3.5 rounded-xl border border-[#DCE3DB] bg-[#F8F7F2] p-4 transition-all hover:border-[#B58A35] hover:bg-[#F5EFDE]"
+                >
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-[#F5EFDE] text-[#B58A35] transition group-hover:bg-[#B58A35] group-hover:text-white">
+                    <Mail size={19} />
+                  </div>
+                  <div className="min-w-0">
+                    <div className="text-[10px] font-semibold uppercase tracking-wider text-[#8A9695]">
+                      {isMarathi ? "ईमेल संपर्क" : "Email Support"}
+                    </div>
+                    <div className="mt-0.5 text-xs sm:text-sm font-bold text-[#19343A] break-all">
+                      yadneshgharat23@gmail.com
+                    </div>
+                  </div>
+                  <ArrowRight
+                    size={15}
+                    className="ml-auto shrink-0 text-[#A7B1AF] transition group-hover:translate-x-1 group-hover:text-[#B58A35]"
+                  />
+                </a>
+              </div>
             </div>
           </div>
         </section>
@@ -968,12 +1083,9 @@ export default function LandingPage({
       >
         <div className="mx-auto flex max-w-[1280px] flex-col gap-6 px-5 py-9 sm:px-8 md:flex-row md:items-center md:justify-between">
           <div>
-            <div className="text-[24px] font-semibold">
-              <span className="text-[#285C3A]">Mandi</span>
-              <span className="text-[#B58A35]">Track</span>
-            </div>
+            <MandiTrackLogo variant="dark" size="md" />
 
-            <p className="mt-1 text-sm text-[#6D797A]">
+            <p className="mt-1.5 text-sm text-[#6D797A]">
               {t.footerTagline}
             </p>
           </div>
@@ -1018,27 +1130,33 @@ function NavButton({ children, onClick, active = false }) {
     <button
       type="button"
       onClick={onClick}
-      className={`relative py-6 text-[14px] font-medium transition ${
+      className={`relative py-6 text-[14px] font-medium transition duration-150 ${
         active
-          ? "text-[#285C3A]"
-          : "text-[#586668] hover:text-[#285C3A]"
+          ? "text-white font-semibold"
+          : "text-white/70 hover:text-white"
       }`}
     >
       {children}
 
-      {active && (
-        <span className="absolute bottom-[18px] left-0 h-[2px] w-full bg-[#285C3A]" />
-      )}
+      <span
+        className={`absolute bottom-[16px] left-0 h-[2.5px] w-full rounded-full bg-white transition-all duration-300 ${
+          active ? "opacity-100 scale-x-100" : "opacity-0 scale-x-0"
+        }`}
+      />
     </button>
   );
 }
 
-function MobileNavButton({ children, onClick }) {
+function MobileNavButton({ children, onClick, active = false }) {
   return (
     <button
       type="button"
       onClick={onClick}
-      className="rounded-lg px-3 py-3 text-left text-sm text-[#344548] hover:bg-[#EDF2EB]"
+      className={`rounded-lg px-3 py-3 text-left text-sm font-medium transition ${
+        active
+          ? "bg-white/15 text-white font-semibold"
+          : "text-white/75 hover:bg-white/10"
+      }`}
     >
       {children}
     </button>
@@ -1047,7 +1165,7 @@ function MobileNavButton({ children, onClick }) {
 
 function MiniStat({ label, value, valueClass }) {
   return (
-    <div className="rounded-lg bg-[#F6F8F5] p-4">
+    <div className="rounded-lg bg-[#F6F8F5] p-4 transition-all duration-200 hover:bg-[#EEF3EC] hover:scale-[1.02]">
       <p className="text-xs text-[#7A8585]">{label}</p>
 
       <p className={`mt-2 text-2xl font-semibold ${valueClass}`}>
@@ -1065,7 +1183,7 @@ function PreviewLot({
   pending = false,
 }) {
   return (
-    <div className="grid grid-cols-[1.2fr_0.8fr_0.8fr] items-center px-4 py-4 text-sm">
+    <div className="grid grid-cols-[1.2fr_0.8fr_0.8fr] items-center px-4 py-4 text-sm transition-colors duration-150 hover:bg-[#F8FAF7]">
       <div>
         <p className="font-medium text-[#19343A]">{crop}</p>
 
@@ -1075,7 +1193,7 @@ function PreviewLot({
       <span className="text-[#526164]">{quantity}</span>
 
       <span
-        className={`w-fit rounded-full px-2.5 py-1 text-xs font-medium ${
+        className={`w-fit rounded-full px-2.5 py-1 text-xs font-medium transition-transform duration-200 hover:scale-105 ${
           pending
             ? "bg-[#FFF5DC] text-[#967025]"
             : "bg-[#EAF4EB] text-[#386044]"
@@ -1102,18 +1220,18 @@ function WorkflowStep({
       : "bg-[#EAF2E9] text-[#285C3A]";
 
   return (
-    <div className="relative text-center">
+    <div className="group relative rounded-2xl border border-[#DCE3DB] bg-[#FDFCF9] p-6 text-center transition-all duration-300 hover:-translate-y-1.5 hover:border-[#285C3A]/30 hover:bg-white hover:shadow-[0_14px_35px_rgba(39,72,52,0.08)]">
       <div
-        className={`mx-auto flex h-12 w-12 items-center justify-center rounded-full ${iconStyle}`}
+        className={`mx-auto flex h-14 w-14 items-center justify-center rounded-2xl shadow-sm transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3 ${iconStyle}`}
       >
         {icon}
       </div>
 
-      <p className="mt-5 text-xs font-semibold uppercase tracking-[1.5px] text-[#8A702B]">
+      <p className="mt-5 text-xs font-bold uppercase tracking-[1.5px] text-[#8A702B]">
         {number}
       </p>
 
-      <h3 className="mt-2 text-lg font-semibold text-[#19343A]">
+      <h3 className="mt-2 text-lg font-semibold text-[#19343A] transition-colors group-hover:text-[#285C3A]">
         {title}
       </h3>
 
@@ -1145,15 +1263,15 @@ function FeatureCard({
     <button
       type="button"
       onClick={onClick}
-      className="rounded-xl border border-[#DCE3DB] bg-white p-6 text-left transition hover:-translate-y-0.5 hover:border-[#BFCDBF] hover:shadow-[0_8px_25px_rgba(39,72,52,0.06)]"
+      className="group rounded-xl border border-[#DCE3DB] bg-white p-6 text-left transition-all duration-300 hover:-translate-y-1.5 hover:border-[#285C3A]/40 hover:shadow-[0_14px_35px_rgba(39,72,52,0.08)]"
     >
       <div
-        className={`flex h-10 w-10 items-center justify-center rounded-lg ${iconStyle}`}
+        className={`flex h-11 w-11 items-center justify-center rounded-xl shadow-sm transition-transform duration-300 group-hover:scale-110 ${iconStyle}`}
       >
         {icon}
       </div>
 
-      <h3 className="mt-5 font-semibold text-[#19343A]">
+      <h3 className="mt-5 font-semibold text-[#19343A] transition-colors group-hover:text-[#285C3A]">
         {title}
       </h3>
 
@@ -1161,7 +1279,7 @@ function FeatureCard({
         {text}
       </p>
 
-      <div className="mt-4 flex items-center gap-1 text-xs font-semibold text-[#285C3A]">
+      <div className="mt-4 flex items-center gap-1.5 text-xs font-semibold text-[#285C3A] transition-transform duration-200 group-hover:translate-x-1">
         Explore
         <ArrowRight size={13} />
       </div>
@@ -1171,14 +1289,15 @@ function FeatureCard({
 
 function MarketRow({ crop, mandi }) {
   return (
-    <div className="grid grid-cols-[1.2fr_1fr_auto] items-center border-b border-[#DDE3DE] px-5 py-4 last:border-b-0">
+    <div className="grid grid-cols-[1.2fr_1fr_auto] items-center border-b border-[#DDE3DE] px-5 py-4 last:border-b-0 transition-colors duration-150 hover:bg-[#F3F6F1]">
       <p className="text-xs font-semibold text-[#19343A]">
         {crop}
       </p>
 
       <p className="text-xs text-[#66736D]">{mandi}</p>
 
-      <span className="text-[10px] font-semibold text-[#285C3A]">
+      <span className="text-[10px] font-semibold text-[#285C3A] flex items-center gap-1">
+        <span className="h-1.5 w-1.5 rounded-full bg-[#285C3A] animate-pulse" />
         Available
       </span>
     </div>
@@ -1187,7 +1306,7 @@ function MarketRow({ crop, mandi }) {
 
 function VoiceCommand({ children }) {
   return (
-    <span className="border border-white/15 bg-white/10 px-3 py-2 text-[10px] text-white/75">
+    <span className="rounded-lg border border-white/15 bg-white/10 px-3 py-2 text-[10px] text-white/85 transition-all duration-200 hover:bg-white/20 hover:scale-105 cursor-pointer">
       “{children}”
     </span>
   );
@@ -1195,8 +1314,8 @@ function VoiceCommand({ children }) {
 
 function VoiceFeature({ icon, text }) {
   return (
-    <div className="flex items-center gap-3 border border-[#E0E5DF] bg-[#FAFBF9] px-4 py-3">
-      <div className="text-[#285C3A]">{icon}</div>
+    <div className="flex items-center gap-3 rounded-lg border border-[#E0E5DF] bg-[#FAFBF9] px-4 py-3 transition-all duration-200 hover:bg-white hover:shadow-sm">
+      <div className="text-[#285C3A] transition-transform duration-200 hover:scale-110">{icon}</div>
 
       <span className="text-xs font-medium text-[#4E5E60]">
         {text}
@@ -1213,12 +1332,12 @@ function SupportCard({
   onClick,
 }) {
   return (
-    <div className="rounded-xl border border-[#DCE3DB] bg-white p-6">
-      <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#EAF2E9] text-[#285C3A]">
+    <div className="group rounded-2xl border border-[#DCE3DB] bg-white p-6 transition-all duration-300 hover:-translate-y-1 hover:border-[#285C3A]/30 hover:shadow-[0_12px_30px_rgba(39,72,52,0.06)]">
+      <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#EAF2E9] text-[#285C3A] transition-transform duration-300 group-hover:scale-110">
         {icon}
       </div>
 
-      <h3 className="mt-5 font-semibold text-[#19343A]">
+      <h3 className="mt-5 font-semibold text-[#19343A] transition-colors group-hover:text-[#285C3A]">
         {title}
       </h3>
 
@@ -1229,7 +1348,7 @@ function SupportCard({
       <button
         type="button"
         onClick={onClick}
-        className="mt-5 flex items-center gap-2 text-xs font-semibold text-[#285C3A]"
+        className="mt-5 flex items-center gap-2 text-xs font-semibold text-[#285C3A] transition-transform duration-200 group-hover:translate-x-1"
       >
         {button}
 

@@ -12,6 +12,7 @@ import {
   Globe2,
   CheckCircle2,
 } from "lucide-react";
+import MandiTrackLogo from "../components/MandiTrackLogo";
 
 export default function LoginPage({
   initialRole = "farmer",
@@ -106,27 +107,16 @@ export default function LoginPage({
           HEADER
       ====================================================== */}
 
-      <header className="border-b border-[#E1E4DE] bg-[#F8F7F2]">
-        <div className="mx-auto flex h-[76px] max-w-[1280px] items-center justify-between px-5 sm:px-8">
+      <header className="border-b border-[#E1E4DE] bg-[#285C3A] animate-fadeIn">
+        <div className="mx-auto flex h-[72px] max-w-[1280px] items-center justify-between px-5 sm:px-8">
           {/* Logo */}
-
           <button
             type="button"
             onClick={onNavigateToHome}
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 transition hover:opacity-90"
+            aria-label="MandiTrack Home"
           >
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#285C3A]">
-              <Sprout
-                size={21}
-                strokeWidth={1.8}
-                className="text-white"
-              />
-            </div>
-
-            <span className="text-[25px] font-semibold tracking-[-0.7px]">
-              <span className="text-[#285C3A]">Mandi</span>
-              <span className="text-[#B58A35]">Track</span>
-            </span>
+            <MandiTrackLogo variant="light" size={62} />
           </button>
 
           {/* Language */}
@@ -147,58 +137,44 @@ export default function LoginPage({
           MAIN
       ====================================================== */}
 
-      <main className="flex min-h-[calc(100vh-76px)] items-center justify-center px-5 py-12 sm:px-8">
-        <div className="grid w-full max-w-[1000px] overflow-hidden rounded-2xl border border-[#DCE3DB] bg-white shadow-[0_12px_40px_rgba(39,72,52,0.08)] lg:grid-cols-[0.85fr_1.15fr]">
+      <main className="flex min-h-[calc(100vh-72px)] items-center justify-center px-5 py-12 sm:px-8">
+        <div className="anim-form-card grid w-full max-w-[1000px] overflow-hidden rounded-2xl border border-[#DCE3DB] bg-white shadow-[0_12px_40px_rgba(39,72,52,0.08)] lg:grid-cols-[0.85fr_1.15fr]">
           {/* =================================================
               LEFT INFORMATION PANEL
           ================================================= */}
 
           <div className="hidden bg-[#285C3A] p-10 text-white lg:flex lg:flex-col lg:justify-between">
             <div>
-              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-white/10">
+              <div className="reveal animate-fadeIn flex h-11 w-11 items-center justify-center rounded-xl bg-white/10">
                 {currentRole.icon}
               </div>
 
-              <p className="mt-7 text-xs font-semibold uppercase tracking-[1.8px] text-[#D9E8D9]">
+              <p className="reveal delay-100 mt-7 text-xs font-semibold uppercase tracking-[1.8px] text-[#D9E8D9]">
                 MandiTrack
               </p>
 
-              <h2 className="mt-3 text-3xl font-semibold leading-tight tracking-[-0.8px]">
+              <h2 className="reveal delay-200 mt-3 text-3xl font-semibold leading-tight tracking-[-0.8px]">
                 {isMarathi
                   ? "मंडी व्यवहार एका सोप्या प्लॅटफॉर्मवर."
                   : "Mandi operations in one simple platform."}
               </h2>
 
-              <p className="mt-5 text-sm leading-7 text-[#D5E3D7]">
+              <p className="reveal delay-300 mt-5 text-sm leading-7 text-[#D5E3D7]">
                 {isMarathi
                   ? "उत्पादन जमा करणे, लॉट ट्रॅकिंग आणि मंडी माहिती एका ठिकाणी."
                   : "Produce submission, lot tracking and mandi information in one place."}
               </p>
             </div>
 
-            <div className="mt-12 space-y-4">
+            <div className="mt-12 space-y-4 anim-list">
               <LoginBenefit
-                text={
-                  isMarathi
-                    ? "शेतकरी-अनुकूल प्रक्रिया"
-                    : "Farmer-friendly workflow"
-                }
+                text={isMarathi ? "शेतकरी-अनुकूल प्रक्रिया" : "Farmer-friendly workflow"}
               />
-
               <LoginBenefit
-                text={
-                  isMarathi
-                    ? "लॉट स्थितीचा मागोवा"
-                    : "Lot status tracking"
-                }
+                text={isMarathi ? "लॉट स्थितीचा मागोवा" : "Lot status tracking"}
               />
-
               <LoginBenefit
-                text={
-                  isMarathi
-                    ? "इंग्रजी आणि मराठी"
-                    : "English and Marathi"
-                }
+                text={isMarathi ? "इंग्रजी आणि मराठी" : "English and Marathi"}
               />
             </div>
           </div>
@@ -209,25 +185,17 @@ export default function LoginPage({
 
           <div className="p-6 sm:p-9 lg:p-10">
             {/* Heading */}
-
-            <div>
+            <div className="animate-fadeIn">
               <div className="inline-flex items-center gap-2 rounded-full border border-[#D8E1D8] bg-[#EEF3EC] px-3 py-1.5 text-[11px] font-semibold text-[#386044]">
                 <span className="h-1.5 w-1.5 rounded-full bg-[#4C8658]" />
-
-                {isMarathi
-                  ? "सुरक्षित पोर्टल प्रवेश"
-                  : "Secure portal access"}
+                {isMarathi ? "सुरक्षित पोर्टल प्रवेश" : "Secure portal access"}
               </div>
 
               <h1 className="mt-5 text-3xl font-semibold tracking-[-1px] text-[#19343A]">
-                {isMarathi
-                  ? "तुमच्या खात्यात लॉगिन करा"
-                  : "Sign in to your account"}
+                {isMarathi ? "तुमच्या खात्यात लॉगिन करा" : "Sign in to your account"}
               </h1>
 
-              <p className="mt-2 text-sm leading-6 text-[#687779]">
-                {currentRole.description}
-              </p>
+              <p className="mt-2 text-sm leading-6 text-[#687779]">{currentRole.description}</p>
             </div>
 
             {/* Role selector */}

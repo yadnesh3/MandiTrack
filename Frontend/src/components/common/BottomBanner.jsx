@@ -1,7 +1,11 @@
 import React from "react";
 import MandiTrackLogo from "../MandiTrackLogo";
+import { useLang } from "../../context/LanguageContext";
 
 export default function BottomBanner({ className = "" }) {
+  const { lang } = useLang();
+  const isMarathi = lang === "mr";
+
   return (
     <footer
       className={`relative overflow-hidden rounded-xl bg-[#214D31] text-white px-5 sm:px-6 py-4 border border-[#285C3A] shadow-sm flex flex-col md:flex-row items-center justify-between gap-4 select-none ${className}`}
@@ -14,8 +18,12 @@ export default function BottomBanner({ className = "" }) {
       <div className="relative z-10 flex items-center gap-3">
         <MandiTrackLogo
           variant="light"
-          subtitle="Govt. of Maharashtra Initiative"
-          size="sm"
+          subtitle={
+            isMarathi
+              ? "महाराष्ट्र शासन उपक्रम"
+              : "Govt. of Maharashtra Initiative"
+          }
+          size="md"
         />
       </div>
 
@@ -26,18 +34,24 @@ export default function BottomBanner({ className = "" }) {
         </div>
 
         <span className="font-semibold text-sm sm:text-base tracking-wide text-white">
-          Better Mandis. Brighter Tomorrows.
+          {isMarathi
+            ? "उत्तम मंडई. उज्ज्वल भविष्य."
+            : "Better Mandis. Brighter Tomorrows."}
         </span>
       </div>
 
       {/* Right: Department & Copyright */}
       <div className="relative z-10 text-center md:text-right text-[10px] sm:text-xs text-white/70 font-medium">
         <div className="font-semibold text-white">
-          Department of Agricultural Marketing
+          {isMarathi
+            ? "कृषी पणन विभाग"
+            : "Department of Agricultural Marketing"}
         </div>
 
         <div className="mt-0.5">
-          Maharashtra State Agricultural Marketing Board (MSAMB)
+          {isMarathi
+            ? "महाराष्ट्र राज्य कृषी पणन मंडळ (MSAMB)"
+            : "Maharashtra State Agricultural Marketing Board (MSAMB)"}
         </div>
       </div>
     </footer>

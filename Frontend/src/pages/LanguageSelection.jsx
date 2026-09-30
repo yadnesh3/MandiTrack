@@ -1,15 +1,27 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   ArrowRight,
   Globe2,
   Check,
   Languages,
 } from "lucide-react";
+import MandiTrackLogo from "../components/MandiTrackLogo";
 
 function LanguageSelection({ currentLang = "en" }) {
   const [selectedLanguage, setSelectedLanguage] = useState(
     currentLang === "mr" ? "mr" : "en"
   );
+
+  // Trigger reveal animations
+  useEffect(() => {
+    const els = document.querySelectorAll(".reveal, .reveal-left, .reveal-right, .reveal-zoom");
+    const observer = new IntersectionObserver(
+      (entries) => entries.forEach((e) => { if (e.isIntersecting) { e.target.classList.add("revealed"); observer.unobserve(e.target); } }),
+      { threshold: 0.08 }
+    );
+    els.forEach((el) => observer.observe(el));
+    return () => observer.disconnect();
+  }, []);
 
   const handleContinue = () => {
     const language = selectedLanguage === "mr" ? "mr" : "en";
@@ -29,28 +41,10 @@ function LanguageSelection({ currentLang = "en" }) {
           HEADER
       ====================================================== */}
 
-      <header className="border-b border-[#DCE3DB] bg-[#214D31] text-white">
+      <header className="border-b border-[#214D31] bg-[#285C3A] text-white animate-fadeIn">
         <div className="mx-auto flex max-w-[1200px] items-center justify-between px-5 py-4 sm:px-6">
-          {/* Logo */}
-          <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/10">
-              <span className="text-lg font-bold text-[#B58A35]">
-                M
-              </span>
-            </div>
+          <MandiTrackLogo variant="light" size={62} />
 
-            <div>
-              <h1 className="text-lg font-bold tracking-tight sm:text-xl">
-                Mandi<span className="text-[#B58A35]">Track</span>
-              </h1>
-
-              <p className="mt-0.5 text-[10px] font-medium text-white/65">
-                Apala Mandi Saathi
-              </p>
-            </div>
-          </div>
-
-          {/* Language indicator */}
           <div className="flex items-center gap-2 rounded-lg border border-white/15 bg-white/5 px-3 py-2 text-xs font-medium text-white/80">
             <Globe2 size={15} />
             <span>Language</span>
@@ -58,27 +52,23 @@ function LanguageSelection({ currentLang = "en" }) {
         </div>
       </header>
 
-      {/* =====================================================
-          MAIN
-      ====================================================== */}
-
       <main className="flex flex-1 items-center justify-center px-5 py-12 sm:py-16">
         <div className="w-full max-w-[760px]">
           {/* Heading */}
           <div className="text-center">
-            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl border border-[#DCE3DB] bg-white text-[#285C3A] shadow-sm">
+            <div className="animate-bounceIn mx-auto flex h-12 w-12 items-center justify-center rounded-xl border border-[#DCE3DB] bg-white text-[#285C3A] shadow-sm">
               <Languages size={22} />
             </div>
 
-            <p className="mt-5 text-[10px] font-bold uppercase tracking-[0.16em] text-[#B58A35]">
+            <p className="reveal mt-5 text-[10px] font-bold uppercase tracking-[0.16em] text-[#B58A35]">
               MandiTrack
             </p>
 
-            <h2 className="mt-2 text-3xl font-bold tracking-tight text-[#19343A] sm:text-4xl">
+            <h2 className="reveal delay-100 mt-2 text-3xl font-bold tracking-tight text-[#19343A] sm:text-4xl">
               Choose your language
             </h2>
 
-            <p className="mt-2 text-sm font-medium text-[#687779]">
+            <p className="reveal delay-200 mt-2 text-sm font-medium text-[#687779]">
               आपली भाषा निवडा
             </p>
           </div>
@@ -92,7 +82,7 @@ function LanguageSelection({ currentLang = "en" }) {
             <button
               type="button"
               onClick={() => setSelectedLanguage("en")}
-              className={`relative rounded-xl border bg-white p-6 text-left transition-all sm:p-7 ${
+              className={`reveal-left anim-card relative rounded-xl border bg-white p-6 text-left transition-all sm:p-7 ${
                 selectedLanguage === "en"
                   ? "border-[#285C3A] shadow-md ring-1 ring-[#285C3A]/10"
                   : "border-[#DCE3DB] shadow-sm hover:border-[#B9C8BC] hover:shadow-md"
@@ -131,7 +121,7 @@ function LanguageSelection({ currentLang = "en" }) {
             <button
               type="button"
               onClick={() => setSelectedLanguage("mr")}
-              className={`relative rounded-xl border bg-white p-6 text-left transition-all sm:p-7 ${
+              className={`reveal-right delay-100 anim-card relative rounded-xl border bg-white p-6 text-left transition-all sm:p-7 ${
                 selectedLanguage === "mr"
                   ? "border-[#285C3A] shadow-md ring-1 ring-[#285C3A]/10"
                   : "border-[#DCE3DB] shadow-sm hover:border-[#B9C8BC] hover:shadow-md"

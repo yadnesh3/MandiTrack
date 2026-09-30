@@ -21,7 +21,7 @@ export default function ReportsView({ user }) {
           HEADER
       ====================================================== */}
 
-      <div className="rounded-xl border border-[#DCE3DB] bg-white p-5 shadow-sm sm:p-6">
+      <div className="anim-sheen reveal rounded-xl border border-[#DCE3DB] bg-white p-5 shadow-sm sm:p-6">
         <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <div className="mb-2 inline-flex items-center gap-1.5 rounded-full border border-[#CFE2D4] bg-[#EAF2E9] px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-[#285C3A]">
@@ -57,9 +57,9 @@ export default function ReportsView({ user }) {
           OVERVIEW STATISTICS
       ====================================================== */}
 
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+      <div className="anim-list grid grid-cols-2 gap-3 lg:grid-cols-4">
         {/* Arrival Volume */}
-        <div className="rounded-xl border border-[#DCE3DB] bg-white p-4 shadow-sm sm:p-5">
+        <div className="anim-sheen reveal rounded-xl border border-[#DCE3DB] bg-white p-4 shadow-sm sm:p-5">
           <div className="flex items-center justify-between gap-2">
             <div className="text-[9px] font-bold uppercase tracking-[0.08em] text-[#8A9695]">
               {t("monthlyArrivalVol")}
@@ -70,7 +70,7 @@ export default function ReportsView({ user }) {
             </div>
           </div>
 
-          <div className="mt-3 text-xl font-bold text-[#19343A] sm:text-2xl">
+          <div className="stat-number mt-3 text-xl font-bold text-[#19343A] sm:text-2xl">
             4,820 Q
           </div>
 

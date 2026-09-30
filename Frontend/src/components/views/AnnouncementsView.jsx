@@ -163,7 +163,7 @@ export default function AnnouncementsView({ user }) {
           HEADER
       ====================================================== */}
 
-      <div className="rounded-xl border border-[#DCE3DB] bg-white p-5 shadow-sm sm:p-6">
+      <div className="anim-sheen reveal rounded-xl border border-[#DCE3DB] bg-white p-5 shadow-sm sm:p-6">
         <div className="flex flex-col gap-5">
           {/* Heading */}
           <div>

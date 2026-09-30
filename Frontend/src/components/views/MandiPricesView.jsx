@@ -94,7 +94,7 @@ export default function MandiPricesView() {
           HEADER
       ====================================================== */}
 
-      <div className="rounded-xl border border-[#DCE3DB] bg-white p-5 shadow-sm sm:p-6">
+      <div className="anim-sheen reveal rounded-xl border border-[#DCE3DB] bg-white p-5 shadow-sm sm:p-6">
         <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <div className="mb-2 inline-flex items-center gap-1.5 rounded-full border border-[#E8DDBF] bg-[#F5EFDE] px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-[#80672C]">
@@ -132,7 +132,7 @@ export default function MandiPricesView() {
           FILTERS
       ====================================================== */}
 
-      <div className="grid grid-cols-1 gap-3 rounded-xl border border-[#DCE3DB] bg-white p-4 shadow-sm sm:grid-cols-2">
+      <div className="reveal delay-100 grid grid-cols-1 gap-3 rounded-xl border border-[#DCE3DB] bg-white p-4 shadow-sm sm:grid-cols-2">
         {/* Crop Search */}
         <div className="relative">
           <Search
@@ -172,7 +172,7 @@ export default function MandiPricesView() {
 
       {loading ? (
         <div className="flex min-h-[280px] flex-col items-center justify-center rounded-xl border border-[#DCE3DB] bg-white px-6 text-center shadow-sm">
-          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#EAF2E9]">
+          <div className="animate-pulseGlow flex h-12 w-12 items-center justify-center rounded-full bg-[#EAF2E9]">
             <RefreshCw
               size={21}
               className="animate-spin text-[#285C3A]"

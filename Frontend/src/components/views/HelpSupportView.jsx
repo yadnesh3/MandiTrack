@@ -143,7 +143,7 @@ export default function HelpSupportView({ onOpenVoiceHelp }) {
           HEADER
       ====================================================== */}
 
-      <div className="rounded-xl border border-[#DCE3DB] bg-white p-5 shadow-sm sm:p-6">
+      <div className="anim-sheen reveal rounded-xl border border-[#DCE3DB] bg-white p-5 shadow-sm sm:p-6">
         <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <div className="mb-2 inline-flex items-center gap-1.5 rounded-full border border-[#CFE2D4] bg-[#EAF2E9] px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-[#285C3A]">
@@ -177,14 +177,14 @@ export default function HelpSupportView({ onOpenVoiceHelp }) {
           MAIN CONTENT
       ====================================================== */}
 
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+      <div className="anim-list grid grid-cols-1 gap-6 lg:grid-cols-3">
         {/* ===================================================
             LEFT — FAQ + WORKFLOW
         ==================================================== */}
 
         <div className="space-y-6 lg:col-span-2">
           {/* FAQ */}
-          <div className="rounded-xl border border-[#DCE3DB] bg-white p-5 shadow-sm sm:p-6">
+          <div className="reveal delay-100 rounded-xl border border-[#DCE3DB] bg-white p-5 shadow-sm sm:p-6">
             <div className="flex items-center gap-2 border-b border-[#E5E9E3] pb-4">
               <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#F5EFDE] text-[#B58A35]">
                 <FileQuestion size={17} />
@@ -356,7 +356,7 @@ export default function HelpSupportView({ onOpenVoiceHelp }) {
 
               {/* Mobile */}
               <a
-                href="tel:+919876543210"
+                href="tel:8010558094"
                 className="group flex items-center gap-3 rounded-lg border border-[#DCE3DB] bg-[#F8F7F2] p-3 transition hover:border-[#CFE2D4] hover:bg-[#EAF2E9]"
               >
                 <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#EAF2E9] text-[#285C3A] transition group-hover:bg-[#285C3A] group-hover:text-white">
@@ -369,7 +369,7 @@ export default function HelpSupportView({ onOpenVoiceHelp }) {
                   </div>
 
                   <div className="mt-0.5 text-xs font-bold text-[#19343A]">
-                    +91 98765 43210
+                    +91 80105 58094
                   </div>
                 </div>
 
@@ -381,7 +381,7 @@ export default function HelpSupportView({ onOpenVoiceHelp }) {
 
               {/* Email */}
               <a
-                href="mailto:support@manditrack.gov.in"
+                href="mailto:yadneshgharat23@gmail.com"
                 className="group flex items-center gap-3 rounded-lg border border-[#DCE3DB] bg-[#F8F7F2] p-3 transition hover:border-[#E8DDBF] hover:bg-[#F5EFDE]"
               >
                 <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#F5EFDE] text-[#B58A35] transition group-hover:bg-[#B58A35] group-hover:text-white">
@@ -394,7 +394,7 @@ export default function HelpSupportView({ onOpenVoiceHelp }) {
                   </div>
 
                   <div className="mt-0.5 break-all text-xs font-bold text-[#19343A]">
-                    support@manditrack.gov.in
+                    yadneshgharat23@gmail.com
                   </div>
                 </div>
 

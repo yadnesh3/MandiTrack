@@ -298,8 +298,14 @@ const translations = {
     adminMandiBreakdown: "Mandi Location Overview",
     adminStageDistribution: "Workflow Stage Distribution",
     adminRecentActivity: "Live System Activity",
-    adminUserDirectory: "Registered Users Directory",
     reviewProcessLots: "Review / Process Lots",
+    mainMenu: "Main Menu",
+    reports: "Reports",
+    announcements: "Announcements",
+    profile: "Profile",
+    helpSupport: "Help & Support",
+    lotTracking: "Lot Tracking",
+    voiceAssistant: "Voice Assistant",
 
     // Reports
     reportsTitle: "Operational Reports & Summaries",
@@ -767,8 +773,14 @@ const translations = {
     adminMandiBreakdown: "मंडी स्थान विहंगावलोकन",
     adminStageDistribution: "कार्यप्रवाह टप्प्यांचे वितरण",
     adminRecentActivity: "थेट सिस्टीम हालचाली",
-    adminUserDirectory: "नोंदणीकृत वापरकर्ते",
     reviewProcessLots: "लॉट पुनरावलोकन व प्रक्रिया",
+    mainMenu: "मुख्य मेनू",
+    reports: "अहवाल",
+    announcements: "घोषणा व सूचना",
+    profile: "प्रोफाइल",
+    helpSupport: "मदत व समर्थन",
+    lotTracking: "लॉट ट्रॅकिंग",
+    voiceAssistant: "व्हॉईस असिस्टंट",
 
     // Reports
     reportsTitle: "कार्यकारी अहवाल आणि सारांश",

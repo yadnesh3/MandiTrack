@@ -43,10 +43,10 @@ export default function ProfileView({ user, onLogout }) {
           PROFILE HEADER
       ====================================================== */}
 
-      <div className="rounded-xl border border-[#DCE3DB] bg-white p-5 shadow-sm sm:p-7">
+      <div className="anim-sheen reveal rounded-xl border border-[#DCE3DB] bg-white p-5 shadow-sm sm:p-7">
         <div className="flex flex-col items-center gap-5 text-center sm:flex-row sm:items-start sm:text-left">
           {/* Avatar */}
-          <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-[#285C3A] text-2xl font-bold text-white shadow-sm ring-4 ring-[#EAF2E9]">
+          <div className="animate-bounceIn flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-[#285C3A] text-2xl font-bold text-white shadow-sm ring-4 ring-[#EAF2E9]">
             {initials}
           </div>
 

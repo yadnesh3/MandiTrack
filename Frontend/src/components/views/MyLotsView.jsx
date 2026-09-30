@@ -130,7 +130,7 @@ export default function MyLotsView({
           HEADER
       ====================================================== */}
 
-      <div className="rounded-xl border border-[#DCE3DB] bg-white p-5 shadow-sm sm:p-6">
+      <div className="anim-sheen reveal rounded-xl border border-[#DCE3DB] bg-white p-5 shadow-sm sm:p-6">
         <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <div className="mb-2 inline-flex items-center gap-1.5 rounded-full border border-[#E8DDBF] bg-[#F5EFDE] px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-[#80672C]">
@@ -167,7 +167,7 @@ export default function MyLotsView({
           SEARCH + FILTERS
       ====================================================== */}
 
-      <div className="rounded-xl border border-[#DCE3DB] bg-white p-4 shadow-sm">
+      <div className="reveal delay-100 rounded-xl border border-[#DCE3DB] bg-white p-4 shadow-sm">
         <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
           {/* Search */}
           <div className="relative w-full md:max-w-sm">

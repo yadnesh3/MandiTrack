@@ -1,64 +1,544 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Mukta:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap");
 
 @import "tailwindcss";
 
 @layer base {
   html,
   body {
-    font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
+    font-family: "Plus Jakarta Sans", "Noto Sans Devanagari", "Mukta", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   }
 }
 
-@layer utilities {
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-      transform: translateY(6px);
-    }
+/* ============================================================
+   KEYFRAMES
+============================================================ */
 
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  @keyframes scaleUp {
-    from {
-      opacity: 0;
-      transform: scale(0.96);
-    }
-
-    to {
-      opacity: 1;
-      transform: scale(1);
-    }
-  }
-
-  .animate-fadeIn {
-    animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  }
-
-  .animate-scaleUp {
-    animation: scaleUp 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  }
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
-/* Custom scrollbar for mobile table views */
-
-::-webkit-scrollbar {
-  height: 6px;
-  width: 6px;
+@keyframes scaleUp {
+  from { opacity: 0; transform: scale(0.96); }
+  to   { opacity: 1; transform: scale(1); }
 }
 
-::-webkit-scrollbar-track {
-  background: #f1f5f9;
+@keyframes floatSlow {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50%       { transform: translateY(-10px) rotate(0.5deg); }
 }
 
-::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 9999px;
+@keyframes pulseGlow {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.85; transform: scale(1.05); }
 }
 
-::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+/* Scroll-reveal entrance animations */
+@keyframes slideInUp {
+  from { opacity: 0; transform: translateY(40px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
+
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateX(-40px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(40px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes zoomIn {
+  from { opacity: 0; transform: scale(0.88); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes bounceIn {
+  0%   { opacity: 0; transform: scale(0.7); }
+  60%  { opacity: 1; transform: scale(1.06); }
+  80%  { transform: scale(0.97); }
+  100% { transform: scale(1); }
+}
+
+@keyframes rotateIn {
+  from { opacity: 0; transform: rotate(-8deg) scale(0.9); }
+  to   { opacity: 1; transform: rotate(0deg) scale(1); }
+}
+
+/* Shimmer sweep on buttons / cards */
+@keyframes shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+/* Gradient text animation */
+@keyframes gradientShift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Ripple for status dot */
+@keyframes ripple {
+  0%   { transform: scale(1);   opacity: 0.6; }
+  100% { transform: scale(2.4); opacity: 0; }
+}
+
+/* Subtle background particle drift */
+@keyframes driftA {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33%       { transform: translate(18px, -12px) scale(1.04); }
+  66%       { transform: translate(-10px, 8px) scale(0.97); }
+}
+
+@keyframes driftB {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33%       { transform: translate(-14px, 10px) scale(0.96); }
+  66%       { transform: translate(12px, -8px) scale(1.03); }
+}
+
+/* Navbar logo entrance */
+@keyframes logoReveal {
+  from { opacity: 0; transform: scale(0.85) translateX(-8px); }
+  to   { opacity: 1; transform: scale(1) translateX(0); }
+}
+
+/* ============================================================
+   ANIMATION UTILITY CLASSES
+============================================================ */
+
+.animate-fadeIn       { animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+.animate-scaleUp      { animation: scaleUp 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+.animate-floatSlow    { animation: floatSlow 6s ease-in-out infinite; }
+.animate-pulseGlow    { animation: pulseGlow 2.5s ease-in-out infinite; }
+.animate-bounceIn     { animation: bounceIn 0.65s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.animate-rotateIn     { animation: rotateIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.animate-logoReveal   { animation: logoReveal 0.6s cubic-bezier(0.22, 1, 0.36, 1) both; }
+
+.animate-driftA { animation: driftA 14s ease-in-out infinite; }
+.animate-driftB { animation: driftB 18s ease-in-out infinite; }
+
+/* Gradient animated text */
+.animate-gradient-text {
+  background: linear-gradient(135deg, #285C3A 0%, #4C8658 30%, #8A702B 60%, #285C3A 100%);
+  background-size: 300% 300%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: gradientShift 5s ease infinite;
+}
+
+/* Shimmer button effect */
+.shimmer-btn {
+  background: linear-gradient(90deg, transparent 30%, rgba(255,255,255,0.18) 50%, transparent 70%);
+  background-size: 200% 100%;
+  animation: shimmer 2.2s linear infinite;
+}
+
+/* ============================================================
+   SCROLL REVEAL SYSTEM
+   Elements start hidden; JS adds .revealed to trigger entrance
+============================================================ */
+
+.reveal {
+  opacity: 0;
+  transform: translateY(36px);
+  transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+              transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.reveal.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.reveal-left {
+  opacity: 0;
+  transform: translateX(-36px);
+  transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+              transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.reveal-left.revealed {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.reveal-right {
+  opacity: 0;
+  transform: translateX(36px);
+  transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+              transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.reveal-right.revealed {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.reveal-zoom {
+  opacity: 0;
+  transform: scale(0.9);
+  transition: opacity 0.65s cubic-bezier(0.22, 1, 0.36, 1),
+              transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.reveal-zoom.revealed {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Stagger delays */
+.delay-100 { transition-delay: 0.10s !important; }
+.delay-200 { transition-delay: 0.20s !important; }
+.delay-300 { transition-delay: 0.30s !important; }
+.delay-400 { transition-delay: 0.40s !important; }
+.delay-500 { transition-delay: 0.50s !important; }
+.delay-600 { transition-delay: 0.60s !important; }
+.delay-700 { transition-delay: 0.70s !important; }
+.delay-800 { transition-delay: 0.80s !important; }
+
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateX(-100%); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.animate-slideInLeft { animation: slideInLeft 0.3s cubic-bezier(0.22, 1, 0.36, 1) both; }
+
+/* ============================================================
+   NAVBAR LOGO VISIBILITY
+============================================================ */
+
+.navbar-logo-wrap {
+  filter: drop-shadow(0 1px 3px rgba(40, 92, 58, 0.18));
+  animation: logoReveal 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+  transition: filter 0.2s ease, transform 0.2s ease;
+}
+
+.navbar-logo-wrap:hover {
+  filter: drop-shadow(0 2px 8px rgba(40, 92, 58, 0.28));
+  transform: scale(1.03);
+}
+
+/* ============================================================
+   RIPPLE STATUS DOT
+============================================================ */
+
+.ripple-dot {
+  position: relative;
+  display: inline-flex;
+}
+
+.ripple-dot::before {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: 50%;
+  background: #4C8658;
+  animation: ripple 2s ease-out infinite;
+}
+
+/* ============================================================
+   HERO FLOATING PARTICLES
+============================================================ */
+
+.hero-particle {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  will-change: transform;
+}
+
+/* ============================================================
+   CUSTOM SCROLLBAR
+============================================================ */
+
+::-webkit-scrollbar { height: 6px; width: 6px; }
+::-webkit-scrollbar-track { background: #f1f5f9; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
+::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+/* ============================================================
+   GLOBAL MICRO-INTERACTIONS & SITE-WIDE ANIMATIONS
+============================================================ */
+
+/* Page-level entrance */
+@keyframes pageEnter {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.page-enter { animation: pageEnter 0.45s cubic-bezier(0.22, 1, 0.36, 1) both; }
+
+/* Card hover lift */
+.anim-card {
+  transition: transform 0.22s cubic-bezier(0.22,1,0.36,1),
+              box-shadow 0.22s cubic-bezier(0.22,1,0.36,1);
+}
+.anim-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 28px rgba(25, 52, 58, 0.10);
+}
+
+/* Stat number pop on mount */
+@keyframes statPop {
+  0%   { opacity: 0; transform: scale(0.7) translateY(8px); }
+  70%  { transform: scale(1.08) translateY(-2px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+.anim-stat { animation: statPop 0.55s cubic-bezier(0.22, 1, 0.36, 1) both; }
+
+/* Stagger helpers — add .anim-list to parent, children get auto delays */
+.anim-list > *:nth-child(1)  { animation-delay: 0ms !important; }
+.anim-list > *:nth-child(2)  { animation-delay: 60ms !important; }
+.anim-list > *:nth-child(3)  { animation-delay: 120ms !important; }
+.anim-list > *:nth-child(4)  { animation-delay: 180ms !important; }
+.anim-list > *:nth-child(5)  { animation-delay: 240ms !important; }
+.anim-list > *:nth-child(6)  { animation-delay: 300ms !important; }
+.anim-list > *:nth-child(7)  { animation-delay: 360ms !important; }
+.anim-list > *:nth-child(8)  { animation-delay: 420ms !important; }
+.anim-list > *:nth-child(9)  { animation-delay: 480ms !important; }
+.anim-list > *:nth-child(10) { animation-delay: 540ms !important; }
+
+/* Input focus glow */
+.anim-input {
+  transition: border-color 0.18s ease, box-shadow 0.18s ease, transform 0.15s ease;
+}
+.anim-input:focus {
+  box-shadow: 0 0 0 3px rgba(40, 92, 58, 0.12);
+  transform: translateY(-1px);
+  outline: none;
+}
+
+/* Button press micro-animation */
+.anim-btn {
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+.anim-btn:hover  { transform: translateY(-1px); box-shadow: 0 4px 14px rgba(40,92,58,0.15); }
+.anim-btn:active { transform: translateY(0) scale(0.97); box-shadow: none; }
+
+/* Badge / tag pop-in */
+@keyframes badgePop {
+  from { opacity: 0; transform: scale(0.75); }
+  to   { opacity: 1; transform: scale(1); }
+}
+.anim-badge { animation: badgePop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+
+/* Row / list-item slide-up */
+@keyframes rowSlideUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.anim-row { animation: rowSlideUp 0.35s cubic-bezier(0.22, 1, 0.36, 1) both; }
+
+/* Underline grow on hover (for links) */
+.anim-underline { position: relative; display: inline-block; }
+.anim-underline::after {
+  content: '';
+  position: absolute;
+  left: 0; bottom: -2px;
+  width: 0; height: 2px;
+  background: #285C3A;
+  border-radius: 2px;
+  transition: width 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.anim-underline:hover::after { width: 100%; }
+
+/* Form card entrance */
+@keyframes formSlideUp {
+  from { opacity: 0; transform: translateY(32px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+.anim-form-card { animation: formSlideUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) both; }
+
+/* Shimmer loading skeleton */
+@keyframes skeletonShimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.anim-skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e8e8e8 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: skeletonShimmer 1.5s infinite;
+  border-radius: 6px;
+}
+
+/* ============================================================
+   EXTREME SITE-WIDE AUTO-ANIMATIONS
+   No class needed on JSX — these selectors auto-apply everywhere
+============================================================ */
+
+/* ── ALL white/light cards hover lift ── */
+.bg-white,
+[class*="bg-white"],
+[class*="rounded-xl"],
+[class*="rounded-2xl"] {
+  transition: transform 0.22s cubic-bezier(0.22,1,0.36,1),
+              box-shadow 0.22s cubic-bezier(0.22,1,0.36,1);
+}
+
+/* ── Dashboard content: every direct card gets entrance ── */
+.page-enter > * { animation: pageEnter 0.45s cubic-bezier(0.22,1,0.36,1) both; }
+.page-enter > *:nth-child(1) { animation-delay: 0ms; }
+.page-enter > *:nth-child(2) { animation-delay: 80ms; }
+.page-enter > *:nth-child(3) { animation-delay: 160ms; }
+.page-enter > *:nth-child(4) { animation-delay: 240ms; }
+.page-enter > *:nth-child(5) { animation-delay: 320ms; }
+.page-enter > *:nth-child(6) { animation-delay: 400ms; }
+
+/* ── All buttons site-wide get press micro-animation ── */
+button {
+  transition: transform 0.12s ease, box-shadow 0.12s ease, background-color 0.18s ease, color 0.18s ease, border-color 0.18s ease !important;
+}
+button:active { transform: scale(0.965) !important; }
+
+/* ── All text inputs glow on focus ── */
+input, textarea, select {
+  transition: border-color 0.18s ease, box-shadow 0.18s ease, transform 0.15s ease !important;
+}
+input:focus, textarea:focus, select:focus {
+  box-shadow: 0 0 0 3px rgba(40, 92, 58, 0.12) !important;
+  transform: translateY(-1px) !important;
+}
+
+/* ── Floating number stat ── */
+@keyframes countUp {
+  from { opacity: 0; transform: translateY(10px) scale(0.85); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ── Pulsing status badge ── */
+@keyframes statusPulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.7; }
+}
+
+/* ── Gentle card breathe (for active/highlighted cards) ── */
+@keyframes cardBreathe {
+  0%, 100% { box-shadow: 0 4px 20px rgba(40,92,58,0.08); }
+  50%       { box-shadow: 0 8px 32px rgba(40,92,58,0.16); }
+}
+
+/* ── Spinning loader ── */
+@keyframes spinSmooth {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+.animate-spin-smooth { animation: spinSmooth 1s linear infinite; }
+
+/* ── Slide-down for dropdowns/modals ── */
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-8px) scaleY(0.96); }
+  to   { opacity: 1; transform: translateY(0) scaleY(1); }
+}
+.animate-slideDown { animation: slideDown 0.2s cubic-bezier(0.22,1,0.36,1) both; }
+
+/* ── Pop for toasts/alerts ── */
+@keyframes toastPop {
+  0%   { opacity: 0; transform: translateY(12px) scale(0.95); }
+  70%  { transform: translateY(-2px) scale(1.01); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+.animate-toastPop { animation: toastPop 0.4s cubic-bezier(0.22,1,0.36,1) both; }
+
+/* ── Wiggle for errors/warnings ── */
+@keyframes wiggle {
+  0%, 100% { transform: translateX(0); }
+  20%       { transform: translateX(-5px); }
+  40%       { transform: translateX(5px); }
+  60%       { transform: translateX(-3px); }
+  80%       { transform: translateX(3px); }
+}
+.animate-wiggle { animation: wiggle 0.45s ease both; }
+
+/* ── Floating action button pulse ── */
+@keyframes fabPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(40,92,58,0.4); }
+  70%       { box-shadow: 0 0 0 10px rgba(40,92,58,0); }
+}
+.animate-fabPulse { animation: fabPulse 2s infinite; }
+
+/* ── Number counter entrance ── */
+.stat-number {
+  animation: countUp 0.6s cubic-bezier(0.22,1,0.36,1) both;
+}
+
+/* ── Ambient green glow orb (background decoration) ── */
+@keyframes orb {
+  0%, 100% { transform: translate(0,0) scale(1);   opacity: 0.5; }
+  33%       { transform: translate(20px,-14px) scale(1.08); opacity: 0.65; }
+  66%       { transform: translate(-12px,10px) scale(0.94); opacity: 0.45; }
+}
+.bg-orb {
+  position: fixed;
+  border-radius: 50%;
+  pointer-events: none;
+  filter: blur(60px);
+  z-index: 0;
+  animation: orb 18s ease-in-out infinite;
+}
+
+/* ── Gradient border on active/selected card ── */
+@keyframes borderGlow {
+  0%, 100% { border-color: rgba(40,92,58,0.3); }
+  50%       { border-color: rgba(40,92,58,0.7); }
+}
+.anim-glow-border { animation: borderGlow 2.5s ease-in-out infinite; }
+
+/* ── Sheen sweep on stat cards ── */
+@keyframes sheen {
+  0%   { background-position: -100% 0; }
+  60%, 100% { background-position: 200% 0; }
+}
+.anim-sheen::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(100deg, transparent 20%, rgba(255,255,255,0.25) 50%, transparent 80%);
+  background-size: 200% 100%;
+  animation: sheen 3.5s ease-in-out infinite;
+  pointer-events: none;
+}
+.anim-sheen { position: relative; overflow: hidden; }
+
+/* ── Text shimmer for headings ── */
+@keyframes textShimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+.anim-text-shimmer {
+  background: linear-gradient(90deg, #19343A 30%, #285C3A 50%, #B58A35 65%, #19343A 80%);
+  background-size: 300% auto;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: textShimmer 4s linear infinite;
+}
+
+/* ── Smooth height expand (for collapsibles) ── */
+.anim-expand {
+  animation: expandHeight 0.3s cubic-bezier(0.22,1,0.36,1) both;
+}
+@keyframes expandHeight {
+  from { opacity: 0; max-height: 0; }
+  to   { opacity: 1; max-height: 600px; }
+}
+
+/* ── Apply animate-fadeIn to all Tailwind animate-fadeIn uses ── */
+.animate-fadeIn { animation: fadeIn 0.35s cubic-bezier(0.16,1,0.3,1) forwards; }
+
+/* ── Emoji crop icon bounce ── */
+@keyframes emojiFloat {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  40%       { transform: translateY(-4px) rotate(-3deg); }
+  60%       { transform: translateY(-2px) rotate(2deg); }
+}
+.emoji-float { display: inline-block; animation: emojiFloat 3s ease-in-out infinite; }
+
+/* ── Success checkmark draw ── */
+@keyframes checkDraw {
+  from { stroke-dashoffset: 50; opacity: 0; }
+  to   { stroke-dashoffset: 0;  opacity: 1; }
+}
+.anim-check { stroke-dasharray: 50; animation: checkDraw 0.5s cubic-bezier(0.22,1,0.36,1) both; }

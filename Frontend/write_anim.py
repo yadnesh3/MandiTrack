@@ -1,0 +1,1 @@
+import textwrap; open(r"C:/Full Stack Projects/MandiTrack/Frontend/src/components/AnimatedPage.jsx","w",encoding="utf-8").write(textwrap.dedent(open(r"C:/Full Stack Projects/MandiTrack/Frontend/anim_template.txt","r",encoding="utf-8").read()))
